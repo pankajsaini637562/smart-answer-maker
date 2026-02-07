@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Flag, Send, Clock, List, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Flag, Send, Clock, List, X, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -8,7 +8,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { QuestionRow } from '@/components/QuestionRow';
 import { Timer } from '@/components/Timer';
 import { NavigationGrid } from '@/components/NavigationGrid';
-import { getSheet, saveAttempt, getInProgressAttempt, generateId, saveResult } from '@/lib/storage';
+import { AnswerKeyInput } from '@/components/AnswerKeyInput';
+import { getSheet, saveSheet, saveAttempt, getInProgressAttempt, generateId, saveResult } from '@/lib/storage';
 import { OMRSheet, ExamAttempt, ExamResult, QuestionResult } from '@/types/exam';
 import { toast } from 'sonner';
 
@@ -23,6 +24,8 @@ export default function ExamPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [showAnswerKeyInput, setShowAnswerKeyInput] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -99,26 +102,49 @@ export default function ExamPage() {
 
   const handleTimeUp = useCallback(() => {
     toast.warning('Time is up! Submitting your exam...');
-    handleSubmit();
+    initiateSubmit();
   }, []);
 
-  const handleSubmit = useCallback(() => {
+  const initiateSubmit = () => {
+    if (!sheet?.answerKey) {
+      setPendingSubmit(true);
+      setShowAnswerKeyInput(true);
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const handleSaveAnswerKey = (answerKey: number[]) => {
+    if (!sheet) return;
+    
+    const updatedSheet = { ...sheet, answerKey };
+    saveSheet(updatedSheet);
+    setSheet(updatedSheet);
+    toast.success('Answer key saved!');
+    
+    if (pendingSubmit) {
+      setPendingSubmit(false);
+      // Small delay to ensure state is updated
+      setTimeout(() => handleSubmitWithKey(answerKey), 100);
+    }
+  };
+
+  const handleSubmitWithKey = (answerKey: number[]) => {
     if (!attempt || !sheet) return;
 
-    // Calculate score
     let correct = 0;
     let wrong = 0;
     let unattempted = 0;
     const questionResults: QuestionResult[] = [];
 
     attempt.answers.forEach((answer, index) => {
-      const correctAnswer = sheet.answerKey?.[index];
+      const correctAnswer = answerKey[index];
       let isCorrect = false;
       let marksObtained = 0;
 
       if (answer === null) {
         unattempted++;
-      } else if (correctAnswer !== null && correctAnswer !== undefined) {
+      } else {
         if (Array.isArray(correctAnswer)) {
           isCorrect = correctAnswer.includes(answer);
         } else {
@@ -132,10 +158,6 @@ export default function ExamPage() {
           wrong++;
           marksObtained = -sheet.negativeMarking;
         }
-      } else {
-        // No answer key set - treat as correct for now
-        correct++;
-        marksObtained = sheet.marksPerQuestion;
       }
 
       questionResults.push({
@@ -184,6 +206,19 @@ export default function ExamPage() {
     
     toast.success('Exam submitted successfully!');
     navigate(`/result/${attempt.id}`);
+  };
+
+  const handleSubmit = useCallback(() => {
+    if (!attempt || !sheet) return;
+
+    const answerKey = sheet.answerKey as number[];
+    if (!answerKey) {
+      setShowAnswerKeyInput(true);
+      setPendingSubmit(true);
+      return;
+    }
+
+    handleSubmitWithKey(answerKey);
   }, [attempt, sheet, timeSpent, navigate]);
 
   if (!sheet || !attempt) {
@@ -356,13 +391,17 @@ export default function ExamPage() {
                         You have answered {answeredCount} of {sheet.totalQuestions} questions.
                         {unansweredCount > 0 && ` ${unansweredCount} questions are unanswered.`}
                         <br /><br />
-                        Are you sure you want to submit?
+                        {!sheet.answerKey && (
+                          <span className="text-primary font-medium">
+                            You'll be asked to enter the answer key next to generate your report card.
+                          </span>
+                        )}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Review Answers</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleSubmit}>
-                        Submit
+                      <AlertDialogAction onClick={initiateSubmit}>
+                        {sheet.answerKey ? 'Submit' : 'Continue to Answer Key'}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -380,6 +419,17 @@ export default function ExamPage() {
           </div>
         </div>
       </footer>
+
+      {/* Answer Key Input Modal */}
+      <AnswerKeyInput
+        sheet={sheet}
+        open={showAnswerKeyInput}
+        onOpenChange={(open) => {
+          setShowAnswerKeyInput(open);
+          if (!open) setPendingSubmit(false);
+        }}
+        onSave={handleSaveAnswerKey}
+      />
     </div>
   );
 }
