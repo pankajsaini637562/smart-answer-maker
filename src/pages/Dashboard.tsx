@@ -26,25 +26,16 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">
-                <span className="gradient-text">Exam Master</span>
-              </h1>
-              <p className="text-muted-foreground mt-1">Create & practice OMR sheets</p>
-            </div>
-            <Link to="/create">
-              <Button size="lg" className="gap-2">
-                <Plus className="w-5 h-5" />
-                New OMR Sheet
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
+      <div className="container py-4 flex justify-between items-center">
+        <p className="text-muted-foreground">Create & practice OMR sheets</p>
+        <Link to="/create">
+          <Button size="lg" className="gap-2">
+            <Plus className="w-5 h-5" />
+            New OMR Sheet
+          </Button>
+        </Link>
+      </div>
 
       <main className="container py-8 space-y-8">
         {/* Stats Overview */}
