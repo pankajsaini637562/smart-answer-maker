@@ -3,6 +3,7 @@ import { Plus, FileText, Trophy, Clock, Target, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
+import { AppHeader } from '@/components/AppHeader';
 import { getSheets, getScoreboard, getResults } from '@/lib/storage';
 import { formatDistanceToNow } from 'date-fns';
 
