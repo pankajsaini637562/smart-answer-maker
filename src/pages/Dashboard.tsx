@@ -60,7 +60,7 @@ export default function Dashboard() {
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { title: 'Total Exams', value: totalExams, icon: FileText, variant: 'default' as const, delay: 'stagger-1' },
-            { title: 'Avg Accuracy', value: `${avgAccuracy}%`, icon: Target, variant: (avgAccuracy >= 70 ? 'success' : avgAccuracy >= 50 ? 'warning' : 'destructive') as const, delay: 'stagger-2' },
+            { title: 'Avg Accuracy', value: `${avgAccuracy}%`, icon: Target, variant: (avgAccuracy >= 70 ? 'success' : avgAccuracy >= 50 ? 'warning' : 'destructive') as 'success' | 'warning' | 'destructive', delay: 'stagger-2' },
             { title: 'Practice Time', value: formatTotalTime(), icon: Clock, variant: 'default' as const, delay: 'stagger-3' },
             { title: 'OMR Sheets', value: sheets.length, icon: TrendingUp, variant: 'default' as const, delay: 'stagger-4' },
           ].map((stat) => (
