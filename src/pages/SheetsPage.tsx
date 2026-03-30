@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Play, Edit, Trash2, MoreVertical, FileText } from 'lucide-react';
+import { Plus, Play, Trash2, MoreVertical, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { AppHeader } from '@/components/AppHeader';
 import { getSheets, deleteSheet } from '@/lib/storage';
 import { OMRSheet } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
@@ -23,42 +25,33 @@ export default function SheetsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link to="/">
-                <Button variant="ghost" size="icon">
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-xl font-semibold">My OMR Sheets</h1>
-                <p className="text-sm text-muted-foreground">{sheets.length} sheets</p>
-              </div>
-            </div>
-            <Link to="/create">
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                New Sheet
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
-      <main className="container py-8">
+      <div className="container py-6">
+        <div className="flex items-center justify-between mb-6 animate-fade-in">
+          <div>
+            <h2 className="text-2xl font-bold font-display">My OMR Sheets</h2>
+            <p className="text-sm text-muted-foreground">{sheets.length} sheets created</p>
+          </div>
+          <Link to="/create">
+            <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20">
+              <Plus className="w-4 h-4" />
+              New Sheet
+            </Button>
+          </Link>
+        </div>
+
         {sheets.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <FileText className="w-10 h-10 text-primary" />
+          <div className="text-center py-20 animate-fade-in">
+            <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+              <FileText className="w-10 h-10 text-accent-foreground" />
             </div>
-            <h2 className="text-2xl font-semibold mb-2">No Sheets Yet</h2>
-            <p className="text-muted-foreground mb-6">
+            <h3 className="text-2xl font-bold font-display mb-2">No Sheets Yet</h3>
+            <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
               Create your first OMR sheet to start practicing
             </p>
             <Link to="/create">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="gap-2 rounded-xl px-8 h-12">
                 <Plus className="w-5 h-5" />
                 Create Sheet
               </Button>
@@ -66,19 +59,19 @@ export default function SheetsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sheets.map((sheet) => (
-              <Card key={sheet.id} className="group hover:border-primary transition-colors">
-                <CardHeader>
+            {sheets.map((sheet, i) => (
+              <Card key={sheet.id} className="modern-card group animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+                <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-lg">{sheet.title}</CardTitle>
-                      <CardDescription>
+                      <CardTitle className="text-base font-display">{sheet.title}</CardTitle>
+                      <CardDescription className="mt-1">
                         {sheet.totalQuestions} questions • {sheet.optionsPerQuestion} options
                       </CardDescription>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity rounded-xl w-8 h-8">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -92,23 +85,23 @@ export default function SheetsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-1.5">
                       {sheet.timeLimit > 0 && (
-                        <span className="px-2 py-1 bg-muted rounded">{sheet.timeLimit} min</span>
+                        <Badge variant="secondary" className="rounded-lg font-normal">{sheet.timeLimit} min</Badge>
                       )}
                       {sheet.negativeMarking > 0 && (
-                        <span className="px-2 py-1 bg-muted rounded">-{sheet.negativeMarking} marking</span>
+                        <Badge variant="secondary" className="rounded-lg font-normal">-{sheet.negativeMarking}</Badge>
                       )}
-                      <span className="px-2 py-1 bg-muted rounded">{sheet.marksPerQuestion} marks/Q</span>
+                      <Badge variant="secondary" className="rounded-lg font-normal">{sheet.marksPerQuestion} marks/Q</Badge>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(sheet.createdAt, { addSuffix: true })}
                       </span>
                       <Link to={`/exam/${sheet.id}`}>
-                        <Button size="sm" className="gap-2">
-                          <Play className="w-4 h-4" />
+                        <Button size="sm" className="gap-2 rounded-lg">
+                          <Play className="w-3.5 h-3.5" />
                           Start
                         </Button>
                       </Link>
@@ -119,21 +112,21 @@ export default function SheetsPage() {
             ))}
           </div>
         )}
-      </main>
+      </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Sheet?</AlertDialogTitle>
+            <AlertDialogTitle className="font-display">Delete Sheet?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the OMR sheet and all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => deleteId && handleDelete(deleteId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             >
               Delete
             </AlertDialogAction>

@@ -21,11 +21,11 @@ export function NavigationGrid({
     const isCurrent = currentQuestion === index;
 
     return cn(
-      'w-10 h-10 rounded-lg font-medium text-sm transition-all',
-      isCurrent && 'ring-2 ring-primary ring-offset-2',
-      isAnswered && !isReview && 'bg-success text-success-foreground',
-      isReview && 'bg-warning text-warning-foreground',
-      !isAnswered && !isReview && 'bg-muted text-muted-foreground hover:bg-muted/80'
+      'w-10 h-10 rounded-xl font-medium text-sm transition-all duration-200 font-mono',
+      isCurrent && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
+      isAnswered && !isReview && 'bg-success text-success-foreground shadow-sm',
+      isReview && 'bg-warning text-warning-foreground shadow-sm',
+      !isAnswered && !isReview && 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
     );
   };
 
@@ -47,18 +47,18 @@ export function NavigationGrid({
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-4 text-sm">
+      <div className="flex flex-wrap gap-4 text-xs font-medium">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-success" />
-          <span>Answered ({answered})</span>
+          <div className="w-3.5 h-3.5 rounded-md bg-success shadow-sm" />
+          <span className="text-muted-foreground">Answered ({answered})</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-muted" />
-          <span>Unanswered ({unanswered})</span>
+          <div className="w-3.5 h-3.5 rounded-md bg-muted border border-border" />
+          <span className="text-muted-foreground">Unanswered ({unanswered})</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-warning" />
-          <span>For Review ({reviewCount})</span>
+          <div className="w-3.5 h-3.5 rounded-md bg-warning shadow-sm" />
+          <span className="text-muted-foreground">Review ({reviewCount})</span>
         </div>
       </div>
     </div>
