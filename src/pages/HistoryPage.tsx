@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, Trash2, Eye, Clock, Target, ChevronRight } from 'lucide-react';
+import { Trophy, Trash2, Eye, Clock, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { AppHeader } from '@/components/AppHeader';
 import { getResults, deleteResult, getScoreboard, clearScoreboard } from '@/lib/storage';
 import { ExamResult, ScoreboardEntry } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
@@ -35,61 +37,53 @@ export default function HistoryPage() {
     return `${mins}m ${secs}s`;
   };
 
+  const medalColors = [
+    'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20',
+    'bg-muted text-muted-foreground border-border',
+    'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20',
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container py-4">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-semibold">Results History</h1>
-              <p className="text-sm text-muted-foreground">{results.length} results</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
-      <main className="container py-8 space-y-8">
+      <div className="container py-6 space-y-8">
+        <div className="animate-fade-in">
+          <h2 className="text-2xl font-bold font-display">Results History</h2>
+          <p className="text-sm text-muted-foreground">{results.length} exams completed</p>
+        </div>
+
         {/* Scoreboard */}
         {scoreboard.length > 0 && (
-          <section>
+          <section className="animate-slide-up">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
+              <h3 className="section-title flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-warning" />
                 Scoreboard
-              </h2>
-              <Button variant="ghost" size="sm" onClick={() => setClearAll(true)}>
+              </h3>
+              <Button variant="ghost" size="sm" onClick={() => setClearAll(true)} className="rounded-lg text-xs">
                 Clear
               </Button>
             </div>
-            <Card>
+            <Card className="modern-card overflow-hidden">
               <CardContent className="p-0">
-                <div className="divide-y">
+                <div className="divide-y divide-border">
                   {scoreboard.slice(0, 5).map((entry, index) => (
-                    <div key={entry.id} className="flex items-center justify-between p-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-                          index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                          index === 1 ? 'bg-gray-100 text-gray-600' :
-                          index === 2 ? 'bg-orange-100 text-orange-700' :
-                          'bg-muted text-muted-foreground'
-                        }`}>
+                    <div key={entry.id} className="flex items-center justify-between p-4 hover:bg-accent/30 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-xl border flex items-center justify-center text-xs font-bold font-mono ${medalColors[index] || 'bg-muted text-muted-foreground border-border'}`}>
                           #{index + 1}
                         </div>
                         <div>
-                          <p className="font-medium">{entry.sheetTitle}</p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="font-medium text-sm">{entry.sheetTitle}</p>
+                          <p className="text-xs text-muted-foreground">
                             {formatDistanceToNow(entry.completedAt, { addSuffix: true })}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-lg">{entry.score}/{entry.maxScore}</p>
-                        <p className="text-sm text-muted-foreground">{entry.accuracy}%</p>
+                        <p className="font-bold font-mono">{entry.score}/{entry.maxScore}</p>
+                        <p className="text-xs text-muted-foreground">{entry.accuracy}%</p>
                       </div>
                     </div>
                   ))}
@@ -101,49 +95,45 @@ export default function HistoryPage() {
 
         {/* All Results */}
         <section>
-          <h2 className="text-xl font-semibold mb-4">All Results</h2>
+          <h3 className="section-title mb-4">All Results</h3>
           {results.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                <Trophy className="w-10 h-10 text-primary" />
+            <div className="text-center py-20 animate-fade-in">
+              <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+                <Trophy className="w-10 h-10 text-accent-foreground" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">No Results Yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Complete an exam to see your results here
-              </p>
-              <Link to="/">
-                <Button>Go to Dashboard</Button>
-              </Link>
+              <h3 className="text-xl font-bold font-display mb-2">No Results Yet</h3>
+              <p className="text-muted-foreground mb-6">Complete an exam to see your results here</p>
+              <Link to="/"><Button className="rounded-xl">Go to Dashboard</Button></Link>
             </div>
           ) : (
-            <div className="space-y-4">
-              {results.map((result) => (
-                <Card key={result.attemptId} className="hover:border-primary transition-colors">
+            <div className="space-y-3">
+              {results.map((result, i) => (
+                <Card key={result.attemptId} className="modern-card animate-slide-up" style={{ animationDelay: `${i * 50}ms` }}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{result.sheetTitle}</h3>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm truncate">{result.sheetTitle}</h4>
+                        <p className="text-xs text-muted-foreground mt-0.5">
                           {result.completedAt.toLocaleDateString()} • {result.completedAt.toLocaleTimeString()}
                         </p>
-                        <div className="flex items-center gap-4 mt-2 text-sm">
-                          <span className="flex items-center gap-1 text-success">
-                            <Target className="w-4 h-4" />
+                        <div className="flex items-center gap-3 mt-2">
+                          <Badge variant="secondary" className="rounded-lg gap-1 font-normal">
+                            <Target className="w-3 h-3" />
                             {result.accuracy}%
-                          </span>
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="w-4 h-4" />
+                          </Badge>
+                          <Badge variant="secondary" className="rounded-lg gap-1 font-normal">
+                            <Clock className="w-3 h-3" />
                             {formatTime(result.timeSpent)}
-                          </span>
+                          </Badge>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="text-right mr-4">
-                          <p className="text-2xl font-bold">{result.score}</p>
-                          <p className="text-sm text-muted-foreground">/{result.maxScore}</p>
+                        <div className="text-right mr-2">
+                          <p className="text-2xl font-bold font-mono">{result.score}</p>
+                          <p className="text-xs text-muted-foreground">/{result.maxScore}</p>
                         </div>
                         <Link to={`/result/${result.attemptId}`}>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="rounded-xl">
                             <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
@@ -151,6 +141,7 @@ export default function HistoryPage() {
                           variant="ghost" 
                           size="icon" 
                           onClick={() => setDeleteId(result.attemptId)}
+                          className="rounded-xl"
                         >
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
@@ -162,21 +153,19 @@ export default function HistoryPage() {
             </div>
           )}
         </section>
-      </main>
+      </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Result?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete this exam result.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="font-display">Delete Result?</AlertDialogTitle>
+            <AlertDialogDescription>This will permanently delete this exam result.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => deleteId && handleDelete(deleteId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             >
               Delete
             </AlertDialogAction>
@@ -185,18 +174,14 @@ export default function HistoryPage() {
       </AlertDialog>
 
       <AlertDialog open={clearAll} onOpenChange={setClearAll}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Clear Scoreboard?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will clear all entries from the scoreboard. Individual results will not be deleted.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="font-display">Clear Scoreboard?</AlertDialogTitle>
+            <AlertDialogDescription>This will clear all entries from the scoreboard.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleClearScoreboard}>
-              Clear
-            </AlertDialogAction>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearScoreboard} className="rounded-xl">Clear</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

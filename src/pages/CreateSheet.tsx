@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { AppHeader } from '@/components/AppHeader';
 import { saveSheet, generateId } from '@/lib/storage';
 import { OMRSheet } from '@/types/exam';
 import { toast } from 'sonner';
@@ -54,28 +55,25 @@ export default function CreateSheet() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container py-4">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-semibold">Create OMR Sheet</h1>
-              <p className="text-sm text-muted-foreground">Design your custom exam sheet</p>
-            </div>
+      <AppHeader />
+
+      <div className="container py-6">
+        <div className="flex items-center gap-3 mb-6 animate-fade-in">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="rounded-xl">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
+          <div>
+            <h2 className="text-2xl font-bold font-display">Create OMR Sheet</h2>
+            <p className="text-sm text-muted-foreground">Design your custom exam sheet</p>
           </div>
         </div>
-      </header>
 
-      <main className="container py-8">
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
-          {/* Basic Info */}
-          <Card>
+          <Card className="modern-card animate-slide-up stagger-1">
             <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
+              <CardTitle className="font-display">Basic Information</CardTitle>
               <CardDescription>Set up the basic details of your OMR sheet</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -86,6 +84,7 @@ export default function CreateSheet() {
                   placeholder="e.g., Physics Chapter 5 Test"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  className="rounded-xl h-11"
                 />
               </div>
 
@@ -98,6 +97,7 @@ export default function CreateSheet() {
                   max={200}
                   value={totalQuestions}
                   onChange={(e) => setTotalQuestions(parseInt(e.target.value) || 1)}
+                  className="rounded-xl h-11"
                 />
               </div>
 
@@ -121,10 +121,9 @@ export default function CreateSheet() {
             </CardContent>
           </Card>
 
-          {/* Scoring */}
-          <Card>
+          <Card className="modern-card animate-slide-up stagger-2">
             <CardHeader>
-              <CardTitle>Scoring</CardTitle>
+              <CardTitle className="font-display">Scoring</CardTitle>
               <CardDescription>Configure marks and negative marking</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -137,10 +136,11 @@ export default function CreateSheet() {
                   max={10}
                   value={marksPerQuestion}
                   onChange={(e) => setMarksPerQuestion(parseInt(e.target.value) || 1)}
+                  className="rounded-xl h-11"
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-accent/50">
                 <div>
                   <Label>Negative Marking</Label>
                   <p className="text-sm text-muted-foreground">Deduct marks for wrong answers</p>
@@ -162,20 +162,20 @@ export default function CreateSheet() {
                     max={marksPerQuestion}
                     value={negativeMarking}
                     onChange={(e) => setNegativeMarking(parseFloat(e.target.value) || 0)}
+                    className="rounded-xl h-11"
                   />
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Timer */}
-          <Card>
+          <Card className="modern-card animate-slide-up stagger-3">
             <CardHeader>
-              <CardTitle>Timer</CardTitle>
+              <CardTitle className="font-display">Timer</CardTitle>
               <CardDescription>Set a time limit for the exam</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-accent/50">
                 <div>
                   <Label>Enable Timer</Label>
                   <p className="text-sm text-muted-foreground">Add a countdown timer</p>
@@ -196,26 +196,26 @@ export default function CreateSheet() {
                     max={300}
                     value={timeLimit}
                     onChange={(e) => setTimeLimit(parseInt(e.target.value) || 1)}
+                    className="rounded-xl h-11"
                   />
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Submit */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 animate-slide-up stagger-4">
             <Link to="/" className="flex-1">
-              <Button type="button" variant="outline" className="w-full">
+              <Button type="button" variant="outline" className="w-full rounded-xl h-12">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" className="flex-1 gap-2">
-              <Save className="w-4 h-4" />
+            <Button type="submit" className="flex-1 gap-2 rounded-xl h-12 shadow-lg shadow-primary/20">
+              <Sparkles className="w-4 h-4" />
               Create Sheet
             </Button>
           </div>
         </form>
-      </main>
+      </div>
     </div>
   );
 }
