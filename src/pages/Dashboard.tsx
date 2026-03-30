@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Plus, FileText, Trophy, Clock, Target, TrendingUp } from 'lucide-react';
+import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
@@ -27,87 +27,73 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <AppHeader />
-      <div className="container py-4 flex justify-between items-center">
-        <p className="text-muted-foreground">Create & practice OMR sheets</p>
-        <Link to="/create">
-          <Button size="lg" className="gap-2">
-            <Plus className="w-5 h-5" />
-            New OMR Sheet
-          </Button>
-        </Link>
-      </div>
 
-      <main className="container py-8 space-y-8">
-        {/* Stats Overview */}
+      {/* Hero Section */}
+      <section className="relative overflow-hidden border-b">
+        <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
+        <div className="container relative py-8 md:py-12">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                <Sparkles className="w-3.5 h-3.5" />
+                Smart OMR Practice
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold font-display tracking-tight">
+                Master your exams
+              </h2>
+              <p className="text-muted-foreground max-w-md">
+                Create custom OMR sheets, practice with timers, and get AI-powered analytics to improve your scores.
+              </p>
+            </div>
+            <Link to="/create" className="animate-scale-in">
+              <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-lg shadow-primary/20">
+                <Plus className="w-5 h-5" />
+                New OMR Sheet
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <main className="container py-8 space-y-10">
+        {/* Stats */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Exams"
-            value={totalExams}
-            icon={FileText}
-          />
-          <StatCard
-            title="Avg Accuracy"
-            value={`${avgAccuracy}%`}
-            icon={Target}
-            variant={avgAccuracy >= 70 ? 'success' : avgAccuracy >= 50 ? 'warning' : 'destructive'}
-          />
-          <StatCard
-            title="Practice Time"
-            value={formatTotalTime()}
-            icon={Clock}
-          />
-          <StatCard
-            title="OMR Sheets"
-            value={sheets.length}
-            icon={TrendingUp}
-          />
+          {[
+            { title: 'Total Exams', value: totalExams, icon: FileText, variant: 'default' as const, delay: 'stagger-1' },
+            { title: 'Avg Accuracy', value: `${avgAccuracy}%`, icon: Target, variant: (avgAccuracy >= 70 ? 'success' : avgAccuracy >= 50 ? 'warning' : 'destructive') as const, delay: 'stagger-2' },
+            { title: 'Practice Time', value: formatTotalTime(), icon: Clock, variant: 'default' as const, delay: 'stagger-3' },
+            { title: 'OMR Sheets', value: sheets.length, icon: TrendingUp, variant: 'default' as const, delay: 'stagger-4' },
+          ].map((stat) => (
+            <div key={stat.title} className={`animate-slide-up ${stat.delay}`}>
+              <StatCard {...stat} />
+            </div>
+          ))}
         </section>
 
         {/* Quick Actions */}
         <section>
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+          <h2 className="section-title mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link to="/create" className="block">
-              <Card className="h-full hover:border-primary transition-colors cursor-pointer group">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:bg-primary/20 transition-colors">
-                    <Plus className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Create OMR Sheet</CardTitle>
-                  <CardDescription>
-                    Design a new OMR sheet with custom questions
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-
-            <Link to="/sheets" className="block">
-              <Card className="h-full hover:border-primary transition-colors cursor-pointer group">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:bg-primary/20 transition-colors">
-                    <FileText className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>My Sheets</CardTitle>
-                  <CardDescription>
-                    View and manage your saved OMR sheets
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-
-            <Link to="/history" className="block">
-              <Card className="h-full hover:border-primary transition-colors cursor-pointer group">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:bg-primary/20 transition-colors">
-                    <Trophy className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Results History</CardTitle>
-                  <CardDescription>
-                    Review your past exam results
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
+            {[
+              { to: '/create', icon: Plus, title: 'Create OMR Sheet', desc: 'Design a new sheet with custom questions', color: 'primary' },
+              { to: '/sheets', icon: FileText, title: 'My Sheets', desc: 'View and manage saved OMR sheets', color: 'primary' },
+              { to: '/history', icon: Trophy, title: 'Results History', desc: 'Review your past exam results', color: 'primary' },
+            ].map((action) => (
+              <Link key={action.to} to={action.to} className="block group">
+                <Card className="h-full modern-card cursor-pointer">
+                  <CardHeader className="pb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                      <action.icon className="w-6 h-6 text-accent-foreground" />
+                    </div>
+                    <CardTitle className="text-lg font-display flex items-center justify-between">
+                      {action.title}
+                      <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    </CardTitle>
+                    <CardDescription>{action.desc}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
           </div>
         </section>
 
@@ -115,30 +101,30 @@ export default function Dashboard() {
         {scoreboard.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Recent Scores</h2>
-              <Link to="/history" className="text-sm text-primary hover:underline">
-                View all
+              <h2 className="section-title">Recent Scores</h2>
+              <Link to="/history" className="text-sm text-primary hover:underline font-medium">
+                View all →
               </Link>
             </div>
-            <Card>
+            <Card className="modern-card overflow-hidden">
               <CardContent className="p-0">
-                <div className="divide-y">
+                <div className="divide-y divide-border">
                   {scoreboard.map((entry, index) => (
-                    <div key={entry.id} className="flex items-center justify-between p-4">
+                    <div key={entry.id} className="flex items-center justify-between p-4 hover:bg-accent/30 transition-colors">
                       <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center text-sm font-bold text-accent-foreground font-mono">
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-medium">{entry.sheetTitle}</p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="font-medium text-sm">{entry.sheetTitle}</p>
+                          <p className="text-xs text-muted-foreground">
                             {formatDistanceToNow(entry.completedAt, { addSuffix: true })}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">{entry.score}/{entry.maxScore}</p>
-                        <p className="text-sm text-muted-foreground">{entry.accuracy}% accuracy</p>
+                        <p className="font-bold font-mono">{entry.score}/{entry.maxScore}</p>
+                        <p className="text-xs text-muted-foreground">{entry.accuracy}%</p>
                       </div>
                     </div>
                   ))}
@@ -152,17 +138,17 @@ export default function Dashboard() {
         {sheets.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Recent Sheets</h2>
-              <Link to="/sheets" className="text-sm text-primary hover:underline">
-                View all
+              <h2 className="section-title">Recent Sheets</h2>
+              <Link to="/sheets" className="text-sm text-primary hover:underline font-medium">
+                View all →
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {sheets.slice(0, 3).map((sheet) => (
                 <Link key={sheet.id} to={`/exam/${sheet.id}`}>
-                  <Card className="hover:border-primary transition-colors cursor-pointer">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{sheet.title}</CardTitle>
+                  <Card className="modern-card cursor-pointer">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base font-display">{sheet.title}</CardTitle>
                       <CardDescription>
                         {sheet.totalQuestions} questions • {sheet.optionsPerQuestion} options
                         {sheet.timeLimit > 0 && ` • ${sheet.timeLimit} min`}
@@ -170,12 +156,12 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Created {formatDistanceToNow(sheet.createdAt, { addSuffix: true })}
+                        <span className="text-muted-foreground text-xs">
+                          {formatDistanceToNow(sheet.createdAt, { addSuffix: true })}
                         </span>
-                        <Button variant="ghost" size="sm">
-                          Start →
-                        </Button>
+                        <span className="text-primary font-medium text-sm flex items-center gap-1">
+                          Start <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
@@ -187,16 +173,16 @@ export default function Dashboard() {
 
         {/* Empty State */}
         {sheets.length === 0 && (
-          <section className="text-center py-16">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <FileText className="w-10 h-10 text-primary" />
+          <section className="text-center py-20">
+            <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+              <FileText className="w-10 h-10 text-accent-foreground" />
             </div>
-            <h2 className="text-2xl font-semibold mb-2">No OMR Sheets Yet</h2>
-            <p className="text-muted-foreground mb-6">
-              Create your first OMR sheet to start practicing
+            <h2 className="text-2xl font-bold font-display mb-2">No OMR Sheets Yet</h2>
+            <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+              Create your first OMR sheet to start practicing for exams
             </p>
             <Link to="/create">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="gap-2 rounded-xl px-8 h-12 shadow-lg shadow-primary/20">
                 <Plus className="w-5 h-5" />
                 Create Your First Sheet
               </Button>
