@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppHeader } from '@/components/AppHeader';
 import { TopicAnalyticsCard } from '@/components/TopicAnalyticsCard';
+import { TopicComparisonView } from '@/components/TopicComparisonView';
 import { getResults } from '@/lib/storage';
 import { analyzeByTopic } from '@/lib/analytics';
 
