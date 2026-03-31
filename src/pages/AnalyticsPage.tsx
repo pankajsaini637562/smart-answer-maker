@@ -148,6 +148,11 @@ export default function AnalyticsPage() {
           </Card>
         )}
 
+        {/* Topic Comparison */}
+        {analysis.topicAnalyses.length >= 2 && (
+          <TopicComparisonView topics={analysis.topicAnalyses} />
+        )}
+
         {/* Topic-wise Analysis */}
         <div className="space-y-3">
           <h3 className="section-title flex items-center gap-2">
