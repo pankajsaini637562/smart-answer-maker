@@ -95,6 +95,29 @@ export default function CreateSheet() {
               </div>
 
               <div className="space-y-2">
+                <Label>Subject / Topic</Label>
+                <Select value={subject} onValueChange={setSubject}>
+                  <SelectTrigger className="rounded-xl h-11">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUBJECTS.map(s => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                    <SelectItem value="custom">✏️ Custom Subject</SelectItem>
+                  </SelectContent>
+                </Select>
+                {subject === 'custom' && (
+                  <Input
+                    placeholder="Enter custom subject name"
+                    value={customSubject}
+                    onChange={e => setCustomSubject(e.target.value)}
+                    className="rounded-xl h-11 animate-fade-in"
+                  />
+                )}
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="questions">Number of Questions</Label>
                 <Input
                   id="questions"
