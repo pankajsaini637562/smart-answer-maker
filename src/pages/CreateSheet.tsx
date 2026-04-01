@@ -39,9 +39,12 @@ export default function CreateSheet() {
       return;
     }
 
+    const finalSubject = subject === 'custom' ? customSubject.trim() : subject;
+
     const sheet: OMRSheet = {
       id: generateId(),
       title: title.trim(),
+      subject: finalSubject || 'General',
       totalQuestions,
       optionsPerQuestion,
       timeLimit: hasTimeLimit ? timeLimit : 0,
