@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 export default function ResultPage() {
   const { attemptId } = useParams<{ attemptId: string }>();
   const navigate = useNavigate();
+  const [shareOpen, setShareOpen] = useState(false);
   
   const result = attemptId ? getResult(attemptId) : null;
   const sheet = result ? getSheet(result.sheetId) : null;
