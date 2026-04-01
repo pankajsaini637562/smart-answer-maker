@@ -27,6 +27,22 @@ export default function AnalyticsPage() {
   const results = getResults();
   const analysis = useMemo(() => analyzeByTopic(results), [results]);
 
+  const sortedResults = useMemo(() => 
+    [...results].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()),
+    [results]
+  );
+
+  const totals = useMemo(() => {
+    const c = results.reduce((s, r) => s + r.correct, 0);
+    const w = results.reduce((s, r) => s + r.wrong, 0);
+    const u = results.reduce((s, r) => s + r.unattempted, 0);
+    return [
+      { name: 'Correct', value: c, color: 'hsl(var(--success))' },
+      { name: 'Wrong', value: w, color: 'hsl(var(--destructive))' },
+      { name: 'Unattempted', value: u, color: 'hsl(var(--muted-foreground))' },
+    ];
+  }, [results]);
+
   if (!analysis) {
     return (
       <div className="min-h-screen bg-background">
@@ -47,11 +63,6 @@ export default function AnalyticsPage() {
   const trendIcon = analysis.trend > 0 ? '↑' : analysis.trend < 0 ? '↓' : '→';
   const trendColor = analysis.trend > 0 ? 'text-success' : analysis.trend < 0 ? 'text-destructive' : 'text-muted-foreground';
 
-  // Chart data: overall accuracy over time
-  const sortedResults = useMemo(() => 
-    [...results].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()),
-    [results]
-  );
   const overallTrendData = sortedResults.map((r, i) => ({
     exam: i + 1,
     accuracy: r.accuracy,
@@ -59,19 +70,6 @@ export default function AnalyticsPage() {
     name: r.sheetTitle.slice(0, 15),
   }));
 
-  // Pie chart: aggregate correct/wrong/unattempted
-  const totals = useMemo(() => {
-    const c = results.reduce((s, r) => s + r.correct, 0);
-    const w = results.reduce((s, r) => s + r.wrong, 0);
-    const u = results.reduce((s, r) => s + r.unattempted, 0);
-    return [
-      { name: 'Correct', value: c, color: 'hsl(var(--success))' },
-      { name: 'Wrong', value: w, color: 'hsl(var(--destructive))' },
-      { name: 'Unattempted', value: u, color: 'hsl(var(--muted-foreground))' },
-    ];
-  }, [results]);
-
-  // Subject-wise bar data
   const subjectData = analysis.topicAnalyses.map(t => ({
     name: t.sheetTitle.length > 12 ? t.sheetTitle.slice(0, 12) + '…' : t.sheetTitle,
     accuracy: t.avgAccuracy,
