@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Target, TrendingUp, Clock, Zap, AlertTriangle, CheckCircle2, Brain, BarChart3 } from 'lucide-react';
+import { Target, TrendingUp, Clock, Zap, AlertTriangle, CheckCircle2, Brain } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 const masteryConfig = {
   beginner: { label: 'Beginner', color: 'bg-destructive/10 text-destructive border-destructive/20' },
@@ -27,7 +28,6 @@ export function TopicAnalyticsCard({ topic }: { topic: TopicAnalysis }) {
 
   return (
     <Card className="modern-card overflow-hidden animate-slide-up">
-      {/* Header with mastery badge */}
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1 min-w-0">
@@ -61,6 +61,37 @@ export function TopicAnalyticsCard({ topic }: { topic: TopicAnalysis }) {
           </div>
         </div>
 
+        {/* Accuracy Trend Chart */}
+        {topic.accuracyHistory.length > 1 && (
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground mb-3 font-medium">📈 Accuracy Trend</p>
+            <ResponsiveContainer width="100%" height={160}>
+              <AreaChart data={topic.accuracyHistory} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id={`grad-${topic.sheetId}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                <XAxis dataKey="attempt" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickLine={false} axisLine={false} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    background: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                  }}
+                  formatter={(value: number) => [`${value}%`, 'Accuracy']}
+                  labelFormatter={(label) => `Attempt ${label}`}
+                />
+                <Area type="monotone" dataKey="accuracy" stroke="hsl(var(--primary))" strokeWidth={2.5} fill={`url(#grad-${topic.sheetId})`} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
         {/* Consistency & improvement */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
@@ -80,27 +111,8 @@ export function TopicAnalyticsCard({ topic }: { topic: TopicAnalysis }) {
           </div>
         </div>
 
-        {/* Mini chart */}
-        {topic.accuracyHistory.length > 1 && (
-          <div className="pt-2">
-            <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1"><BarChart3 className="w-3 h-3" /> Accuracy Trend</p>
-            <div className="flex items-end gap-1 h-16">
-              {topic.accuracyHistory.map((point, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                  <span className="text-[9px] font-mono text-muted-foreground">{point.accuracy}%</span>
-                  <div
-                    className="w-full rounded-t bg-primary/70 min-h-[2px] transition-all"
-                    style={{ height: `${Math.max(point.accuracy * 0.6, 3)}%` }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Expandable details */}
         <Accordion type="single" collapsible className="w-full">
-          {/* Tips */}
           {topic.tips.length > 0 && (
             <AccordionItem value="tips" className="border-b-0">
               <AccordionTrigger className="py-2 text-sm hover:no-underline">
@@ -124,7 +136,6 @@ export function TopicAnalyticsCard({ topic }: { topic: TopicAnalysis }) {
             </AccordionItem>
           )}
 
-          {/* Hard questions */}
           {topic.hardQuestions.length > 0 && (
             <AccordionItem value="hard" className="border-b-0">
               <AccordionTrigger className="py-2 text-sm hover:no-underline">
@@ -146,7 +157,6 @@ export function TopicAnalyticsCard({ topic }: { topic: TopicAnalysis }) {
             </AccordionItem>
           )}
 
-          {/* Easy questions */}
           {topic.easyQuestions.length > 0 && (
             <AccordionItem value="easy" className="border-b-0">
               <AccordionTrigger className="py-2 text-sm hover:no-underline">

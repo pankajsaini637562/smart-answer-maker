@@ -11,6 +11,10 @@ import { TopicAnalyticsCard } from '@/components/TopicAnalyticsCard';
 import { TopicComparisonView } from '@/components/TopicComparisonView';
 import { getResults } from '@/lib/storage';
 import { analyzeByTopic } from '@/lib/analytics';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, AreaChart, Area,
+} from 'recharts';
 
 function formatStudyTime(seconds: number) {
   const h = Math.floor(seconds / 3600);
@@ -22,6 +26,22 @@ function formatStudyTime(seconds: number) {
 export default function AnalyticsPage() {
   const results = getResults();
   const analysis = useMemo(() => analyzeByTopic(results), [results]);
+
+  const sortedResults = useMemo(() => 
+    [...results].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()),
+    [results]
+  );
+
+  const totals = useMemo(() => {
+    const c = results.reduce((s, r) => s + r.correct, 0);
+    const w = results.reduce((s, r) => s + r.wrong, 0);
+    const u = results.reduce((s, r) => s + r.unattempted, 0);
+    return [
+      { name: 'Correct', value: c, color: 'hsl(var(--success))' },
+      { name: 'Wrong', value: w, color: 'hsl(var(--destructive))' },
+      { name: 'Unattempted', value: u, color: 'hsl(var(--muted-foreground))' },
+    ];
+  }, [results]);
 
   if (!analysis) {
     return (
@@ -42,6 +62,19 @@ export default function AnalyticsPage() {
   const readinessColor = analysis.readiness >= 70 ? 'text-success' : analysis.readiness >= 40 ? 'text-warning' : 'text-destructive';
   const trendIcon = analysis.trend > 0 ? '↑' : analysis.trend < 0 ? '↓' : '→';
   const trendColor = analysis.trend > 0 ? 'text-success' : analysis.trend < 0 ? 'text-destructive' : 'text-muted-foreground';
+
+  const overallTrendData = sortedResults.map((r, i) => ({
+    exam: i + 1,
+    accuracy: r.accuracy,
+    score: Math.round((r.score / r.maxScore) * 100),
+    name: r.sheetTitle.slice(0, 15),
+  }));
+
+  const subjectData = analysis.topicAnalyses.map(t => ({
+    name: t.sheetTitle.length > 12 ? t.sheetTitle.slice(0, 12) + '…' : t.sheetTitle,
+    accuracy: t.avgAccuracy,
+    consistency: t.consistencyScore,
+  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,7 +124,93 @@ export default function AnalyticsPage() {
           </Card>
         </div>
 
-        {/* Strongest / Weakest topics */}
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-slide-up stagger-2">
+          {/* Overall Accuracy Trend */}
+          {overallTrendData.length > 1 && (
+            <Card className="modern-card">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-primary" /> Overall Accuracy Trend
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={200}>
+                  <AreaChart data={overallTrendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="gradOverall" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                    <XAxis dataKey="exam" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickLine={false} axisLine={false} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickLine={false} axisLine={false} />
+                    <Tooltip
+                      contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }}
+                      formatter={(value: number) => [`${value}%`, 'Accuracy']}
+                      labelFormatter={(label) => `Exam #${label}`}
+                    />
+                    <Area type="monotone" dataKey="accuracy" stroke="hsl(var(--primary))" strokeWidth={2.5} fill="url(#gradOverall)" dot={{ r: 3, fill: 'hsl(var(--primary))' }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Overall Distribution Pie */}
+          <Card className="modern-card">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-display flex items-center gap-2">
+                <Target className="w-4 h-4 text-primary" /> Answer Distribution
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie data={totals} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value" strokeWidth={0}>
+                    {totals.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: '11px' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Subject-wise Accuracy Bars */}
+        {subjectData.length > 1 && (
+          <Card className="modern-card animate-slide-up stagger-3">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-display flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-primary" /> Subject-wise Accuracy
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={Math.max(160, subjectData.length * 40)}>
+                <LineChart data={subjectData} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} horizontal={false} />
+                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickLine={false} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={90} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }}
+                    formatter={(value: number, name: string) => [`${value}%`, name === 'accuracy' ? 'Accuracy' : 'Consistency']}
+                  />
+                  <Line type="monotone" dataKey="accuracy" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
+                  <Line type="monotone" dataKey="consistency" stroke="hsl(var(--success))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--success))' }} />
+                  <Legend wrapperStyle={{ fontSize: '11px' }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        )}
+
+
         {analysis.topicAnalyses.length > 1 && (
           <div className="grid grid-cols-2 gap-3 animate-slide-up stagger-2">
             {analysis.strongestTopic && (

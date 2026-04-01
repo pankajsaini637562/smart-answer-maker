@@ -7,14 +7,17 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AppHeader } from '@/components/AppHeader';
 import { saveSheet, generateId } from '@/lib/storage';
-import { OMRSheet } from '@/types/exam';
+import { OMRSheet, SUBJECTS } from '@/types/exam';
 import { toast } from 'sonner';
 
 export default function CreateSheet() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
+  const [subject, setSubject] = useState('');
+  const [customSubject, setCustomSubject] = useState('');
   const [totalQuestions, setTotalQuestions] = useState(30);
   const [optionsPerQuestion, setOptionsPerQuestion] = useState<4 | 5>(4);
   const [hasTimeLimit, setHasTimeLimit] = useState(true);
@@ -36,9 +39,12 @@ export default function CreateSheet() {
       return;
     }
 
+    const finalSubject = subject === 'custom' ? customSubject.trim() : subject;
+
     const sheet: OMRSheet = {
       id: generateId(),
       title: title.trim(),
+      subject: finalSubject || 'General',
       totalQuestions,
       optionsPerQuestion,
       timeLimit: hasTimeLimit ? timeLimit : 0,
@@ -86,6 +92,29 @@ export default function CreateSheet() {
                   onChange={(e) => setTitle(e.target.value)}
                   className="rounded-xl h-11"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Subject / Topic</Label>
+                <Select value={subject} onValueChange={setSubject}>
+                  <SelectTrigger className="rounded-xl h-11">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUBJECTS.map(s => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                    <SelectItem value="custom">✏️ Custom Subject</SelectItem>
+                  </SelectContent>
+                </Select>
+                {subject === 'custom' && (
+                  <Input
+                    placeholder="Enter custom subject name"
+                    value={customSubject}
+                    onChange={e => setCustomSubject(e.target.value)}
+                    className="rounded-xl h-11 animate-fade-in"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
