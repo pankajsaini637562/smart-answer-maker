@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { TopicAnalysis } from '@/lib/analytics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeftRight, Trophy, TrendingUp, Target, Zap, Clock, BarChart3 } from 'lucide-react';
+import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 
 const masteryConfig = {
   beginner: { label: 'Beginner', color: 'bg-destructive/10 text-destructive border-destructive/20' },
@@ -19,7 +19,6 @@ interface CompareRow {
   valueA: string | number;
   valueB: string | number;
   winner: 'a' | 'b' | 'tie';
-  unit?: string;
 }
 
 function formatTime(seconds: number) {
@@ -44,6 +43,16 @@ function buildRows(a: TopicAnalysis, b: TopicAnalysis): CompareRow[] {
   ];
 }
 
+function buildRadarData(a: TopicAnalysis, b: TopicAnalysis) {
+  return [
+    { metric: 'Accuracy', A: a.avgAccuracy, B: b.avgAccuracy },
+    { metric: 'Consistency', A: a.consistencyScore, B: b.consistencyScore },
+    { metric: 'Best Score', A: a.bestAccuracy, B: b.bestAccuracy },
+    { metric: 'Predicted', A: a.predictedNext, B: b.predictedNext },
+    { metric: 'Improvement', A: Math.max(0, a.improvementRate + 50), B: Math.max(0, b.improvementRate + 50) },
+  ];
+}
+
 export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
   const [topicAId, setTopicAId] = useState(topics[0]?.sheetId || '');
   const [topicBId, setTopicBId] = useState(topics[1]?.sheetId || topics[0]?.sheetId || '');
@@ -65,6 +74,7 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
   const rows = topicA && topicB ? buildRows(topicA, topicB) : [];
   const winsA = rows.filter(r => r.winner === 'a').length;
   const winsB = rows.filter(r => r.winner === 'b').length;
+  const radarData = topicA && topicB && topicAId !== topicBId ? buildRadarData(topicA, topicB) : [];
 
   return (
     <Card className="modern-card overflow-hidden animate-slide-up">
@@ -79,26 +89,18 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
           <div className="space-y-1.5">
             <label className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Topic A</label>
             <Select value={topicAId} onValueChange={setTopicAId}>
-              <SelectTrigger className="rounded-xl h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="rounded-xl h-9 text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {topics.map(t => (
-                  <SelectItem key={t.sheetId} value={t.sheetId}>{t.sheetTitle}</SelectItem>
-                ))}
+                {topics.map(t => <SelectItem key={t.sheetId} value={t.sheetId}>{t.sheetTitle}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
             <label className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Topic B</label>
             <Select value={topicBId} onValueChange={setTopicBId}>
-              <SelectTrigger className="rounded-xl h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="rounded-xl h-9 text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {topics.map(t => (
-                  <SelectItem key={t.sheetId} value={t.sheetId}>{t.sheetTitle}</SelectItem>
-                ))}
+                {topics.map(t => <SelectItem key={t.sheetId} value={t.sheetId}>{t.sheetTitle}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -112,7 +114,7 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
                 <p className="text-2xl font-bold font-mono text-primary">{winsA}</p>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Wins</p>
               </div>
-              <div className="p-3 rounded-xl bg-muted/50 flex flex-col items-center justify-center">
+              <div className="p-3 rounded-xl bg-muted/50 flex items-center justify-center">
                 <p className="text-lg font-bold font-mono text-muted-foreground">VS</p>
               </div>
               <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
@@ -135,6 +137,21 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
               </div>
             </div>
 
+            {/* Radar Chart */}
+            <div className="pt-2">
+              <p className="text-xs text-muted-foreground mb-2 font-medium">🕸️ Skills Radar</p>
+              <ResponsiveContainer width="100%" height={240}>
+                <RadarChart data={radarData}>
+                  <PolarGrid stroke="hsl(var(--border))" />
+                  <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                  <Radar name={topicA.sheetTitle} dataKey="A" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
+                  <Radar name={topicB.sheetTitle} dataKey="B" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive))" fillOpacity={0.15} strokeWidth={2} />
+                  <Legend wrapperStyle={{ fontSize: '11px' }} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
             {/* Comparison rows */}
             <div className="space-y-1">
               {rows.map((row, i) => (
@@ -151,25 +168,6 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Accuracy comparison bars */}
-            <div className="space-y-2 pt-2">
-              <p className="text-xs text-muted-foreground font-medium">Accuracy Comparison</p>
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground w-6 text-right font-mono">{topicA.avgAccuracy}%</span>
-                  <div className="flex-1 bg-muted/50 rounded-full h-3 overflow-hidden">
-                    <div className="h-full bg-primary/70 rounded-full transition-all" style={{ width: `${topicA.avgAccuracy}%` }} />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground w-6 text-right font-mono">{topicB.avgAccuracy}%</span>
-                  <div className="flex-1 bg-muted/50 rounded-full h-3 overflow-hidden">
-                    <div className="h-full bg-primary/40 rounded-full transition-all" style={{ width: `${topicB.avgAccuracy}%` }} />
-                  </div>
-                </div>
-              </div>
             </div>
           </>
         )}
