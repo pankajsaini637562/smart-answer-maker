@@ -97,6 +97,18 @@ export default function ResultPage() {
           </div>
         </div>
       </main>
+
+      <ShareModal
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        data={{
+          title: result.sheetTitle,
+          text: shareText,
+          score: result.score,
+          maxScore: result.maxScore,
+          accuracy: result.accuracy,
+        }}
+      />
     </div>
   );
 }
