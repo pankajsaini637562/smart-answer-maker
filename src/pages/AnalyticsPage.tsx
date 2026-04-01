@@ -11,6 +11,10 @@ import { TopicAnalyticsCard } from '@/components/TopicAnalyticsCard';
 import { TopicComparisonView } from '@/components/TopicComparisonView';
 import { getResults } from '@/lib/storage';
 import { analyzeByTopic } from '@/lib/analytics';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, AreaChart, Area,
+} from 'recharts';
 
 function formatStudyTime(seconds: number) {
   const h = Math.floor(seconds / 3600);
