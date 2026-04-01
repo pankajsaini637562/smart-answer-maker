@@ -16,6 +16,8 @@ import { toast } from 'sonner';
 export default function CreateSheet() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
+  const [subject, setSubject] = useState('');
+  const [customSubject, setCustomSubject] = useState('');
   const [totalQuestions, setTotalQuestions] = useState(30);
   const [optionsPerQuestion, setOptionsPerQuestion] = useState<4 | 5>(4);
   const [hasTimeLimit, setHasTimeLimit] = useState(true);
