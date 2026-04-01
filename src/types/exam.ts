@@ -1,12 +1,20 @@
+export const SUBJECTS = [
+  'Physics', 'Chemistry', 'Biology', 'Mathematics',
+  'English', 'Hindi', 'History', 'Geography',
+  'Computer Science', 'Economics', 'Political Science',
+  'General Knowledge', 'Reasoning', 'Aptitude',
+] as const;
+
 export interface OMRSheet {
   id: string;
   title: string;
+  subject: string;
   totalQuestions: number;
   optionsPerQuestion: 4 | 5;
-  timeLimit: number; // in minutes, 0 means no limit
-  negativeMarking: number; // marks deducted per wrong answer
+  timeLimit: number;
+  negativeMarking: number;
   marksPerQuestion: number;
-  answerKey: (number | number[])[] | null; // null means not set yet, array of correct options (0-indexed), supports multiple correct
+  answerKey: (number | number[])[] | null;
   createdAt: Date;
 }
 

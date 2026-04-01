@@ -7,9 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AppHeader } from '@/components/AppHeader';
 import { saveSheet, generateId } from '@/lib/storage';
-import { OMRSheet } from '@/types/exam';
+import { OMRSheet, SUBJECTS } from '@/types/exam';
 import { toast } from 'sonner';
 
 export default function CreateSheet() {
