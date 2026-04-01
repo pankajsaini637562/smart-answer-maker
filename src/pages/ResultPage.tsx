@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, RotateCcw, Home, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReportCard } from '@/components/ReportCard';
+import { ShareModal } from '@/components/ShareModal';
 import { getResult, getSheet } from '@/lib/storage';
 import { toast } from 'sonner';
 
