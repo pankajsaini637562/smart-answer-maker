@@ -76,7 +76,7 @@ export default function ResultPage() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4 justify-center mt-8 print:hidden">
-            <Button variant="outline" className="gap-2" onClick={handleShare}>
+            <Button variant="outline" className="gap-2" onClick={() => setShareOpen(true)}>
               <Share2 className="w-4 h-4" />
               Share Result
             </Button>
