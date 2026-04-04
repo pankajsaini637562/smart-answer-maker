@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Brain, TrendingUp, Target, Lightbulb, Shield, Clock, Award, BookOpen } from 'lucide-react';
+import { ArrowLeft, Brain, TrendingUp, Target, Lightbulb, Shield, Clock, Award, BookOpen, Crosshair } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -9,8 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppHeader } from '@/components/AppHeader';
 import { TopicAnalyticsCard } from '@/components/TopicAnalyticsCard';
 import { TopicComparisonView } from '@/components/TopicComparisonView';
+import { WeakTopicHeatmap } from '@/components/WeakTopicHeatmap';
+import { AdaptiveInsights } from '@/components/AdaptiveInsights';
+import { GamificationBar } from '@/components/GamificationBar';
+import { BadgesGrid } from '@/components/BadgesGrid';
 import { getResults } from '@/lib/storage';
 import { analyzeByTopic } from '@/lib/analytics';
+import { predictScore } from '@/lib/adaptiveEngine';
+import { getGamificationState } from '@/lib/gamification';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
@@ -26,6 +32,7 @@ function formatStudyTime(seconds: number) {
 export default function AnalyticsPage() {
   const results = getResults();
   const analysis = useMemo(() => analyzeByTopic(results), [results]);
+  const gamState = getGamificationState();
 
   const sortedResults = useMemo(() => 
     [...results].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()),
@@ -42,6 +49,15 @@ export default function AnalyticsPage() {
       { name: 'Unattempted', value: u, color: 'hsl(var(--muted-foreground))' },
     ];
   }, [results]);
+
+  // Score predictions for each topic
+  const predictions = useMemo(() => {
+    if (!analysis) return [];
+    return analysis.topicAnalyses.map(t => ({
+      name: t.sheetTitle,
+      ...predictScore(results, t.sheetTitle),
+    }));
+  }, [analysis, results]);
 
   if (!analysis) {
     return (
@@ -85,11 +101,14 @@ export default function AnalyticsPage() {
           <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
             <h2 className="text-2xl font-bold font-display flex items-center gap-2">
-              <Brain className="w-6 h-6 text-primary" /> AI Analytics
+              <Brain className="w-6 h-6 text-primary" /> AI Analytics Engine
             </h2>
             <p className="text-muted-foreground text-sm">{analysis.totalExams} exams across {analysis.topicAnalyses.length} topic{analysis.topicAnalyses.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
+
+        {/* Gamification Bar */}
+        {gamState.xp > 0 && <GamificationBar />}
 
         {/* Overview Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up">
@@ -124,9 +143,37 @@ export default function AnalyticsPage() {
           </Card>
         </div>
 
+        {/* Predicted Scores */}
+        {predictions.length > 0 && (
+          <Card className="modern-card animate-slide-up">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-display flex items-center gap-2">
+                <Crosshair className="w-4 h-4 text-primary" /> AI Score Predictions
+              </CardTitle>
+              <CardDescription>Based on your performance patterns</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {predictions.map(p => (
+                  <div key={p.name} className="p-3 rounded-xl bg-accent/30 space-y-2">
+                    <p className="text-sm font-medium truncate">{p.name}</p>
+                    <div className="flex items-end gap-1">
+                      <span className="text-2xl font-bold font-mono text-primary">{p.predicted}%</span>
+                      <span className="text-xs text-muted-foreground mb-1">± {Math.round((p.range[1] - p.range[0]) / 2)}%</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Progress value={p.confidence} className="h-1 flex-1" />
+                      <span className="text-[10px] text-muted-foreground">{p.confidence}% confidence</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Charts Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-slide-up stagger-2">
-          {/* Overall Accuracy Trend */}
           {overallTrendData.length > 1 && (
             <Card className="modern-card">
               <CardHeader className="pb-2">
@@ -158,7 +205,6 @@ export default function AnalyticsPage() {
             </Card>
           )}
 
-          {/* Overall Distribution Pie */}
           <Card className="modern-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-display flex items-center gap-2">
@@ -169,19 +215,18 @@ export default function AnalyticsPage() {
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={totals} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value" strokeWidth={0}>
-                    {totals.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
-                    ))}
+                    {totals.map((entry, i) => (<Cell key={i} fill={entry.color} />))}
                   </Pie>
-                  <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }}
-                  />
+                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }} />
                   <Legend wrapperStyle={{ fontSize: '11px' }} />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
+
+        {/* Weak Topic Heatmap */}
+        {results.length > 0 && <WeakTopicHeatmap results={results} />}
 
         {/* Subject-wise Accuracy Bars */}
         {subjectData.length > 1 && (
@@ -210,7 +255,7 @@ export default function AnalyticsPage() {
           </Card>
         )}
 
-
+        {/* Strongest / Weakest */}
         {analysis.topicAnalyses.length > 1 && (
           <div className="grid grid-cols-2 gap-3 animate-slide-up stagger-2">
             {analysis.strongestTopic && (
@@ -242,6 +287,9 @@ export default function AnalyticsPage() {
           </div>
         )}
 
+        {/* Adaptive Insights + AI Coach */}
+        <AdaptiveInsights results={results} />
+
         {/* Overall tips */}
         {analysis.overallTips.length > 0 && (
           <Card className="modern-card animate-slide-up stagger-3">
@@ -271,6 +319,9 @@ export default function AnalyticsPage() {
         {analysis.topicAnalyses.length >= 2 && (
           <TopicComparisonView topics={analysis.topicAnalyses} />
         )}
+
+        {/* Badges */}
+        {gamState.badges.some(b => b.unlockedAt) && <BadgesGrid />}
 
         {/* Topic-wise Analysis */}
         <div className="space-y-3">
