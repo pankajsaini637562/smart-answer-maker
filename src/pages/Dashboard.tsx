@@ -1,17 +1,25 @@
 import { Link } from 'react-router-dom';
-import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles } from 'lucide-react';
+import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles, Brain, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
 import { AppHeader } from '@/components/AppHeader';
+import { GamificationBar } from '@/components/GamificationBar';
+import { BadgesGrid } from '@/components/BadgesGrid';
 import { getSheets, getScoreboard, getResults } from '@/lib/storage';
+import { refreshStreak, getGamificationState } from '@/lib/gamification';
 import { formatDistanceToNow } from 'date-fns';
+import { useEffect } from 'react';
 
 export default function Dashboard() {
   const sheets = getSheets();
   const scoreboard = getScoreboard().slice(0, 5);
   const results = getResults();
 
+  // Refresh streak on load
+  useEffect(() => { refreshStreak(); }, []);
+
+  const gamState = getGamificationState();
   const totalExams = results.length;
   const avgAccuracy = results.length > 0 
     ? Math.round(results.reduce((sum, r) => sum + r.accuracy, 0) / results.length) 
@@ -36,13 +44,13 @@ export default function Dashboard() {
             <div className="space-y-2 animate-fade-in">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 <Sparkles className="w-3.5 h-3.5" />
-                Smart OMR Practice
+                AI-Powered Smart Learning
               </div>
               <h2 className="text-3xl md:text-4xl font-bold font-display tracking-tight">
                 Master your exams
               </h2>
               <p className="text-muted-foreground max-w-md">
-                Create custom OMR sheets, practice with timers, and get AI-powered analytics to improve your scores.
+                Adaptive learning, AI analytics, and gamified practice to boost your scores.
               </p>
             </div>
             <Link to="/create" className="animate-scale-in">
@@ -52,6 +60,13 @@ export default function Dashboard() {
               </Button>
             </Link>
           </div>
+
+          {/* Gamification Bar */}
+          {gamState.xp > 0 && (
+            <div className="mt-6 animate-slide-up">
+              <GamificationBar />
+            </div>
+          )}
         </div>
       </section>
 
@@ -62,7 +77,7 @@ export default function Dashboard() {
             { title: 'Total Exams', value: totalExams, icon: FileText, variant: 'default' as const, delay: 'stagger-1' },
             { title: 'Avg Accuracy', value: `${avgAccuracy}%`, icon: Target, variant: (avgAccuracy >= 70 ? 'success' : avgAccuracy >= 50 ? 'warning' : 'destructive') as 'success' | 'warning' | 'destructive', delay: 'stagger-2' },
             { title: 'Practice Time', value: formatTotalTime(), icon: Clock, variant: 'default' as const, delay: 'stagger-3' },
-            { title: 'OMR Sheets', value: sheets.length, icon: TrendingUp, variant: 'default' as const, delay: 'stagger-4' },
+            { title: 'Day Streak', value: gamState.streak > 0 ? `${gamState.streak} 🔥` : '0', icon: Flame, variant: (gamState.streak >= 7 ? 'success' : gamState.streak >= 3 ? 'warning' : 'default') as any, delay: 'stagger-4' },
           ].map((stat) => (
             <div key={stat.title} className={`animate-slide-up ${stat.delay}`}>
               <StatCard {...stat} />
@@ -73,11 +88,12 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <section>
           <h2 className="section-title mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
-              { to: '/create', icon: Plus, title: 'Create OMR Sheet', desc: 'Design a new sheet with custom questions', color: 'primary' },
-              { to: '/sheets', icon: FileText, title: 'My Sheets', desc: 'View and manage saved OMR sheets', color: 'primary' },
-              { to: '/history', icon: Trophy, title: 'Results History', desc: 'Review your past exam results', color: 'primary' },
+              { to: '/create', icon: Plus, title: 'Create OMR Sheet', desc: 'Design a new exam sheet', color: 'primary' },
+              { to: '/sheets', icon: FileText, title: 'My Sheets', desc: 'View saved OMR sheets', color: 'primary' },
+              { to: '/history', icon: Trophy, title: 'Results', desc: 'Past exam results', color: 'primary' },
+              { to: '/analytics', icon: Brain, title: 'AI Analytics', desc: 'Smart performance insights', color: 'primary' },
             ].map((action) => (
               <Link key={action.to} to={action.to} className="block group">
                 <Card className="h-full modern-card cursor-pointer">
@@ -97,14 +113,19 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* Badges */}
+        {gamState.badges.some(b => b.unlockedAt) && (
+          <section className="animate-slide-up stagger-2">
+            <BadgesGrid />
+          </section>
+        )}
+
         {/* Recent Scores */}
         {scoreboard.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="section-title">Recent Scores</h2>
-              <Link to="/history" className="text-sm text-primary hover:underline font-medium">
-                View all →
-              </Link>
+              <Link to="/history" className="text-sm text-primary hover:underline font-medium">View all →</Link>
             </div>
             <Card className="modern-card overflow-hidden">
               <CardContent className="p-0">
@@ -139,9 +160,7 @@ export default function Dashboard() {
           <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="section-title">Recent Sheets</h2>
-              <Link to="/sheets" className="text-sm text-primary hover:underline font-medium">
-                View all →
-              </Link>
+              <Link to="/sheets" className="text-sm text-primary hover:underline font-medium">View all →</Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {sheets.slice(0, 3).map((sheet) => (
@@ -183,8 +202,7 @@ export default function Dashboard() {
             </p>
             <Link to="/create">
               <Button size="lg" className="gap-2 rounded-xl px-8 h-12 shadow-lg shadow-primary/20">
-                <Plus className="w-5 h-5" />
-                Create Your First Sheet
+                <Plus className="w-5 h-5" /> Create Your First Sheet
               </Button>
             </Link>
           </section>
