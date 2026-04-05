@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, User, Save, LogOut, Target, Clock, Trophy, Brain, Loader2 } from 'lucide-react';
+import { ArrowLeft, User, Save, LogOut, Target, Clock, Trophy, Loader2, GraduationCap, School, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,16 +14,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const TARGET_EXAMS = ['NEET', 'JEE Main', 'JEE Advanced', 'UPSC', 'SSC', 'GATE', 'CAT', 'CLAT', 'CUET', 'Board Exams', 'Other'];
+const CLASSES = ['6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Dropper', 'College'];
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [displayName, setDisplayName] = useState('');
+  const [studentClass, setStudentClass] = useState('');
+  const [school, setSchool] = useState('');
+  const [phone, setPhone] = useState('');
   const [targetExam, setTargetExam] = useState('NEET');
   const [studyHoursGoal, setStudyHoursGoal] = useState(4);
 
-  // Stats
   const [stats, setStats] = useState({ totalExams: 0, avgAccuracy: 0, totalTime: 0 });
 
   useEffect(() => {
@@ -36,6 +39,9 @@ export default function ProfilePage() {
     const { data } = await supabase.from('profiles').select('*').eq('id', user!.id).single();
     if (data) {
       setDisplayName(data.display_name || '');
+      setStudentClass((data as any).class || '');
+      setSchool((data as any).school || '');
+      setPhone((data as any).phone || '');
       setTargetExam(data.target_exam || 'NEET');
       setStudyHoursGoal(data.study_hours_goal || 4);
     }
@@ -56,10 +62,13 @@ export default function ProfilePage() {
     setSaving(true);
     const { error } = await supabase.from('profiles').update({
       display_name: displayName,
+      class: studentClass,
+      school,
+      phone,
       target_exam: targetExam,
       study_hours_goal: studyHoursGoal,
       updated_at: new Date().toISOString(),
-    }).eq('id', user.id);
+    } as any).eq('id', user.id);
     setSaving(false);
     if (error) { toast.error('Failed to save'); return; }
     toast.success('Profile updated!');
@@ -70,7 +79,7 @@ export default function ProfilePage() {
     toast.success('Signed out');
   };
 
-  const initials = displayName ? displayName.slice(0, 2).toUpperCase() : (user?.email?.slice(0, 2).toUpperCase() || 'U');
+  const initials = displayName ? displayName.slice(0, 2).toUpperCase() : 'ST';
   const formatTime = (s: number) => {
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
@@ -96,7 +105,7 @@ export default function ProfilePage() {
           <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
             <h2 className="text-2xl font-bold font-display">Profile & Settings</h2>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
+            <p className="text-sm text-muted-foreground">{displayName || 'Student'} • {studentClass || 'N/A'}</p>
           </div>
         </div>
 
@@ -109,7 +118,10 @@ export default function ProfilePage() {
               </Avatar>
               <div className="flex-1">
                 <CardTitle className="font-display">{displayName || 'Student'}</CardTitle>
-                <CardDescription>{user?.email}</CardDescription>
+                <CardDescription className="flex items-center gap-2">
+                  <GraduationCap className="w-3.5 h-3.5" /> {studentClass || 'Not set'}
+                  {school && <><span>•</span><School className="w-3.5 h-3.5" /> {school}</>}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -150,8 +162,28 @@ export default function ProfilePage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Display Name</Label>
-              <Input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="Your name" className="rounded-xl h-11" />
+              <Input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="Your name" className="rounded-xl h-11" maxLength={50} />
             </div>
+            <div className="space-y-2">
+              <Label>Class</Label>
+              <Select value={studentClass} onValueChange={setStudentClass}>
+                <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select class" /></SelectTrigger>
+                <SelectContent>
+                  {CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>School / Institute</Label>
+              <Input value={school} onChange={e => setSchool(e.target.value)} placeholder="Your school" className="rounded-xl h-11" maxLength={100} />
+            </div>
+            <div className="space-y-2">
+              <Label>Phone</Label>
+              <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" className="rounded-xl h-11" maxLength={15} />
+            </div>
+
+            <Separator />
+
             <div className="space-y-2">
               <Label>Target Exam</Label>
               <Select value={targetExam} onValueChange={setTargetExam}>

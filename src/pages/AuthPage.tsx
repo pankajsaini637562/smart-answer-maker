@@ -1,50 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, GraduationCap, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
+const CLASSES = ['6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Dropper', 'College'];
+
 export default function AuthPage() {
-  const { signIn, signUp } = useAuth();
+  const { signInAnonymously } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [studentClass, setStudentClass] = useState('');
+  const [school, setSchool] = useState('');
+  const [phone, setPhone] = useState('');
 
-  // Login
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [showLoginPw, setShowLoginPw] = useState(false);
-
-  // Signup
-  const [signupName, setSignupName] = useState('');
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupPassword, setSignupPassword] = useState('');
-  const [showSignupPw, setShowSignupPw] = useState(false);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loginEmail || !loginPassword) { toast.error('Fill all fields'); return; }
+    if (!name.trim()) { toast.error('Please enter your name'); return; }
+    if (!studentClass) { toast.error('Please select your class'); return; }
     setLoading(true);
-    const { error } = await signIn(loginEmail, loginPassword);
+    const { error } = await signInAnonymously(name.trim(), studentClass, school.trim(), phone.trim());
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    toast.success('Welcome back!');
-    navigate('/');
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signupEmail || !signupPassword) { toast.error('Fill all fields'); return; }
-    if (signupPassword.length < 6) { toast.error('Password must be at least 6 characters'); return; }
-    setLoading(true);
-    const { error } = await signUp(signupEmail, signupPassword, signupName || undefined);
-    setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success('Account created! You are now logged in.');
+    toast.success(`Welcome, ${name}! 🎉`);
     navigate('/');
   };
 
@@ -64,68 +48,73 @@ export default function AuthPage() {
         </div>
 
         <Card className="modern-card animate-slide-up">
-          <Tabs defaultValue="login">
-            <CardHeader className="pb-2">
-              <TabsList className="w-full rounded-xl">
-                <TabsTrigger value="login" className="flex-1 gap-2 rounded-lg">
-                  <LogIn className="w-4 h-4" /> Login
-                </TabsTrigger>
-                <TabsTrigger value="signup" className="flex-1 gap-2 rounded-lg">
-                  <UserPlus className="w-4 h-4" /> Sign Up
-                </TabsTrigger>
-              </TabsList>
-            </CardHeader>
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="font-display flex items-center justify-center gap-2">
+              <GraduationCap className="w-5 h-5 text-primary" /> Get Started
+            </CardTitle>
+            <CardDescription>Enter your details to begin</CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Your Name *</Label>
+                <Input
+                  id="name"
+                  placeholder="e.g. Rahul Sharma"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  className="rounded-xl h-11"
+                  maxLength={50}
+                />
+              </div>
 
-            <TabsContent value="login">
-              <form onSubmit={handleLogin}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <Input id="login-email" type="email" placeholder="you@example.com" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} className="rounded-xl h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="login-pw">Password</Label>
-                    <div className="relative">
-                      <Input id="login-pw" type={showLoginPw ? 'text' : 'password'} placeholder="••••••" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} className="rounded-xl h-11 pr-10" />
-                      <button type="button" onClick={() => setShowLoginPw(!showLoginPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                        {showLoginPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
-                    <LogIn className="w-4 h-4" /> {loading ? 'Signing in…' : 'Sign In'}
-                  </Button>
-                </CardContent>
-              </form>
-            </TabsContent>
+              <div className="space-y-2">
+                <Label htmlFor="class">Class *</Label>
+                <Select value={studentClass} onValueChange={setStudentClass}>
+                  <SelectTrigger className="rounded-xl h-11">
+                    <SelectValue placeholder="Select your class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignup}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Display Name (optional)</Label>
-                    <Input id="signup-name" placeholder="Your name" value={signupName} onChange={e => setSignupName(e.target.value)} className="rounded-xl h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input id="signup-email" type="email" placeholder="you@example.com" value={signupEmail} onChange={e => setSignupEmail(e.target.value)} className="rounded-xl h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-pw">Password</Label>
-                    <div className="relative">
-                      <Input id="signup-pw" type={showSignupPw ? 'text' : 'password'} placeholder="Min 6 characters" value={signupPassword} onChange={e => setSignupPassword(e.target.value)} className="rounded-xl h-11 pr-10" />
-                      <button type="button" onClick={() => setShowSignupPw(!showSignupPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                        {showSignupPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
-                    <UserPlus className="w-4 h-4" /> {loading ? 'Creating…' : 'Create Account'}
-                  </Button>
-                </CardContent>
-              </form>
-            </TabsContent>
-          </Tabs>
+              <div className="space-y-2">
+                <Label htmlFor="school">School / Institute (optional)</Label>
+                <Input
+                  id="school"
+                  placeholder="e.g. Delhi Public School"
+                  value={school}
+                  onChange={e => setSchool(e.target.value)}
+                  className="rounded-xl h-11"
+                  maxLength={100}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone (optional)</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="e.g. 9876543210"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  className="rounded-xl h-11"
+                  maxLength={15}
+                />
+              </div>
+
+              <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
+                {loading ? 'Setting up…' : 'Start Learning'}
+              </Button>
+
+              <p className="text-[11px] text-muted-foreground text-center">
+                No email or password needed. Just enter your details and go!
+              </p>
+            </CardContent>
+          </form>
         </Card>
       </div>
     </div>
