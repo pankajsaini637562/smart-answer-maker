@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, BarChart3, FileText, Trophy, Home } from 'lucide-react';
+import { Moon, Sun, BarChart3, FileText, Trophy, Home, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
@@ -75,6 +75,16 @@ export function AppHeader() {
             >
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
+            <Link to="/profile">
+              <Button
+                variant={location.pathname === '/profile' ? 'default' : 'ghost'}
+                size="icon"
+                className="w-9 h-9 rounded-xl"
+                aria-label="Profile"
+              >
+                <User className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
