@@ -6,8 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInAnonymously: (name: string, studentClass: string, school?: string, phone?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -34,18 +33,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName?: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { display_name: displayName } },
+  const signInAnonymously = async (name: string, studentClass: string, school?: string, phone?: string) => {
+    const { data, error } = await supabase.auth.signInAnonymously({
+      options: { data: { display_name: name } },
     });
-    return { error };
-  };
+    if (error) return { error };
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    // Update profile with student details
+    if (data.user) {
+      await supabase.from('profiles').update({
+        display_name: name,
+        class: studentClass,
+        school: school || '',
+        phone: phone || '',
+        updated_at: new Date().toISOString(),
+      }).eq('id', data.user.id);
+    }
+
+    return { error: null };
   };
 
   const signOut = async () => {
@@ -53,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signInAnonymously, signOut }}>
       {children}
     </AuthContext.Provider>
   );
