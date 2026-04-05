@@ -14,7 +14,239 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attempts: {
+        Row: {
+          accuracy: number
+          answers: Json
+          correct: number
+          end_time: string | null
+          id: string
+          marked_for_review: Json
+          score: number | null
+          sheet_id: string
+          sheet_title: string
+          start_time: string
+          status: string
+          time_spent: number
+          unattempted: number
+          user_id: string
+          wrong: number
+        }
+        Insert: {
+          accuracy?: number
+          answers?: Json
+          correct?: number
+          end_time?: string | null
+          id?: string
+          marked_for_review?: Json
+          score?: number | null
+          sheet_id: string
+          sheet_title: string
+          start_time?: string
+          status?: string
+          time_spent?: number
+          unattempted?: number
+          user_id: string
+          wrong?: number
+        }
+        Update: {
+          accuracy?: number
+          answers?: Json
+          correct?: number
+          end_time?: string | null
+          id?: string
+          marked_for_review?: Json
+          score?: number | null
+          sheet_id?: string
+          sheet_title?: string
+          start_time?: string
+          status?: string
+          time_spent?: number
+          unattempted?: number
+          user_id?: string
+          wrong?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_sheet_id_fkey"
+            columns: ["sheet_id"]
+            isOneToOne: false
+            referencedRelation: "sheets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gamification: {
+        Row: {
+          badges: Json
+          id: string
+          last_active_date: string | null
+          level: number
+          streak: number
+          updated_at: string
+          xp: number
+        }
+        Insert: {
+          badges?: Json
+          id: string
+          last_active_date?: string | null
+          level?: number
+          streak?: number
+          updated_at?: string
+          xp?: number
+        }
+        Update: {
+          badges?: Json
+          id?: string
+          last_active_date?: string | null
+          level?: number
+          streak?: number
+          updated_at?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          study_hours_goal: number | null
+          target_exam: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          study_hours_goal?: number | null
+          target_exam?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          study_hours_goal?: number | null
+          target_exam?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      results: {
+        Row: {
+          accuracy: number
+          attempt_id: string
+          completed_at: string
+          correct: number
+          id: string
+          max_score: number
+          question_results: Json
+          score: number
+          sheet_id: string
+          sheet_title: string
+          time_spent: number
+          total_questions: number
+          unattempted: number
+          user_id: string
+          wrong: number
+        }
+        Insert: {
+          accuracy?: number
+          attempt_id: string
+          completed_at?: string
+          correct?: number
+          id?: string
+          max_score?: number
+          question_results?: Json
+          score?: number
+          sheet_id: string
+          sheet_title: string
+          time_spent?: number
+          total_questions: number
+          unattempted?: number
+          user_id: string
+          wrong?: number
+        }
+        Update: {
+          accuracy?: number
+          attempt_id?: string
+          completed_at?: string
+          correct?: number
+          id?: string
+          max_score?: number
+          question_results?: Json
+          score?: number
+          sheet_id?: string
+          sheet_title?: string
+          time_spent?: number
+          total_questions?: number
+          unattempted?: number
+          user_id?: string
+          wrong?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "results_sheet_id_fkey"
+            columns: ["sheet_id"]
+            isOneToOne: false
+            referencedRelation: "sheets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sheets: {
+        Row: {
+          answer_key: Json | null
+          created_at: string
+          id: string
+          marks_per_question: number
+          negative_marking: number
+          options_per_question: number
+          subject: string
+          time_limit: number
+          title: string
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          answer_key?: Json | null
+          created_at?: string
+          id?: string
+          marks_per_question?: number
+          negative_marking?: number
+          options_per_question?: number
+          subject?: string
+          time_limit?: number
+          title: string
+          total_questions: number
+          user_id: string
+        }
+        Update: {
+          answer_key?: Json | null
+          created_at?: string
+          id?: string
+          marks_per_question?: number
+          negative_marking?: number
+          options_per_question?: number
+          subject?: string
+          time_limit?: number
+          title?: string
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
