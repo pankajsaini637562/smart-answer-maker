@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles, Brain, Flame } from 'lucide-react';
+import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles, Brain, Flame, Scan } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
@@ -63,12 +63,20 @@ export default function Dashboard() {
                   : 'Adaptive learning, AI analytics, and gamified practice to boost your scores.'}
               </p>
             </div>
-            <Link to="/create" className="animate-scale-in">
-              <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-lg shadow-primary/20">
-                <Plus className="w-5 h-5" />
-                New OMR Sheet
-              </Button>
-            </Link>
+            <div className="flex gap-3 animate-scale-in">
+              <Link to="/create">
+                <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-lg shadow-primary/20">
+                  <Plus className="w-5 h-5" />
+                  New OMR Sheet
+                </Button>
+              </Link>
+              <Link to="/scan">
+                <Button size="lg" variant="outline" className="gap-2 rounded-xl px-6 h-12 text-base">
+                  <Scan className="w-5 h-5" />
+                  Scan OMR
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Gamification Bar */}
@@ -101,6 +109,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
               { to: '/create', icon: Plus, title: 'Create OMR Sheet', desc: 'Design a new exam sheet', color: 'primary' },
+              { to: '/scan', icon: Scan, title: 'Scan OMR Sheet', desc: 'Upload & detect answers', color: 'primary' },
               { to: '/sheets', icon: FileText, title: 'My Sheets', desc: 'View saved OMR sheets', color: 'primary' },
               { to: '/history', icon: Trophy, title: 'Results', desc: 'Past exam results', color: 'primary' },
               { to: '/analytics', icon: Brain, title: 'AI Analytics', desc: 'Smart performance insights', color: 'primary' },
