@@ -55,10 +55,12 @@ export default function Dashboard() {
                 AI-Powered Smart Learning
               </div>
               <h2 className="text-3xl md:text-4xl font-bold font-display tracking-tight">
-                Master your exams
+                {profile?.display_name ? `Hey ${profile.display_name} 👋` : 'Master your exams'}
               </h2>
               <p className="text-muted-foreground max-w-md">
-                Adaptive learning, AI analytics, and gamified practice to boost your scores.
+                {profile?.class
+                  ? <><span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-xs font-semibold mr-1">Class {profile.class}</span> Adaptive learning &amp; AI analytics to boost your scores.</>
+                  : 'Adaptive learning, AI analytics, and gamified practice to boost your scores.'}
               </p>
             </div>
             <Link to="/create" className="animate-scale-in">
