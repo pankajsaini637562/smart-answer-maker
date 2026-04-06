@@ -14,6 +14,7 @@ import HistoryPage from "./pages/HistoryPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
+import ScanOMRPage from "./pages/ScanOMRPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
