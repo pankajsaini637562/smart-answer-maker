@@ -63,12 +63,20 @@ export default function Dashboard() {
                   : 'Adaptive learning, AI analytics, and gamified practice to boost your scores.'}
               </p>
             </div>
-            <Link to="/create" className="animate-scale-in">
-              <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-lg shadow-primary/20">
-                <Plus className="w-5 h-5" />
-                New OMR Sheet
-              </Button>
-            </Link>
+            <div className="flex gap-3 animate-scale-in">
+              <Link to="/create">
+                <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-lg shadow-primary/20">
+                  <Plus className="w-5 h-5" />
+                  New OMR Sheet
+                </Button>
+              </Link>
+              <Link to="/scan">
+                <Button size="lg" variant="outline" className="gap-2 rounded-xl px-6 h-12 text-base">
+                  <Scan className="w-5 h-5" />
+                  Scan OMR
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Gamification Bar */}
