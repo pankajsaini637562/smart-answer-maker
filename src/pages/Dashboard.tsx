@@ -13,12 +13,19 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 export default function Dashboard() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<{ display_name: string; class: string } | null>(null);
   const sheets = getSheets();
   const scoreboard = getScoreboard().slice(0, 5);
   const results = getResults();
 
-  // Refresh streak on load
   useEffect(() => { refreshStreak(); }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from('profiles').select('display_name, class').eq('id', user.id).single()
+      .then(({ data }) => { if (data) setProfile(data as any); });
+  }, [user]);
 
   const gamState = getGamificationState();
   const totalExams = results.length;
