@@ -9,8 +9,9 @@ import { BadgesGrid } from '@/components/BadgesGrid';
 import { getSheets, getScoreboard, getResults } from '@/lib/storage';
 import { refreshStreak, getGamificationState } from '@/lib/gamification';
 import { formatDistanceToNow } from 'date-fns';
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 export default function Dashboard() {
   const sheets = getSheets();
   const scoreboard = getScoreboard().slice(0, 5);
