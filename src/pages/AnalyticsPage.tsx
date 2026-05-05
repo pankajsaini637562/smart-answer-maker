@@ -32,8 +32,73 @@ function formatStudyTime(seconds: number) {
 
 export default function AnalyticsPage() {
   const results = getResults();
+  const sheets = getSheets();
   const analysis = useMemo(() => analyzeByTopic(results), [results]);
   const gamState = getGamificationState();
+
+  // Subject-wise aggregation (Physics/Chemistry/etc.)
+  const subjectAnalytics = useMemo(() => {
+    const sheetSubject: Record<string, string> = {};
+    sheets.forEach(s => { sheetSubject[s.id] = s.subject || 'General'; });
+
+    const grouped: Record<string, {
+      subject: string;
+      attempts: number;
+      totalAccuracy: number;
+      totalScore: number;
+      totalMaxScore: number;
+      correct: number;
+      wrong: number;
+      unattempted: number;
+      timeSpent: number;
+      bestAccuracy: number;
+      recent: { date: number; accuracy: number }[];
+    }> = {};
+
+    results.forEach(r => {
+      const subject = sheetSubject[r.sheetId] || 'General';
+      if (!grouped[subject]) {
+        grouped[subject] = {
+          subject, attempts: 0, totalAccuracy: 0, totalScore: 0, totalMaxScore: 0,
+          correct: 0, wrong: 0, unattempted: 0, timeSpent: 0, bestAccuracy: 0, recent: [],
+        };
+      }
+      const g = grouped[subject];
+      g.attempts++;
+      g.totalAccuracy += r.accuracy;
+      g.totalScore += r.score;
+      g.totalMaxScore += r.maxScore;
+      g.correct += r.correct;
+      g.wrong += r.wrong;
+      g.unattempted += r.unattempted;
+      g.timeSpent += r.timeSpent;
+      g.bestAccuracy = Math.max(g.bestAccuracy, r.accuracy);
+      g.recent.push({ date: new Date(r.completedAt).getTime(), accuracy: r.accuracy });
+    });
+
+    return Object.values(grouped).map(g => {
+      const sortedRecent = g.recent.sort((a, b) => a.date - b.date);
+      const half = Math.floor(sortedRecent.length / 2) || 1;
+      const earlyAvg = sortedRecent.slice(0, half).reduce((s, x) => s + x.accuracy, 0) / half;
+      const recentAvg = sortedRecent.slice(-half).reduce((s, x) => s + x.accuracy, 0) / half;
+      const trend = Math.round(recentAvg - earlyAvg);
+      const avgAccuracy = Math.round(g.totalAccuracy / g.attempts);
+      return {
+        subject: g.subject,
+        attempts: g.attempts,
+        avgAccuracy,
+        bestAccuracy: g.bestAccuracy,
+        scorePercent: g.totalMaxScore > 0 ? Math.round((g.totalScore / g.totalMaxScore) * 100) : 0,
+        correct: g.correct,
+        wrong: g.wrong,
+        unattempted: g.unattempted,
+        timeSpent: g.timeSpent,
+        trend,
+        mastery: avgAccuracy >= 80 ? 'Master' : avgAccuracy >= 60 ? 'Proficient' : avgAccuracy >= 40 ? 'Developing' : 'Beginner',
+      };
+    }).sort((a, b) => b.avgAccuracy - a.avgAccuracy);
+  }, [results, sheets]);
+
 
   const sortedResults = useMemo(() => 
     [...results].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()),
