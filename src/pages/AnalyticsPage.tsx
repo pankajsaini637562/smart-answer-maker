@@ -152,11 +152,6 @@ export default function AnalyticsPage() {
     name: r.sheetTitle.slice(0, 15),
   }));
 
-  const subjectData = analysis.topicAnalyses.map(t => ({
-    name: t.sheetTitle.length > 12 ? t.sheetTitle.slice(0, 12) + '…' : t.sheetTitle,
-    accuracy: t.avgAccuracy,
-    consistency: t.consistencyScore,
-  }));
 
   return (
     <div className="min-h-screen bg-background">
