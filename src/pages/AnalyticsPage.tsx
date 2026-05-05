@@ -13,8 +13,9 @@ import { WeakTopicHeatmap } from '@/components/WeakTopicHeatmap';
 import { AdaptiveInsights } from '@/components/AdaptiveInsights';
 import { GamificationBar } from '@/components/GamificationBar';
 import { BadgesGrid } from '@/components/BadgesGrid';
-import { getResults } from '@/lib/storage';
+import { getResults, getSheets } from '@/lib/storage';
 import { analyzeByTopic } from '@/lib/analytics';
+import { BarChart, Bar } from 'recharts';
 import { predictScore } from '@/lib/adaptiveEngine';
 import { getGamificationState } from '@/lib/gamification';
 import {
