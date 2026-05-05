@@ -13,8 +13,9 @@ import { WeakTopicHeatmap } from '@/components/WeakTopicHeatmap';
 import { AdaptiveInsights } from '@/components/AdaptiveInsights';
 import { GamificationBar } from '@/components/GamificationBar';
 import { BadgesGrid } from '@/components/BadgesGrid';
-import { getResults } from '@/lib/storage';
+import { getResults, getSheets } from '@/lib/storage';
 import { analyzeByTopic } from '@/lib/analytics';
+import { BarChart, Bar } from 'recharts';
 import { predictScore } from '@/lib/adaptiveEngine';
 import { getGamificationState } from '@/lib/gamification';
 import {
@@ -31,8 +32,73 @@ function formatStudyTime(seconds: number) {
 
 export default function AnalyticsPage() {
   const results = getResults();
+  const sheets = getSheets();
   const analysis = useMemo(() => analyzeByTopic(results), [results]);
   const gamState = getGamificationState();
+
+  // Subject-wise aggregation (Physics/Chemistry/etc.)
+  const subjectAnalytics = useMemo(() => {
+    const sheetSubject: Record<string, string> = {};
+    sheets.forEach(s => { sheetSubject[s.id] = s.subject || 'General'; });
+
+    const grouped: Record<string, {
+      subject: string;
+      attempts: number;
+      totalAccuracy: number;
+      totalScore: number;
+      totalMaxScore: number;
+      correct: number;
+      wrong: number;
+      unattempted: number;
+      timeSpent: number;
+      bestAccuracy: number;
+      recent: { date: number; accuracy: number }[];
+    }> = {};
+
+    results.forEach(r => {
+      const subject = sheetSubject[r.sheetId] || 'General';
+      if (!grouped[subject]) {
+        grouped[subject] = {
+          subject, attempts: 0, totalAccuracy: 0, totalScore: 0, totalMaxScore: 0,
+          correct: 0, wrong: 0, unattempted: 0, timeSpent: 0, bestAccuracy: 0, recent: [],
+        };
+      }
+      const g = grouped[subject];
+      g.attempts++;
+      g.totalAccuracy += r.accuracy;
+      g.totalScore += r.score;
+      g.totalMaxScore += r.maxScore;
+      g.correct += r.correct;
+      g.wrong += r.wrong;
+      g.unattempted += r.unattempted;
+      g.timeSpent += r.timeSpent;
+      g.bestAccuracy = Math.max(g.bestAccuracy, r.accuracy);
+      g.recent.push({ date: new Date(r.completedAt).getTime(), accuracy: r.accuracy });
+    });
+
+    return Object.values(grouped).map(g => {
+      const sortedRecent = g.recent.sort((a, b) => a.date - b.date);
+      const half = Math.floor(sortedRecent.length / 2) || 1;
+      const earlyAvg = sortedRecent.slice(0, half).reduce((s, x) => s + x.accuracy, 0) / half;
+      const recentAvg = sortedRecent.slice(-half).reduce((s, x) => s + x.accuracy, 0) / half;
+      const trend = Math.round(recentAvg - earlyAvg);
+      const avgAccuracy = Math.round(g.totalAccuracy / g.attempts);
+      return {
+        subject: g.subject,
+        attempts: g.attempts,
+        avgAccuracy,
+        bestAccuracy: g.bestAccuracy,
+        scorePercent: g.totalMaxScore > 0 ? Math.round((g.totalScore / g.totalMaxScore) * 100) : 0,
+        correct: g.correct,
+        wrong: g.wrong,
+        unattempted: g.unattempted,
+        timeSpent: g.timeSpent,
+        trend,
+        mastery: avgAccuracy >= 80 ? 'Master' : avgAccuracy >= 60 ? 'Proficient' : avgAccuracy >= 40 ? 'Developing' : 'Beginner',
+      };
+    }).sort((a, b) => b.avgAccuracy - a.avgAccuracy);
+  }, [results, sheets]);
+
 
   const sortedResults = useMemo(() => 
     [...results].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()),
@@ -86,11 +152,6 @@ export default function AnalyticsPage() {
     name: r.sheetTitle.slice(0, 15),
   }));
 
-  const subjectData = analysis.topicAnalyses.map(t => ({
-    name: t.sheetTitle.length > 12 ? t.sheetTitle.slice(0, 12) + '…' : t.sheetTitle,
-    accuracy: t.avgAccuracy,
-    consistency: t.consistencyScore,
-  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -228,29 +289,68 @@ export default function AnalyticsPage() {
         {/* Weak Topic Heatmap */}
         {results.length > 0 && <WeakTopicHeatmap results={results} />}
 
-        {/* Subject-wise Accuracy Bars */}
-        {subjectData.length > 1 && (
+        {/* Subject-wise Performance (aggregated by subject) */}
+        {subjectAnalytics.length > 0 && (
           <Card className="modern-card animate-slide-up stagger-3">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-display flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-primary" /> Subject-wise Accuracy
+                <BookOpen className="w-4 h-4 text-primary" /> Subject-wise Performance
               </CardTitle>
+              <CardDescription>Aggregated across all your exams per subject</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={Math.max(160, subjectData.length * 40)}>
-                <LineChart data={subjectData} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+            <CardContent className="space-y-4">
+              <ResponsiveContainer width="100%" height={Math.max(180, subjectAnalytics.length * 44)}>
+                <BarChart data={subjectAnalytics} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} horizontal={false} />
                   <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickLine={false} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={90} tickLine={false} axisLine={false} />
+                  <YAxis type="category" dataKey="subject" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={100} tickLine={false} axisLine={false} />
                   <Tooltip
                     contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }}
-                    formatter={(value: number, name: string) => [`${value}%`, name === 'accuracy' ? 'Accuracy' : 'Consistency']}
+                    formatter={(value: number) => [`${value}%`, 'Avg Accuracy']}
                   />
-                  <Line type="monotone" dataKey="accuracy" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
-                  <Line type="monotone" dataKey="consistency" stroke="hsl(var(--success))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--success))' }} />
-                  <Legend wrapperStyle={{ fontSize: '11px' }} />
-                </LineChart>
+                  <Bar dataKey="avgAccuracy" fill="hsl(var(--primary))" radius={[0, 8, 8, 0]} />
+                </BarChart>
               </ResponsiveContainer>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {subjectAnalytics.map(s => {
+                  const trendIco = s.trend > 0 ? '↑' : s.trend < 0 ? '↓' : '→';
+                  const trendCol = s.trend > 0 ? 'text-success' : s.trend < 0 ? 'text-destructive' : 'text-muted-foreground';
+                  const masteryCol = s.mastery === 'Master' ? 'bg-success/15 text-success' : s.mastery === 'Proficient' ? 'bg-primary/15 text-primary' : s.mastery === 'Developing' ? 'bg-warning/15 text-warning' : 'bg-destructive/15 text-destructive';
+                  return (
+                    <div key={s.subject} className="p-4 rounded-xl bg-accent/30 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-sm">{s.subject}</p>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.attempts} exam{s.attempts !== 1 ? 's' : ''}</p>
+                        </div>
+                        <Badge className={`text-[10px] ${masteryCol} border-0`}>{s.mastery}</Badge>
+                      </div>
+                      <div className="flex items-end justify-between gap-2">
+                        <div>
+                          <p className="text-[10px] text-muted-foreground uppercase">Accuracy</p>
+                          <p className="text-2xl font-bold font-mono text-primary">{s.avgAccuracy}%</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] text-muted-foreground uppercase">Trend</p>
+                          <p className={`text-sm font-mono ${trendCol}`}>{trendIco} {Math.abs(s.trend)}%</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] text-muted-foreground uppercase">Best</p>
+                          <p className="text-sm font-mono text-success">{s.bestAccuracy}%</p>
+                        </div>
+                      </div>
+                      <Progress value={s.avgAccuracy} className="h-1.5" />
+                      <div className="flex justify-between text-[10px] text-muted-foreground gap-2 flex-wrap">
+                        <span><span className="text-success font-mono">{s.correct}</span> correct</span>
+                        <span><span className="text-destructive font-mono">{s.wrong}</span> wrong</span>
+                        <span><span className="font-mono">{s.unattempted}</span> skipped</span>
+                        <span className="font-mono">{formatStudyTime(s.timeSpent)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         )}
