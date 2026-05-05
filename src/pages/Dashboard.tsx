@@ -70,12 +70,6 @@ export default function Dashboard() {
                   New OMR Sheet
                 </Button>
               </Link>
-              <Link to="/scan">
-                <Button size="lg" variant="outline" className="gap-2 rounded-xl px-6 h-12 text-base">
-                  <Scan className="w-5 h-5" />
-                  Scan OMR
-                </Button>
-              </Link>
             </div>
           </div>
 
