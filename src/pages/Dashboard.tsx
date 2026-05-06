@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles, Brain, Flame } from 'lucide-react';
+import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles, Brain, Flame, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
@@ -104,12 +104,13 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <section>
           <h2 className="section-title mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               { to: '/create', icon: Plus, title: 'Create OMR Sheet', desc: 'Design a new exam sheet', color: 'primary' },
               { to: '/sheets', icon: FileText, title: 'My Sheets', desc: 'View saved OMR sheets', color: 'primary' },
               { to: '/history', icon: Trophy, title: 'Results', desc: 'Past exam results', color: 'primary' },
               { to: '/analytics', icon: Brain, title: 'AI Analytics', desc: 'Smart performance insights', color: 'primary' },
+              { to: '/chat', icon: MessageCircle, title: 'Study Chat', desc: 'Talk with peers in groups', color: 'primary' },
             ].map((action) => (
               <Link key={action.to} to={action.to} className="block group">
                 <Card className="h-full modern-card cursor-pointer">
