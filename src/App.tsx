@@ -45,6 +45,7 @@ const AppRoutes = () => (
     <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
     
+    <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
