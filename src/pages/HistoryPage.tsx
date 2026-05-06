@@ -49,6 +49,7 @@ export default function HistoryPage() {
       <AppHeader />
 
       <div className="container py-6 space-y-8">
+        <AdSlot slot="3333333333" format="horizontal" minHeight={90} />
         <div className="animate-fade-in">
           <h2 className="text-2xl font-bold font-display">Results History</h2>
           <p className="text-sm text-muted-foreground">{results.length} exams completed</p>
