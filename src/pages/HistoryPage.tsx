@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AppHeader } from '@/components/AppHeader';
+import { AdSlot } from '@/components/AdSlot';
 import { getResults, deleteResult, getScoreboard, clearScoreboard } from '@/lib/storage';
 import { ExamResult, ScoreboardEntry } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
