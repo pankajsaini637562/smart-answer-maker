@@ -129,7 +129,11 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* In-feed Ad */}
+        <AdSlot slot="2222222222" format="fluid" layoutKey="-gw-3+1f-3d+2z" minHeight={120} />
+
         {/* Badges */}
+
         {gamState.badges.some(b => b.unlockedAt) && (
           <section className="animate-slide-up stagger-2">
             <BadgesGrid />
