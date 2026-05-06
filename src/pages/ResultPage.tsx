@@ -8,6 +8,7 @@ import { XPNotification } from '@/components/XPNotification';
 import { getResult, getSheet } from '@/lib/storage';
 import { recordExamCompletion, getXPProgress, getLevelFromXP } from '@/lib/gamification';
 import { updateAdaptiveProfile } from '@/lib/adaptiveEngine';
+import { AdSlot } from '@/components/AdSlot';
 import { useEffect, useRef } from 'react';
 
 export default function ResultPage() {
