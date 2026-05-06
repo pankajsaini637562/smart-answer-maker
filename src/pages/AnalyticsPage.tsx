@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppHeader } from '@/components/AppHeader';
+import { AdSlot } from '@/components/AdSlot';
 import { TopicAnalyticsCard } from '@/components/TopicAnalyticsCard';
 import { TopicComparisonView } from '@/components/TopicComparisonView';
 import { WeakTopicHeatmap } from '@/components/WeakTopicHeatmap';
@@ -157,6 +158,7 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-background">
       <AppHeader />
       <main className="container py-8 space-y-6">
+        <AdSlot slot="5555555555" format="horizontal" minHeight={90} />
         {/* Header */}
         <div className="flex items-center gap-3 animate-fade-in">
           <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>

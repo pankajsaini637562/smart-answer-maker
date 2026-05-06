@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AppHeader } from '@/components/AppHeader';
+import { AdSlot } from '@/components/AdSlot';
 import { getResults, deleteResult, getScoreboard, clearScoreboard } from '@/lib/storage';
 import { ExamResult, ScoreboardEntry } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
@@ -48,6 +49,7 @@ export default function HistoryPage() {
       <AppHeader />
 
       <div className="container py-6 space-y-8">
+        <AdSlot slot="3333333333" format="horizontal" minHeight={90} />
         <div className="animate-fade-in">
           <h2 className="text-2xl font-bold font-display">Results History</h2>
           <p className="text-sm text-muted-foreground">{results.length} exams completed</p>
