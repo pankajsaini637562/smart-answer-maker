@@ -103,6 +103,11 @@ export default function ResultPage() {
         <div className="max-w-4xl mx-auto">
           <ReportCard result={result} sheet={sheet} />
 
+          <div className="print:hidden mt-6">
+            <AdSlot slot="6666666666" format="fluid" layout="in-article" minHeight={150} />
+          </div>
+
+
           <div className="flex flex-wrap gap-4 justify-center mt-8 print:hidden">
             <Button variant="outline" className="gap-2" onClick={() => setShareOpen(true)}>
               <Share2 className="w-4 h-4" /> Share Result
