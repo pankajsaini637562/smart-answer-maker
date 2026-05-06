@@ -84,6 +84,9 @@ export default function Dashboard() {
       </section>
 
       <main className="container py-8 space-y-10">
+        {/* Header Ad */}
+        <AdSlot slot="1111111111" format="horizontal" minHeight={90} />
+
         {/* Stats */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
