@@ -29,6 +29,7 @@ export default function SheetsPage() {
       <AppHeader />
 
       <div className="container py-6">
+        <AdSlot slot="4444444444" format="horizontal" minHeight={90} className="mb-6" />
         <div className="flex items-center justify-between mb-6 animate-fade-in">
           <div>
             <h2 className="text-2xl font-bold font-display">My OMR Sheets</h2>
