@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { AppHeader } from '@/components/AppHeader';
+import { AdSlot } from '@/components/AdSlot';
 import { getSheets, deleteSheet } from '@/lib/storage';
 import { OMRSheet } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
