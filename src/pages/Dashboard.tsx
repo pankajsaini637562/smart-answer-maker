@@ -12,6 +12,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { AdSlot } from '@/components/AdSlot';
 export default function Dashboard() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<{ display_name: string; class: string } | null>(null);
