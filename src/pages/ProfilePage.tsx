@@ -134,9 +134,16 @@ export default function ProfilePage() {
         <Card className="modern-card animate-slide-up">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-4">
-              <Avatar className="w-16 h-16">
-                <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">{initials}</AvatarFallback>
-              </Avatar>
+              <label className="relative cursor-pointer group/avatar">
+                <Avatar className="w-16 h-16">
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
+                  <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">{initials}</AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity">
+                  {uploadingAvatar ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
+                </div>
+                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+              </label>
               <div className="flex-1">
                 <CardTitle className="font-display">{displayName || 'Student'}</CardTitle>
                 <CardDescription className="flex items-center gap-2">
