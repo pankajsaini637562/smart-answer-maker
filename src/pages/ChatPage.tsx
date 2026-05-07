@@ -32,12 +32,30 @@ export default function ChatPage() {
   const [joinId, setJoinId] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Fetch profile name
+  // Fetch own profile
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('display_name').eq('id', user.id).single()
-      .then(({ data }) => { if (data?.display_name) setProfileName(data.display_name); });
+    supabase.from('profiles').select('display_name, avatar_url').eq('id', user.id).single()
+      .then(({ data }) => {
+        if (data?.display_name) setProfileName(data.display_name);
+        if ((data as any)?.avatar_url) setProfileAvatar((data as any).avatar_url);
+      });
   }, [user]);
+
+  // Resolve sender profiles for messages in view
+  useEffect(() => {
+    const ids = Array.from(new Set(messages.map(m => m.user_id))).filter(id => !profilesById[id]);
+    if (ids.length === 0) return;
+    supabase.from('profiles').select('id, display_name, avatar_url').in('id', ids)
+      .then(({ data }) => {
+        if (!data) return;
+        setProfilesById(prev => {
+          const next = { ...prev };
+          data.forEach((p: any) => { next[p.id] = { display_name: p.display_name, avatar_url: p.avatar_url }; });
+          return next;
+        });
+      });
+  }, [messages]);
 
   // Fetch groups
   const loadGroups = async () => {
