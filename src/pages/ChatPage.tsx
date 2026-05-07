@@ -247,6 +247,7 @@ export default function ChatPage() {
   const activeGroup = groups.find(g => g.id === activeGroupId);
 
   const formatTime = (iso: string) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatSize = (b: number) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(1)} MB`;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
