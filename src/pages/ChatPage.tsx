@@ -197,6 +197,53 @@ export default function ChatPage() {
     loadGroups();
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !user || !activeGroupId) return;
+    if (file.size > 20 * 1024 * 1024) { toast.error('Max 20 MB per file'); return; }
+    setUploading(true);
+    const safeName = file.name.replace(/[^\w.\-]+/g, '_');
+    const path = `${activeGroupId}/${Date.now()}-${safeName}`;
+    const { error: upErr } = await supabase.storage.from('group-files').upload(path, file, { contentType: file.type });
+    if (upErr) { toast.error(upErr.message); setUploading(false); return; }
+    const { error: dbErr } = await supabase.from('group_files').insert({
+      group_id: activeGroupId, uploaded_by: user.id, uploader_name: profileName,
+      file_name: file.name, file_path: path, mime_type: file.type, size_bytes: file.size,
+    });
+    setUploading(false);
+    if (dbErr) { toast.error(dbErr.message); return; }
+    toast.success('File uploaded');
+    setActiveTab('files');
+  };
+
+  const downloadFile = async (f: GroupFile) => {
+    const { data, error } = await supabase.storage.from('group-files').createSignedUrl(f.file_path, 60);
+    if (error || !data) { toast.error(error?.message || 'Download failed'); return; }
+    const a = document.createElement('a');
+    a.href = data.signedUrl; a.download = f.file_name; a.target = '_blank';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  const createInvite = async () => {
+    if (!activeGroupId || !user) return;
+    setInviteOpen(true);
+    setInviteCopied(false);
+    setInviteUrl('');
+    const { data, error } = await supabase.from('group_invites').insert({
+      group_id: activeGroupId, created_by: user.id,
+    }).select('token').single();
+    if (error) { toast.error(error.message); return; }
+    setInviteUrl(`${window.location.origin}/chat?invite=${data.token}`);
+  };
+
+  const copyInvite = async () => {
+    await navigator.clipboard.writeText(inviteUrl);
+    setInviteCopied(true);
+    toast.success('Invite link copied');
+    setTimeout(() => setInviteCopied(false), 2000);
+  };
+
   const activeGroup = groups.find(g => g.id === activeGroupId);
 
   const formatTime = (iso: string) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
