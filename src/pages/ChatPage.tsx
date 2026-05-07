@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AppHeader } from '@/components/AppHeader';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -12,10 +13,13 @@ import { cn } from '@/lib/utils';
 
 interface Group { id: string; name: string; created_by: string; created_at: string; }
 interface Message { id: string; group_id: string; user_id: string; user_name: string; text: string; created_at: string; }
+interface ProfileLite { display_name: string | null; avatar_url: string | null; }
 
 export default function ChatPage() {
   const { user } = useAuth();
   const [profileName, setProfileName] = useState('Student');
+  const [profileAvatar, setProfileAvatar] = useState<string>('');
+  const [profilesById, setProfilesById] = useState<Record<string, ProfileLite>>({});
   const [groups, setGroups] = useState<Group[]>([]);
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,12 +32,30 @@ export default function ChatPage() {
   const [joinId, setJoinId] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Fetch profile name
+  // Fetch own profile
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('display_name').eq('id', user.id).single()
-      .then(({ data }) => { if (data?.display_name) setProfileName(data.display_name); });
+    supabase.from('profiles').select('display_name, avatar_url').eq('id', user.id).single()
+      .then(({ data }) => {
+        if (data?.display_name) setProfileName(data.display_name);
+        if ((data as any)?.avatar_url) setProfileAvatar((data as any).avatar_url);
+      });
   }, [user]);
+
+  // Resolve sender profiles for messages in view
+  useEffect(() => {
+    const ids = Array.from(new Set(messages.map(m => m.user_id))).filter(id => !profilesById[id]);
+    if (ids.length === 0) return;
+    supabase.from('profiles').select('id, display_name, avatar_url').in('id', ids)
+      .then(({ data }) => {
+        if (!data) return;
+        setProfilesById(prev => {
+          const next = { ...prev };
+          data.forEach((p: any) => { next[p.id] = { display_name: p.display_name, avatar_url: p.avatar_url }; });
+          return next;
+        });
+      });
+  }, [messages]);
 
   // Fetch groups
   const loadGroups = async () => {
@@ -205,16 +227,28 @@ export default function ChatPage() {
                   <p className="text-center text-sm text-muted-foreground py-12">Be the first to say hi 👋</p>
                 ) : messages.map(m => {
                   const mine = m.user_id === user?.id;
+                  const liveProfile = mine
+                    ? { display_name: profileName, avatar_url: profileAvatar }
+                    : profilesById[m.user_id];
+                  const name = liveProfile?.display_name || m.user_name || 'Student';
+                  const avatar = liveProfile?.avatar_url || '';
+                  const initials = name.slice(0, 2).toUpperCase();
                   return (
-                    <div key={m.id} className={cn('flex flex-col max-w-[80%]', mine ? 'ml-auto items-end' : 'items-start')}>
-                      {!mine && <span className="text-[11px] text-muted-foreground px-2 mb-0.5">{m.user_name}</span>}
-                      <div className={cn(
-                        'px-3 py-2 rounded-2xl text-sm break-words',
-                        mine ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-accent text-accent-foreground rounded-bl-sm'
-                      )}>
-                        {m.text}
+                    <div key={m.id} className={cn('flex gap-2 max-w-[85%]', mine ? 'ml-auto flex-row-reverse' : '')}>
+                      <Avatar className="w-7 h-7 mt-4 shrink-0">
+                        {avatar && <AvatarImage src={avatar} alt={name} />}
+                        <AvatarFallback className="text-[10px] bg-primary/10 text-primary">{initials}</AvatarFallback>
+                      </Avatar>
+                      <div className={cn('flex flex-col min-w-0', mine ? 'items-end' : 'items-start')}>
+                        <span className="text-[11px] text-muted-foreground px-2 mb-0.5">{mine ? 'You' : name}</span>
+                        <div className={cn(
+                          'px-3 py-2 rounded-2xl text-sm break-words',
+                          mine ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-accent text-accent-foreground rounded-bl-sm'
+                        )}>
+                          {m.text}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground px-2 mt-0.5">{formatTime(m.created_at)}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground px-2 mt-0.5">{formatTime(m.created_at)}</span>
                     </div>
                   );
                 })}

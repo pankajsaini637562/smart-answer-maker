@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, User, Save, LogOut, Target, Clock, Trophy, Loader2, GraduationCap, School, Phone } from 'lucide-react';
+import { ArrowLeft, User, Save, LogOut, Target, Clock, Trophy, Loader2, GraduationCap, School, Phone, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { AppHeader } from '@/components/AppHeader';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,6 +26,8 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState('');
   const [targetExam, setTargetExam] = useState('NEET');
   const [studyHoursGoal, setStudyHoursGoal] = useState(4);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const [stats, setStats] = useState({ totalExams: 0, avgAccuracy: 0, totalTime: 0 });
 
@@ -44,8 +46,27 @@ export default function ProfilePage() {
       setPhone((data as any).phone || '');
       setTargetExam(data.target_exam || 'NEET');
       setStudyHoursGoal(data.study_hours_goal || 4);
+      setAvatarUrl((data as any).avatar_url || '');
     }
     setLoading(false);
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 2 * 1024 * 1024) { toast.error('Image must be under 2 MB'); return; }
+    setUploadingAvatar(true);
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    if (upErr) { toast.error(upErr.message); setUploadingAvatar(false); return; }
+    const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
+    const url = pub.publicUrl;
+    const { error } = await supabase.from('profiles').update({ avatar_url: url, updated_at: new Date().toISOString() }).eq('id', user.id);
+    setUploadingAvatar(false);
+    if (error) { toast.error(error.message); return; }
+    setAvatarUrl(url);
+    toast.success('Avatar updated!');
   };
 
   const loadStats = async () => {
@@ -113,9 +134,16 @@ export default function ProfilePage() {
         <Card className="modern-card animate-slide-up">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-4">
-              <Avatar className="w-16 h-16">
-                <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">{initials}</AvatarFallback>
-              </Avatar>
+              <label className="relative cursor-pointer group/avatar">
+                <Avatar className="w-16 h-16">
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
+                  <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">{initials}</AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity">
+                  {uploadingAvatar ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
+                </div>
+                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+              </label>
               <div className="flex-1">
                 <CardTitle className="font-display">{displayName || 'Student'}</CardTitle>
                 <CardDescription className="flex items-center gap-2">
