@@ -433,6 +433,25 @@ export default function ChatPage() {
           )}
         </section>
       </div>
+
+      {/* Invite Dialog */}
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="rounded-2xl">
+          <DialogHeader><DialogTitle className="font-display flex items-center gap-2"><Link2 className="w-5 h-5 text-primary" /> Share Invite Link</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Anyone with this link can join the group.</p>
+          {inviteUrl ? (
+            <div className="flex gap-2">
+              <Input value={inviteUrl} readOnly className="rounded-xl text-xs font-mono" />
+              <Button onClick={copyInvite} className="rounded-xl shrink-0 gap-1">
+                {inviteCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {inviteCopied ? 'Copied' : 'Copy'}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
