@@ -15,9 +15,11 @@ import { cn } from '@/lib/utils';
 interface Group { id: string; name: string; created_by: string; created_at: string; }
 interface Message { id: string; group_id: string; user_id: string; user_name: string; text: string; created_at: string; }
 interface ProfileLite { display_name: string | null; avatar_url: string | null; }
+interface GroupFile { id: string; group_id: string; uploader_name: string; file_name: string; file_path: string; mime_type: string | null; size_bytes: number; created_at: string; uploaded_by: string; }
 
 export default function ChatPage() {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [profileName, setProfileName] = useState('Student');
   const [profileAvatar, setProfileAvatar] = useState<string>('');
   const [profilesById, setProfilesById] = useState<Record<string, ProfileLite>>({});
