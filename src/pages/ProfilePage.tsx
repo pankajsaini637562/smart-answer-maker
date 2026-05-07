@@ -26,6 +26,8 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState('');
   const [targetExam, setTargetExam] = useState('NEET');
   const [studyHoursGoal, setStudyHoursGoal] = useState(4);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const [stats, setStats] = useState({ totalExams: 0, avgAccuracy: 0, totalTime: 0 });
 
