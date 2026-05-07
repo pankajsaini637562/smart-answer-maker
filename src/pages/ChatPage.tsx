@@ -227,16 +227,28 @@ export default function ChatPage() {
                   <p className="text-center text-sm text-muted-foreground py-12">Be the first to say hi 👋</p>
                 ) : messages.map(m => {
                   const mine = m.user_id === user?.id;
+                  const liveProfile = mine
+                    ? { display_name: profileName, avatar_url: profileAvatar }
+                    : profilesById[m.user_id];
+                  const name = liveProfile?.display_name || m.user_name || 'Student';
+                  const avatar = liveProfile?.avatar_url || '';
+                  const initials = name.slice(0, 2).toUpperCase();
                   return (
-                    <div key={m.id} className={cn('flex flex-col max-w-[80%]', mine ? 'ml-auto items-end' : 'items-start')}>
-                      {!mine && <span className="text-[11px] text-muted-foreground px-2 mb-0.5">{m.user_name}</span>}
-                      <div className={cn(
-                        'px-3 py-2 rounded-2xl text-sm break-words',
-                        mine ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-accent text-accent-foreground rounded-bl-sm'
-                      )}>
-                        {m.text}
+                    <div key={m.id} className={cn('flex gap-2 max-w-[85%]', mine ? 'ml-auto flex-row-reverse' : '')}>
+                      <Avatar className="w-7 h-7 mt-4 shrink-0">
+                        {avatar && <AvatarImage src={avatar} alt={name} />}
+                        <AvatarFallback className="text-[10px] bg-primary/10 text-primary">{initials}</AvatarFallback>
+                      </Avatar>
+                      <div className={cn('flex flex-col min-w-0', mine ? 'items-end' : 'items-start')}>
+                        <span className="text-[11px] text-muted-foreground px-2 mb-0.5">{mine ? 'You' : name}</span>
+                        <div className={cn(
+                          'px-3 py-2 rounded-2xl text-sm break-words',
+                          mine ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-accent text-accent-foreground rounded-bl-sm'
+                        )}>
+                          {m.text}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground px-2 mt-0.5">{formatTime(m.created_at)}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground px-2 mt-0.5">{formatTime(m.created_at)}</span>
                     </div>
                   );
                 })}
