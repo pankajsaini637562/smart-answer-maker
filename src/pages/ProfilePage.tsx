@@ -46,8 +46,27 @@ export default function ProfilePage() {
       setPhone((data as any).phone || '');
       setTargetExam(data.target_exam || 'NEET');
       setStudyHoursGoal(data.study_hours_goal || 4);
+      setAvatarUrl((data as any).avatar_url || '');
     }
     setLoading(false);
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 2 * 1024 * 1024) { toast.error('Image must be under 2 MB'); return; }
+    setUploadingAvatar(true);
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    if (upErr) { toast.error(upErr.message); setUploadingAvatar(false); return; }
+    const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
+    const url = pub.publicUrl;
+    const { error } = await supabase.from('profiles').update({ avatar_url: url, updated_at: new Date().toISOString() }).eq('id', user.id);
+    setUploadingAvatar(false);
+    if (error) { toast.error(error.message); return; }
+    setAvatarUrl(url);
+    toast.success('Avatar updated!');
   };
 
   const loadStats = async () => {
