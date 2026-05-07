@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, User, Save, LogOut, Target, Clock, Trophy, Loader2, GraduationCap, School, Phone } from 'lucide-react';
+import { ArrowLeft, User, Save, LogOut, Target, Clock, Trophy, Loader2, GraduationCap, School, Phone, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
