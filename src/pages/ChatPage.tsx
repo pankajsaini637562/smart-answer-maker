@@ -33,7 +33,14 @@ export default function ChatPage() {
   const [joinOpen, setJoinOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [joinId, setJoinId] = useState('');
+  const [files, setFiles] = useState<GroupFile[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState('');
+  const [inviteCopied, setInviteCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<'chat' | 'files'>('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch own profile
   useEffect(() => {
