@@ -78,6 +78,40 @@ export default function ChatPage() {
 
   useEffect(() => { if (user) loadGroups(); }, [user]);
 
+  // Auto-join via invite token in URL (?invite=xxx)
+  useEffect(() => {
+    const token = searchParams.get('invite');
+    if (!token || !user) return;
+    (async () => {
+      const { data, error } = await supabase.rpc('join_group_via_invite', {
+        _token: token, _user_name: profileName,
+      });
+      if (error) { toast.error(error.message); }
+      else { toast.success('Joined group via invite!'); setActiveGroupId(data as string); loadGroups(); }
+      searchParams.delete('invite');
+      setSearchParams(searchParams, { replace: true });
+    })();
+  }, [user, searchParams.get('invite'), profileName]);
+
+  // Files for active group
+  const loadFiles = async (gid: string) => {
+    const { data, error } = await supabase.from('group_files').select('*')
+      .eq('group_id', gid).order('created_at', { ascending: false });
+    if (error) { toast.error(error.message); return; }
+    setFiles(data ?? []);
+  };
+
+  useEffect(() => {
+    if (!activeGroupId) { setFiles([]); return; }
+    loadFiles(activeGroupId);
+    const ch = supabase.channel(`files-${activeGroupId}`)
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'group_files', filter: `group_id=eq.${activeGroupId}` },
+        () => loadFiles(activeGroupId))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [activeGroupId]);
+
   // Realtime: groups & group_members changes → reload group list
   useEffect(() => {
     if (!user) return;
