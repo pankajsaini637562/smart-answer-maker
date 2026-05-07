@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Send, Users, Plus, LogOut, Hash, Loader2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Send, Users, Plus, LogOut, Hash, Loader2, Paperclip, FileText, Download, Link2, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
