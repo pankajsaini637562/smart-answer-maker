@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Send, Users, Plus, LogOut, Hash, Loader2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Send, Users, Plus, LogOut, Hash, Loader2, Paperclip, FileText, Download, Link2, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -14,9 +15,11 @@ import { cn } from '@/lib/utils';
 interface Group { id: string; name: string; created_by: string; created_at: string; }
 interface Message { id: string; group_id: string; user_id: string; user_name: string; text: string; created_at: string; }
 interface ProfileLite { display_name: string | null; avatar_url: string | null; }
+interface GroupFile { id: string; group_id: string; uploader_name: string; file_name: string; file_path: string; mime_type: string | null; size_bytes: number; created_at: string; uploaded_by: string; }
 
 export default function ChatPage() {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [profileName, setProfileName] = useState('Student');
   const [profileAvatar, setProfileAvatar] = useState<string>('');
   const [profilesById, setProfilesById] = useState<Record<string, ProfileLite>>({});
@@ -30,7 +33,14 @@ export default function ChatPage() {
   const [joinOpen, setJoinOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [joinId, setJoinId] = useState('');
+  const [files, setFiles] = useState<GroupFile[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState('');
+  const [inviteCopied, setInviteCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<'chat' | 'files'>('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch own profile
   useEffect(() => {
@@ -67,6 +77,40 @@ export default function ChatPage() {
   };
 
   useEffect(() => { if (user) loadGroups(); }, [user]);
+
+  // Auto-join via invite token in URL (?invite=xxx)
+  useEffect(() => {
+    const token = searchParams.get('invite');
+    if (!token || !user) return;
+    (async () => {
+      const { data, error } = await supabase.rpc('join_group_via_invite', {
+        _token: token, _user_name: profileName,
+      });
+      if (error) { toast.error(error.message); }
+      else { toast.success('Joined group via invite!'); setActiveGroupId(data as string); loadGroups(); }
+      searchParams.delete('invite');
+      setSearchParams(searchParams, { replace: true });
+    })();
+  }, [user, searchParams.get('invite'), profileName]);
+
+  // Files for active group
+  const loadFiles = async (gid: string) => {
+    const { data, error } = await supabase.from('group_files').select('*')
+      .eq('group_id', gid).order('created_at', { ascending: false });
+    if (error) { toast.error(error.message); return; }
+    setFiles(data ?? []);
+  };
+
+  useEffect(() => {
+    if (!activeGroupId) { setFiles([]); return; }
+    loadFiles(activeGroupId);
+    const ch = supabase.channel(`files-${activeGroupId}`)
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'group_files', filter: `group_id=eq.${activeGroupId}` },
+        () => loadFiles(activeGroupId))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [activeGroupId]);
 
   // Realtime: groups & group_members changes → reload group list
   useEffect(() => {
@@ -153,9 +197,57 @@ export default function ChatPage() {
     loadGroups();
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !user || !activeGroupId) return;
+    if (file.size > 20 * 1024 * 1024) { toast.error('Max 20 MB per file'); return; }
+    setUploading(true);
+    const safeName = file.name.replace(/[^\w.\-]+/g, '_');
+    const path = `${activeGroupId}/${Date.now()}-${safeName}`;
+    const { error: upErr } = await supabase.storage.from('group-files').upload(path, file, { contentType: file.type });
+    if (upErr) { toast.error(upErr.message); setUploading(false); return; }
+    const { error: dbErr } = await supabase.from('group_files').insert({
+      group_id: activeGroupId, uploaded_by: user.id, uploader_name: profileName,
+      file_name: file.name, file_path: path, mime_type: file.type, size_bytes: file.size,
+    });
+    setUploading(false);
+    if (dbErr) { toast.error(dbErr.message); return; }
+    toast.success('File uploaded');
+    setActiveTab('files');
+  };
+
+  const downloadFile = async (f: GroupFile) => {
+    const { data, error } = await supabase.storage.from('group-files').createSignedUrl(f.file_path, 60);
+    if (error || !data) { toast.error(error?.message || 'Download failed'); return; }
+    const a = document.createElement('a');
+    a.href = data.signedUrl; a.download = f.file_name; a.target = '_blank';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  const createInvite = async () => {
+    if (!activeGroupId || !user) return;
+    setInviteOpen(true);
+    setInviteCopied(false);
+    setInviteUrl('');
+    const { data, error } = await supabase.from('group_invites').insert({
+      group_id: activeGroupId, created_by: user.id,
+    }).select('token').single();
+    if (error) { toast.error(error.message); return; }
+    setInviteUrl(`${window.location.origin}/chat?invite=${data.token}`);
+  };
+
+  const copyInvite = async () => {
+    await navigator.clipboard.writeText(inviteUrl);
+    setInviteCopied(true);
+    toast.success('Invite link copied');
+    setTimeout(() => setInviteCopied(false), 2000);
+  };
+
   const activeGroup = groups.find(g => g.id === activeGroupId);
 
   const formatTime = (iso: string) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatSize = (b: number) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(1)} MB`;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -217,56 +309,120 @@ export default function ChatPage() {
                   <h3 className="font-display font-semibold truncate"># {activeGroup.name}</h3>
                   <p className="text-[10px] text-muted-foreground truncate font-mono">ID: {activeGroup.id}</p>
                 </div>
-                <Button size="sm" variant="ghost" onClick={leaveGroup} className="rounded-lg gap-1 text-xs">
-                  <LogOut className="w-3.5 h-3.5" /> Leave
-                </Button>
+                <div className="flex gap-1 shrink-0">
+                  <Button size="sm" variant="ghost" onClick={createInvite} className="rounded-lg gap-1 text-xs">
+                    <Link2 className="w-3.5 h-3.5" /> Invite
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={leaveGroup} className="rounded-lg gap-1 text-xs">
+                    <LogOut className="w-3.5 h-3.5" /> Leave
+                  </Button>
+                </div>
               </div>
 
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-2">
-                {messages.length === 0 ? (
-                  <p className="text-center text-sm text-muted-foreground py-12">Be the first to say hi 👋</p>
-                ) : messages.map(m => {
-                  const mine = m.user_id === user?.id;
-                  const liveProfile = mine
-                    ? { display_name: profileName, avatar_url: profileAvatar }
-                    : profilesById[m.user_id];
-                  const name = liveProfile?.display_name || m.user_name || 'Student';
-                  const avatar = liveProfile?.avatar_url || '';
-                  const initials = name.slice(0, 2).toUpperCase();
-                  return (
-                    <div key={m.id} className={cn('flex gap-2 max-w-[85%]', mine ? 'ml-auto flex-row-reverse' : '')}>
-                      <Avatar className="w-7 h-7 mt-4 shrink-0">
-                        {avatar && <AvatarImage src={avatar} alt={name} />}
-                        <AvatarFallback className="text-[10px] bg-primary/10 text-primary">{initials}</AvatarFallback>
-                      </Avatar>
-                      <div className={cn('flex flex-col min-w-0', mine ? 'items-end' : 'items-start')}>
-                        <span className="text-[11px] text-muted-foreground px-2 mb-0.5">{mine ? 'You' : name}</span>
-                        <div className={cn(
-                          'px-3 py-2 rounded-2xl text-sm break-words',
-                          mine ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-accent text-accent-foreground rounded-bl-sm'
-                        )}>
-                          {m.text}
+              {/* Tabs */}
+              <div className="flex border-b border-border text-sm">
+                {(['chat', 'files'] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={cn(
+                      'flex-1 py-2 capitalize font-medium transition-colors',
+                      activeTab === tab ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {tab === 'files' ? `Files (${files.length})` : 'Chat'}
+                  </button>
+                ))}
+              </div>
+
+              {activeTab === 'chat' ? (
+                <>
+                  <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-2">
+                    {messages.length === 0 ? (
+                      <p className="text-center text-sm text-muted-foreground py-12">Be the first to say hi 👋</p>
+                    ) : messages.map(m => {
+                      const mine = m.user_id === user?.id;
+                      const liveProfile = mine
+                        ? { display_name: profileName, avatar_url: profileAvatar }
+                        : profilesById[m.user_id];
+                      const name = liveProfile?.display_name || m.user_name || 'Student';
+                      const avatar = liveProfile?.avatar_url || '';
+                      const initials = name.slice(0, 2).toUpperCase();
+                      return (
+                        <div key={m.id} className={cn('flex gap-2 max-w-[85%]', mine ? 'ml-auto flex-row-reverse' : '')}>
+                          <Avatar className="w-7 h-7 mt-4 shrink-0">
+                            {avatar && <AvatarImage src={avatar} alt={name} />}
+                            <AvatarFallback className="text-[10px] bg-primary/10 text-primary">{initials}</AvatarFallback>
+                          </Avatar>
+                          <div className={cn('flex flex-col min-w-0', mine ? 'items-end' : 'items-start')}>
+                            <span className="text-[11px] text-muted-foreground px-2 mb-0.5">{mine ? 'You' : name}</span>
+                            <div className={cn(
+                              'px-3 py-2 rounded-2xl text-sm break-words',
+                              mine ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-accent text-accent-foreground rounded-bl-sm'
+                            )}>
+                              {m.text}
+                            </div>
+                            <span className="text-[10px] text-muted-foreground px-2 mt-0.5">{formatTime(m.created_at)}</span>
+                          </div>
                         </div>
-                        <span className="text-[10px] text-muted-foreground px-2 mt-0.5">{formatTime(m.created_at)}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
 
-              <div className="p-3 border-t border-border flex gap-2">
-                <Input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                  placeholder="Type a message…"
-                  className="rounded-xl"
-                  maxLength={1000}
-                />
-                <Button onClick={sendMessage} disabled={sending || !input.trim()} className="rounded-xl gap-1">
-                  {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                </Button>
-              </div>
+                  <div className="p-3 border-t border-border flex gap-2">
+                    <input ref={fileInputRef} type="file" hidden onChange={handleFileUpload} />
+                    <Button
+                      type="button" variant="ghost" size="icon"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="rounded-xl shrink-0" title="Attach file"
+                    >
+                      {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Paperclip className="w-4 h-4" />}
+                    </Button>
+                    <Input
+                      value={input}
+                      onChange={e => setInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                      placeholder="Type a message…"
+                      className="rounded-xl"
+                      maxLength={1000}
+                    />
+                    <Button onClick={sendMessage} disabled={sending || !input.trim()} className="rounded-xl gap-1">
+                      {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex flex-col min-h-0">
+                  <div className="p-3 border-b border-border">
+                    <input ref={fileInputRef} type="file" hidden onChange={handleFileUpload} />
+                    <Button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full rounded-xl gap-2">
+                      {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Paperclip className="w-4 h-4" />}
+                      {uploading ? 'Uploading…' : 'Upload Notes / OMR File'}
+                    </Button>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                    {files.length === 0 ? (
+                      <p className="text-center text-sm text-muted-foreground py-12">No files yet. Upload notes or OMR sheets to share.</p>
+                    ) : files.map(f => (
+                      <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl bg-accent/40 hover:bg-accent transition-colors">
+                        <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <FileText className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{f.file_name}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">
+                            {f.uploader_name} • {formatSize(f.size_bytes)} • {new Date(f.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Button size="icon" variant="ghost" onClick={() => downloadFile(f)} className="rounded-lg shrink-0" title="Download">
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 gap-3">
@@ -277,6 +433,25 @@ export default function ChatPage() {
           )}
         </section>
       </div>
+
+      {/* Invite Dialog */}
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="rounded-2xl">
+          <DialogHeader><DialogTitle className="font-display flex items-center gap-2"><Link2 className="w-5 h-5 text-primary" /> Share Invite Link</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Anyone with this link can join the group.</p>
+          {inviteUrl ? (
+            <div className="flex gap-2">
+              <Input value={inviteUrl} readOnly className="rounded-xl text-xs font-mono" />
+              <Button onClick={copyInvite} className="rounded-xl shrink-0 gap-1">
+                {inviteCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {inviteCopied ? 'Copied' : 'Copy'}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

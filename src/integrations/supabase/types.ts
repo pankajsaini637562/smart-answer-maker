@@ -106,6 +106,69 @@ export type Database = {
         }
         Relationships: []
       }
+      group_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          group_id: string
+          id: string
+          mime_type: string | null
+          size_bytes: number
+          uploaded_by: string
+          uploader_name: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          group_id: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number
+          uploaded_by: string
+          uploader_name?: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          group_id?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number
+          uploaded_by?: string
+          uploader_name?: string
+        }
+        Relationships: []
+      }
+      group_invites: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          group_id: string
+          id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          group_id: string
+          id?: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          group_id?: string
+          id?: string
+          token?: string
+        }
+        Relationships: []
+      }
       group_members: {
         Row: {
           group_id: string
@@ -346,9 +409,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_group_by_invite: {
+        Args: { _token: string }
+        Returns: {
+          group_id: string
+          group_name: string
+        }[]
+      }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
+      }
+      join_group_via_invite: {
+        Args: { _token: string; _user_name: string }
+        Returns: string
       }
     }
     Enums: {
