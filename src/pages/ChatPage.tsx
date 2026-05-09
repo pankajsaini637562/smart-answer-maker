@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import {
@@ -212,7 +212,10 @@ export default function ChatPage() {
               <Button size="sm"><Plus className="w-4 h-4 mr-1" /> New Group</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Create Group</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Create Group</DialogTitle>
+                <DialogDescription>Start a private Study Chat group for sharing messages, notes, and OMR files.</DialogDescription>
+              </DialogHeader>
               <Input
                 placeholder="Group name (e.g. Physics Class 12)"
                 value={creatingName}
@@ -357,8 +360,10 @@ export default function ChatPage() {
 
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Invite Link</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">Share this link to invite others to the group.</p>
+          <DialogHeader>
+            <DialogTitle>Invite Link</DialogTitle>
+            <DialogDescription>Share this link to invite others to the group.</DialogDescription>
+          </DialogHeader>
           <div className="flex gap-2">
             <Input value={inviteUrl} readOnly />
             <Button onClick={copyInvite}><Copy className="w-4 h-4" /></Button>
