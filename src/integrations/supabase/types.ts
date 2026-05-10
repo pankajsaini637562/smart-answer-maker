@@ -200,21 +200,30 @@ export type Database = {
       }
       groups: {
         Row: {
+          avatar_url: string | null
           created_at: string
           created_by: string
+          description: string | null
           id: string
+          is_public: boolean
           name: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           created_by: string
+          description?: string | null
           id?: string
+          is_public?: boolean
           name: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           created_by?: string
+          description?: string | null
           id?: string
+          is_public?: boolean
           name?: string
         }
         Relationships: []
@@ -416,6 +425,7 @@ export type Database = {
           group_name: string
         }[]
       }
+      group_member_count: { Args: { _group_id: string }; Returns: number }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
