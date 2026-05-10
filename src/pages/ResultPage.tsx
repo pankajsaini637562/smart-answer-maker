@@ -8,7 +8,6 @@ import { XPNotification } from '@/components/XPNotification';
 import { getResult, getSheet } from '@/lib/storage';
 import { recordExamCompletion, getXPProgress, getLevelFromXP } from '@/lib/gamification';
 import { updateAdaptiveProfile } from '@/lib/adaptiveEngine';
-import { AdSlot } from '@/components/AdSlot';
 import { useEffect, useRef } from 'react';
 
 export default function ResultPage() {
@@ -102,11 +101,6 @@ export default function ResultPage() {
       <main className="container py-8">
         <div className="max-w-4xl mx-auto">
           <ReportCard result={result} sheet={sheet} />
-
-          <div className="print:hidden mt-6">
-            <AdSlot slot="6666666666" format="fluid" layout="in-article" minHeight={150} />
-          </div>
-
 
           <div className="flex flex-wrap gap-4 justify-center mt-8 print:hidden">
             <Button variant="outline" className="gap-2" onClick={() => setShareOpen(true)}>
