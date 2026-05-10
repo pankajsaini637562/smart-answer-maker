@@ -8,7 +8,6 @@ import { XPNotification } from '@/components/XPNotification';
 import { getResult, getSheet } from '@/lib/storage';
 import { recordExamCompletion, getXPProgress, getLevelFromXP } from '@/lib/gamification';
 import { updateAdaptiveProfile } from '@/lib/adaptiveEngine';
-import { AdSlot } from '@/components/AdSlot';
 import { useEffect, useRef } from 'react';
 
 export default function ResultPage() {
@@ -104,7 +103,6 @@ export default function ResultPage() {
           <ReportCard result={result} sheet={sheet} />
 
           <div className="print:hidden mt-6">
-            <AdSlot slot="6666666666" format="fluid" layout="in-article" minHeight={150} />
           </div>
 
 

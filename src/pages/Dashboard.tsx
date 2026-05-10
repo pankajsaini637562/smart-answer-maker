@@ -12,7 +12,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { AdSlot } from '@/components/AdSlot';
 export default function Dashboard() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<{ display_name: string; class: string } | null>(null);
@@ -85,7 +84,6 @@ export default function Dashboard() {
 
       <main className="container py-8 space-y-10">
         {/* Header Ad */}
-        <AdSlot slot="1111111111" format="horizontal" minHeight={90} />
 
         {/* Stats */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -131,7 +129,6 @@ export default function Dashboard() {
         </section>
 
         {/* In-feed Ad */}
-        <AdSlot slot="2222222222" format="fluid" layoutKey="-gw-3+1f-3d+2z" minHeight={120} />
 
         {/* Badges */}
 
