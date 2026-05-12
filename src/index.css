@@ -249,6 +249,102 @@
     @apply text-lg font-semibold tracking-tight;
     font-family: 'Space Grotesk', system-ui, sans-serif;
   }
+
+  /* Premium 3D card with depth, glow and tilt-on-hover */
+  .premium-card {
+    @apply relative rounded-2xl border bg-card overflow-hidden transition-all duration-500;
+    background:
+      linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.85) 100%);
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.06) inset,
+      0 -1px 0 hsl(var(--foreground) / 0.04) inset,
+      0 10px 30px -12px hsl(var(--primary) / 0.18),
+      0 4px 14px -6px hsl(var(--foreground) / 0.08);
+    transform: perspective(1000px) translateZ(0);
+  }
+  .premium-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: var(--gradient-hero);
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  .premium-card::after {
+    content: "";
+    position: absolute; inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.45), transparent 40%, hsl(280 72% 56% / 0.35));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.5s ease;
+  }
+  .premium-card:hover {
+    transform: perspective(1000px) translateY(-4px) rotateX(2deg);
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.08) inset,
+      0 18px 50px -12px hsl(var(--primary) / 0.35),
+      0 8px 24px -8px hsl(var(--foreground) / 0.12);
+  }
+  .premium-card:hover::before { opacity: 0.9; }
+  .premium-card:hover::after  { opacity: 1; }
+
+  /* Glow ring for avatar / hero element */
+  .premium-glow {
+    position: relative;
+  }
+  .premium-glow::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 9999px;
+    background: conic-gradient(from 0deg, hsl(var(--primary)), hsl(280 72% 56%), hsl(200 80% 60%), hsl(var(--primary)));
+    filter: blur(10px);
+    opacity: 0.55;
+    z-index: -1;
+    animation: spin-slow 8s linear infinite;
+  }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+  .premium-button {
+    @apply relative overflow-hidden text-primary-foreground;
+    background: var(--gradient-primary);
+    box-shadow: 0 8px 24px -8px hsl(var(--primary) / 0.6), 0 1px 0 hsl(0 0% 100% / 0.18) inset;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .premium-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px -8px hsl(var(--primary) / 0.7), 0 1px 0 hsl(0 0% 100% / 0.25) inset;
+  }
+  .premium-button::after {
+    content: "";
+    position: absolute; top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, hsl(0 0% 100% / 0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+  }
+  .premium-button:hover::after { left: 125%; }
+
+  .stat-3d {
+    @apply relative rounded-2xl border overflow-hidden;
+    background: linear-gradient(160deg, hsl(var(--card)) 0%, hsl(var(--accent) / 0.4) 100%);
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.08) inset,
+      0 -2px 0 hsl(var(--foreground) / 0.04) inset,
+      0 12px 24px -12px hsl(var(--primary) / 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .stat-3d:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.12) inset,
+      0 18px 36px -12px hsl(var(--primary) / 0.4);
+  }
 }
 
 @layer utilities {
