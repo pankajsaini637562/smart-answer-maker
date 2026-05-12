@@ -425,6 +425,14 @@ export type Database = {
           group_name: string
         }[]
       }
+      get_group_member_profiles: {
+        Args: { _ids: string[] }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          id: string
+        }[]
+      }
       group_member_count: { Args: { _group_id: string }; Returns: number }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
