@@ -325,24 +325,34 @@ export default function ChatPage() {
   };
 
   // Profile actions
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onAvatarPicked = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
     if (file.size > 5 * 1024 * 1024) { toast.error('Max 5MB'); return; }
-    setSavingProfile(true);
+    if (!file.type.startsWith('image/')) { toast.error('Please pick an image'); return; }
+    setPendingAvatar(file);
+  };
+
+  const saveAvatar = async () => {
+    if (!user || !pendingAvatar) return;
+    setSavingAvatar(true);
     try {
-      const path = `${user.id}/avatar-${Date.now()}.${file.name.split('.').pop()}`;
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      const ext = pendingAvatar.name.split('.').pop() || 'jpg';
+      const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, pendingAvatar, { upsert: true });
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
       const { error: updErr } = await supabase.from('profiles').update({ avatar_url: pub.publicUrl }).eq('id', user.id);
       if (updErr) throw updErr;
       setProfile((p) => ({ ...p, avatar_url: pub.publicUrl }));
+      // Reflect instantly in any rendered chat (own messages use `profile`; others use profilesById)
+      setProfilesById((prev) => ({ ...prev, [user.id]: { display_name: profile.display_name, avatar_url: pub.publicUrl } }));
+      setPendingAvatar(null);
       toast.success('Profile photo updated');
     } catch (err: any) {
       toast.error(err.message || 'Upload failed');
     } finally {
-      setSavingProfile(false);
+      setSavingAvatar(false);
       if (avatarInputRef.current) avatarInputRef.current.value = '';
     }
   };
