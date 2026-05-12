@@ -360,10 +360,12 @@ export default function ChatPage() {
   const saveDisplayName = async () => {
     if (!user || !editName.trim()) return;
     setSavingProfile(true);
-    const { error } = await supabase.from('profiles').update({ display_name: editName.trim() }).eq('id', user.id);
+    const trimmed = editName.trim();
+    const { error } = await supabase.from('profiles').update({ display_name: trimmed }).eq('id', user.id);
     setSavingProfile(false);
     if (error) { toast.error(error.message); return; }
-    setProfile((p) => ({ ...p, display_name: editName.trim() }));
+    setProfile((p) => ({ ...p, display_name: trimmed }));
+    setProfilesById((prev) => ({ ...prev, [user.id]: { display_name: trimmed, avatar_url: profile.avatar_url } }));
     toast.success('Profile updated');
   };
 
