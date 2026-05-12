@@ -71,6 +71,9 @@ export default function ChatPage() {
   const [editName, setEditName] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [pendingAvatar, setPendingAvatar] = useState<File | null>(null);
+  const [savingAvatar, setSavingAvatar] = useState(false);
+  const [joiningId, setJoiningId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const groupAvatarInputRef = useRef<HTMLInputElement>(null);
@@ -239,9 +242,11 @@ export default function ChatPage() {
 
   const joinGroup = async (g: GroupWithMeta) => {
     if (!user) return;
+    setJoiningId(g.id);
     const { error } = await supabase.from('group_members').insert({
       group_id: g.id, user_id: user.id, user_name: profile.display_name || 'Student',
     });
+    setJoiningId(null);
     if (error) { toast.error(error.message); return; }
     toast.success(`Joined ${g.name}`);
     await loadGroups();
@@ -320,24 +325,34 @@ export default function ChatPage() {
   };
 
   // Profile actions
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onAvatarPicked = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
     if (file.size > 5 * 1024 * 1024) { toast.error('Max 5MB'); return; }
-    setSavingProfile(true);
+    if (!file.type.startsWith('image/')) { toast.error('Please pick an image'); return; }
+    setPendingAvatar(file);
+  };
+
+  const saveAvatar = async () => {
+    if (!user || !pendingAvatar) return;
+    setSavingAvatar(true);
     try {
-      const path = `${user.id}/avatar-${Date.now()}.${file.name.split('.').pop()}`;
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      const ext = pendingAvatar.name.split('.').pop() || 'jpg';
+      const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, pendingAvatar, { upsert: true });
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
       const { error: updErr } = await supabase.from('profiles').update({ avatar_url: pub.publicUrl }).eq('id', user.id);
       if (updErr) throw updErr;
       setProfile((p) => ({ ...p, avatar_url: pub.publicUrl }));
+      // Reflect instantly in any rendered chat (own messages use `profile`; others use profilesById)
+      setProfilesById((prev) => ({ ...prev, [user.id]: { display_name: profile.display_name, avatar_url: pub.publicUrl } }));
+      setPendingAvatar(null);
       toast.success('Profile photo updated');
     } catch (err: any) {
       toast.error(err.message || 'Upload failed');
     } finally {
-      setSavingProfile(false);
+      setSavingAvatar(false);
       if (avatarInputRef.current) avatarInputRef.current.value = '';
     }
   };
@@ -345,43 +360,61 @@ export default function ChatPage() {
   const saveDisplayName = async () => {
     if (!user || !editName.trim()) return;
     setSavingProfile(true);
-    const { error } = await supabase.from('profiles').update({ display_name: editName.trim() }).eq('id', user.id);
+    const trimmed = editName.trim();
+    const { error } = await supabase.from('profiles').update({ display_name: trimmed }).eq('id', user.id);
     setSavingProfile(false);
     if (error) { toast.error(error.message); return; }
-    setProfile((p) => ({ ...p, display_name: editName.trim() }));
+    setProfile((p) => ({ ...p, display_name: trimmed }));
+    setProfilesById((prev) => ({ ...prev, [user.id]: { display_name: trimmed, avatar_url: profile.avatar_url } }));
     toast.success('Profile updated');
   };
 
   const initials = (n?: string | null) => (n || 'S').trim().charAt(0).toUpperCase();
 
   // -------- Sub-views --------
-  const GroupRow = ({ g, action }: { g: GroupWithMeta; action: 'open' | 'join' }) => (
-    <button
-      onClick={() => action === 'open' ? setActiveGroup(g) : joinGroup(g)}
-      className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent transition text-left"
-    >
-      <Avatar className="w-12 h-12 shrink-0">
-        {g.avatar_url && <AvatarImage src={g.avatar_url} />}
-        <AvatarFallback className="bg-primary/15 text-primary"><Users className="w-5 h-5" /></AvatarFallback>
-      </Avatar>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="font-medium truncate">{g.name}</p>
-          {g.is_public ? <Globe className="w-3 h-3 text-muted-foreground" /> : <Lock className="w-3 h-3 text-muted-foreground" />}
-        </div>
-        <p className="text-xs text-muted-foreground truncate">
-          {g.description || `${g.member_count} member${g.member_count === 1 ? '' : 's'}`}
-        </p>
+  const GroupRow = ({ g, action }: { g: GroupWithMeta; action: 'open' | 'join' }) => {
+    const isJoining = joiningId === g.id;
+    return (
+      <div className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent/60 transition text-left">
+        <button
+          onClick={() => action === 'open' ? setActiveGroup(g) : undefined}
+          className="flex items-center gap-3 flex-1 min-w-0 text-left"
+          disabled={action === 'join'}
+        >
+          <Avatar className="w-12 h-12 shrink-0">
+            {g.avatar_url && <AvatarImage src={g.avatar_url} />}
+            <AvatarFallback className="bg-primary/15 text-primary"><Users className="w-5 h-5" /></AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="font-medium truncate">{g.name}</p>
+              {g.is_public ? <Globe className="w-3 h-3 text-muted-foreground shrink-0" /> : <Lock className="w-3 h-3 text-muted-foreground shrink-0" />}
+            </div>
+            {g.description ? (
+              <p className="text-xs text-muted-foreground line-clamp-1">{g.description}</p>
+            ) : null}
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+              <Users className="w-3 h-3" /> {g.member_count} member{g.member_count === 1 ? '' : 's'}
+            </p>
+          </div>
+        </button>
+        {action === 'join' ? (
+          <Button
+            size="sm"
+            onClick={() => joinGroup(g)}
+            disabled={isJoining || joiningId !== null}
+            className="shrink-0"
+          >
+            {isJoining ? 'Joining...' : 'Join'}
+          </Button>
+        ) : (
+          <button onClick={() => setActiveGroup(g)} className="text-[10px] text-muted-foreground shrink-0 px-1">
+            Open
+          </button>
+        )}
       </div>
-      {action === 'join' ? (
-        <Badge variant="secondary" className="shrink-0">Join</Badge>
-      ) : (
-        <span className="text-[10px] text-muted-foreground shrink-0">
-          {g.member_count} <Users className="inline w-3 h-3" />
-        </span>
-      )}
-    </button>
-  );
+    );
+  };
 
   // -------- Render --------
   const showSidebar = !activeGroup; // mobile: hide list when in chat
@@ -480,20 +513,33 @@ export default function ChatPage() {
               <TabsContent value="profile" className="flex-1 m-0 overflow-y-auto p-4 space-y-4 data-[state=inactive]:hidden">
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="relative">
-                    <Avatar className="w-24 h-24">
-                      {profile.avatar_url && <AvatarImage src={profile.avatar_url} />}
+                    <Avatar className="w-24 h-24 ring-2 ring-primary/30">
+                      {pendingAvatar ? (
+                        <AvatarImage src={URL.createObjectURL(pendingAvatar)} />
+                      ) : profile.avatar_url ? (
+                        <AvatarImage src={profile.avatar_url} />
+                      ) : null}
                       <AvatarFallback className="text-2xl bg-primary/15 text-primary">{initials(profile.display_name)}</AvatarFallback>
                     </Avatar>
                     <button
                       onClick={() => avatarInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg"
+                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg hover:scale-105 transition"
                       aria-label="Change photo"
                     >
                       <Camera className="w-4 h-4" />
                     </button>
-                    <input ref={avatarInputRef} type="file" accept="image/*" hidden onChange={handleAvatarUpload} />
+                    <input ref={avatarInputRef} type="file" accept="image/*" hidden onChange={onAvatarPicked} />
                   </div>
-                  <p className="text-xs text-muted-foreground">Tap the camera to change photo (max 5MB)</p>
+                  {pendingAvatar ? (
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={saveAvatar} disabled={savingAvatar}>
+                        {savingAvatar ? 'Saving...' : 'Save photo'}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setPendingAvatar(null)} disabled={savingAvatar}>Cancel</Button>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">Tap the camera to change photo (max 5MB)</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Display name</Label>
