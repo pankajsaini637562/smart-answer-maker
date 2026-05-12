@@ -179,7 +179,7 @@ export default function ChatPage() {
     const ids = Array.from(new Set(messages.map((m) => m.user_id)))
       .filter((id) => id && !profilesById[id] && id !== user?.id);
     if (ids.length === 0) return;
-    supabase.from('profiles').select('id, display_name, avatar_url').in('id', ids).then(({ data }) => {
+    supabase.rpc('get_group_member_profiles', { _ids: ids }).then(({ data }) => {
       if (!data) return;
       setProfilesById((prev) => {
         const next = { ...prev };
