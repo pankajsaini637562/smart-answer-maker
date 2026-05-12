@@ -242,9 +242,11 @@ export default function ChatPage() {
 
   const joinGroup = async (g: GroupWithMeta) => {
     if (!user) return;
+    setJoiningId(g.id);
     const { error } = await supabase.from('group_members').insert({
       group_id: g.id, user_id: user.id, user_name: profile.display_name || 'Student',
     });
+    setJoiningId(null);
     if (error) { toast.error(error.message); return; }
     toast.success(`Joined ${g.name}`);
     await loadGroups();
