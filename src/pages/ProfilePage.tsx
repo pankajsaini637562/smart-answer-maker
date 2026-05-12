@@ -38,8 +38,10 @@ export default function ProfilePage() {
   }, [user]);
 
   const loadProfile = async () => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', user!.id).single();
-    if (data) {
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', user!.id).maybeSingle();
+    if (error) {
+      toast.error('Could not load profile');
+    } else if (data) {
       setDisplayName(data.display_name || '');
       setStudentClass((data as any).class || '');
       setSchool((data as any).school || '');
