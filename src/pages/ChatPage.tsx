@@ -497,20 +497,33 @@ export default function ChatPage() {
               <TabsContent value="profile" className="flex-1 m-0 overflow-y-auto p-4 space-y-4 data-[state=inactive]:hidden">
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="relative">
-                    <Avatar className="w-24 h-24">
-                      {profile.avatar_url && <AvatarImage src={profile.avatar_url} />}
+                    <Avatar className="w-24 h-24 ring-2 ring-primary/30">
+                      {pendingAvatar ? (
+                        <AvatarImage src={URL.createObjectURL(pendingAvatar)} />
+                      ) : profile.avatar_url ? (
+                        <AvatarImage src={profile.avatar_url} />
+                      ) : null}
                       <AvatarFallback className="text-2xl bg-primary/15 text-primary">{initials(profile.display_name)}</AvatarFallback>
                     </Avatar>
                     <button
                       onClick={() => avatarInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg"
+                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg hover:scale-105 transition"
                       aria-label="Change photo"
                     >
                       <Camera className="w-4 h-4" />
                     </button>
-                    <input ref={avatarInputRef} type="file" accept="image/*" hidden onChange={handleAvatarUpload} />
+                    <input ref={avatarInputRef} type="file" accept="image/*" hidden onChange={onAvatarPicked} />
                   </div>
-                  <p className="text-xs text-muted-foreground">Tap the camera to change photo (max 5MB)</p>
+                  {pendingAvatar ? (
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={saveAvatar} disabled={savingAvatar}>
+                        {savingAvatar ? 'Saving...' : 'Save photo'}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setPendingAvatar(null)} disabled={savingAvatar}>Cancel</Button>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">Tap the camera to change photo (max 5MB)</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Display name</Label>
