@@ -372,33 +372,49 @@ export default function ChatPage() {
   const initials = (n?: string | null) => (n || 'S').trim().charAt(0).toUpperCase();
 
   // -------- Sub-views --------
-  const GroupRow = ({ g, action }: { g: GroupWithMeta; action: 'open' | 'join' }) => (
-    <button
-      onClick={() => action === 'open' ? setActiveGroup(g) : joinGroup(g)}
-      className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent transition text-left"
-    >
-      <Avatar className="w-12 h-12 shrink-0">
-        {g.avatar_url && <AvatarImage src={g.avatar_url} />}
-        <AvatarFallback className="bg-primary/15 text-primary"><Users className="w-5 h-5" /></AvatarFallback>
-      </Avatar>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="font-medium truncate">{g.name}</p>
-          {g.is_public ? <Globe className="w-3 h-3 text-muted-foreground" /> : <Lock className="w-3 h-3 text-muted-foreground" />}
-        </div>
-        <p className="text-xs text-muted-foreground truncate">
-          {g.description || `${g.member_count} member${g.member_count === 1 ? '' : 's'}`}
-        </p>
+  const GroupRow = ({ g, action }: { g: GroupWithMeta; action: 'open' | 'join' }) => {
+    const isJoining = joiningId === g.id;
+    return (
+      <div className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-accent/60 transition text-left">
+        <button
+          onClick={() => action === 'open' ? setActiveGroup(g) : undefined}
+          className="flex items-center gap-3 flex-1 min-w-0 text-left"
+          disabled={action === 'join'}
+        >
+          <Avatar className="w-12 h-12 shrink-0">
+            {g.avatar_url && <AvatarImage src={g.avatar_url} />}
+            <AvatarFallback className="bg-primary/15 text-primary"><Users className="w-5 h-5" /></AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="font-medium truncate">{g.name}</p>
+              {g.is_public ? <Globe className="w-3 h-3 text-muted-foreground shrink-0" /> : <Lock className="w-3 h-3 text-muted-foreground shrink-0" />}
+            </div>
+            {g.description ? (
+              <p className="text-xs text-muted-foreground line-clamp-1">{g.description}</p>
+            ) : null}
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+              <Users className="w-3 h-3" /> {g.member_count} member{g.member_count === 1 ? '' : 's'}
+            </p>
+          </div>
+        </button>
+        {action === 'join' ? (
+          <Button
+            size="sm"
+            onClick={() => joinGroup(g)}
+            disabled={isJoining || joiningId !== null}
+            className="shrink-0"
+          >
+            {isJoining ? 'Joining...' : 'Join'}
+          </Button>
+        ) : (
+          <button onClick={() => setActiveGroup(g)} className="text-[10px] text-muted-foreground shrink-0 px-1">
+            Open
+          </button>
+        )}
       </div>
-      {action === 'join' ? (
-        <Badge variant="secondary" className="shrink-0">Join</Badge>
-      ) : (
-        <span className="text-[10px] text-muted-foreground shrink-0">
-          {g.member_count} <Users className="inline w-3 h-3" />
-        </span>
-      )}
-    </button>
-  );
+    );
+  };
 
   // -------- Render --------
   const showSidebar = !activeGroup; // mobile: hide list when in chat
