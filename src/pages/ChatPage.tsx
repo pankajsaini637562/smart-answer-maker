@@ -71,6 +71,9 @@ export default function ChatPage() {
   const [editName, setEditName] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [pendingAvatar, setPendingAvatar] = useState<File | null>(null);
+  const [savingAvatar, setSavingAvatar] = useState(false);
+  const [joiningId, setJoiningId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const groupAvatarInputRef = useRef<HTMLInputElement>(null);
