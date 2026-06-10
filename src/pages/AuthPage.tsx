@@ -89,6 +89,18 @@ export default function AuthPage() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="country">Country *</Label>
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger className="rounded-xl h-11">
+                    <SelectValue placeholder="Select your country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="school">School / Institute (optional)</Label>
                 <Input
                   id="school"
@@ -102,6 +114,10 @@ export default function AuthPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone (optional)</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="e.g. 9876543210"
                 <Input
                   id="phone"
                   type="tel"
