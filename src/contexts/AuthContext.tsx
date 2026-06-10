@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signInAnonymously = async (name: string, studentClass: string, school?: string, phone?: string) => {
+  const signInAnonymously = async (name: string, studentClass: string, country: string, school?: string, phone?: string) => {
     const { data, error } = await supabase.auth.signInAnonymously({
       options: { data: { display_name: name } },
     });
@@ -44,10 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.from('profiles').update({
         display_name: name,
         class: studentClass,
+        country,
         school: school || '',
         phone: phone || '',
         updated_at: new Date().toISOString(),
-      }).eq('id', data.user.id);
+      } as any).eq('id', data.user.id);
     }
 
     return { error: null };
