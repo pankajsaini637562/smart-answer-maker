@@ -118,10 +118,6 @@ export default function AuthPage() {
                   id="phone"
                   type="tel"
                   placeholder="e.g. 9876543210"
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="e.g. 9876543210"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                   className="rounded-xl h-11"
