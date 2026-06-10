@@ -29,6 +29,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [studentClass, setStudentClass] = useState('');
   const [school, setSchool] = useState('');
+  const [country, setCountry] = useState('');
   const [phone, setPhone] = useState('');
   const [targetExam, setTargetExam] = useState('NEET');
   const [studyHoursGoal, setStudyHoursGoal] = useState(4);
