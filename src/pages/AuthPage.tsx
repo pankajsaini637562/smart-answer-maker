@@ -10,6 +10,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 const CLASSES = ['6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Dropper', 'College'];
+const COUNTRIES = [
+  'India', 'United States', 'United Kingdom', 'Canada', 'Australia', 'United Arab Emirates',
+  'Singapore', 'Nepal', 'Bangladesh', 'Pakistan', 'Sri Lanka', 'Saudi Arabia', 'Qatar',
+  'Germany', 'France', 'Netherlands', 'South Africa', 'Nigeria', 'Kenya', 'Malaysia',
+  'Indonesia', 'Philippines', 'Japan', 'South Korea', 'China', 'Brazil', 'Mexico', 'Other'
+];
 
 export default function AuthPage() {
   const { signInAnonymously } = useAuth();
@@ -17,6 +23,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [studentClass, setStudentClass] = useState('');
+  const [country, setCountry] = useState('');
   const [school, setSchool] = useState('');
   const [phone, setPhone] = useState('');
 
@@ -24,8 +31,9 @@ export default function AuthPage() {
     e.preventDefault();
     if (!name.trim()) { toast.error('Please enter your name'); return; }
     if (!studentClass) { toast.error('Please select your class'); return; }
+    if (!country) { toast.error('Please select your country'); return; }
     setLoading(true);
-    const { error } = await signInAnonymously(name.trim(), studentClass, school.trim(), phone.trim());
+    const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
     setLoading(false);
     if (error) { toast.error(error.message); return; }
     toast.success(`Welcome, ${name}! 🎉`);
@@ -76,6 +84,18 @@ export default function AuthPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="country">Country *</Label>
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger className="rounded-xl h-11">
+                    <SelectValue placeholder="Select your country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>

@@ -15,6 +15,12 @@ import { toast } from 'sonner';
 
 const TARGET_EXAMS = ['NEET', 'JEE Main', 'JEE Advanced', 'UPSC', 'SSC', 'GATE', 'CAT', 'CLAT', 'CUET', 'Board Exams', 'Other'];
 const CLASSES = ['6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Dropper', 'College'];
+const COUNTRIES = [
+  'India', 'United States', 'United Kingdom', 'Canada', 'Australia', 'United Arab Emirates',
+  'Singapore', 'Nepal', 'Bangladesh', 'Pakistan', 'Sri Lanka', 'Saudi Arabia', 'Qatar',
+  'Germany', 'France', 'Netherlands', 'South Africa', 'Nigeria', 'Kenya', 'Malaysia',
+  'Indonesia', 'Philippines', 'Japan', 'South Korea', 'China', 'Brazil', 'Mexico', 'Other'
+];
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -23,6 +29,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [studentClass, setStudentClass] = useState('');
   const [school, setSchool] = useState('');
+  const [country, setCountry] = useState('');
   const [phone, setPhone] = useState('');
   const [targetExam, setTargetExam] = useState('NEET');
   const [studyHoursGoal, setStudyHoursGoal] = useState(4);
@@ -45,6 +52,7 @@ export default function ProfilePage() {
       setDisplayName(data.display_name || '');
       setStudentClass((data as any).class || '');
       setSchool((data as any).school || '');
+      setCountry((data as any).country || '');
       setPhone((data as any).phone || '');
       setTargetExam(data.target_exam || 'NEET');
       setStudyHoursGoal(data.study_hours_goal || 4);
@@ -89,6 +97,7 @@ export default function ProfilePage() {
       display_name: displayName,
       class: studentClass,
       school,
+      country,
       phone,
       target_exam: targetExam,
       study_hours_goal: studyHoursGoal,
@@ -216,6 +225,15 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <Label>School / Institute</Label>
               <Input value={school} onChange={e => setSchool(e.target.value)} placeholder="Your school" className="rounded-xl h-11" maxLength={100} />
+            </div>
+            <div className="space-y-2">
+              <Label>Country</Label>
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select country" /></SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>Phone</Label>
