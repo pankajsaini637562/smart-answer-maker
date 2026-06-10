@@ -52,6 +52,7 @@ export default function ProfilePage() {
       setDisplayName(data.display_name || '');
       setStudentClass((data as any).class || '');
       setSchool((data as any).school || '');
+      setCountry((data as any).country || '');
       setPhone((data as any).phone || '');
       setTargetExam(data.target_exam || 'NEET');
       setStudyHoursGoal(data.study_hours_goal || 4);
