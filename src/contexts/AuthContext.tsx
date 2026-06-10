@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInAnonymously: (name: string, studentClass: string, school?: string, phone?: string) => Promise<{ error: any }>;
+  signInAnonymously: (name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
