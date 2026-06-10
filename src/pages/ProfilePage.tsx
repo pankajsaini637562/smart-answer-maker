@@ -97,6 +97,7 @@ export default function ProfilePage() {
       display_name: displayName,
       class: studentClass,
       school,
+      country,
       phone,
       target_exam: targetExam,
       study_hours_goal: studyHoursGoal,
