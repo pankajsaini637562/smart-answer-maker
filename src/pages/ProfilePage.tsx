@@ -227,6 +227,15 @@ export default function ProfilePage() {
               <Input value={school} onChange={e => setSchool(e.target.value)} placeholder="Your school" className="rounded-xl h-11" maxLength={100} />
             </div>
             <div className="space-y-2">
+              <Label>Country</Label>
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Select country" /></SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
               <Label>Phone</Label>
               <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" className="rounded-xl h-11" maxLength={15} />
             </div>
