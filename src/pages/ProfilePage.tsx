@@ -15,6 +15,12 @@ import { toast } from 'sonner';
 
 const TARGET_EXAMS = ['NEET', 'JEE Main', 'JEE Advanced', 'UPSC', 'SSC', 'GATE', 'CAT', 'CLAT', 'CUET', 'Board Exams', 'Other'];
 const CLASSES = ['6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Dropper', 'College'];
+const COUNTRIES = [
+  'India', 'United States', 'United Kingdom', 'Canada', 'Australia', 'United Arab Emirates',
+  'Singapore', 'Nepal', 'Bangladesh', 'Pakistan', 'Sri Lanka', 'Saudi Arabia', 'Qatar',
+  'Germany', 'France', 'Netherlands', 'South Africa', 'Nigeria', 'Kenya', 'Malaysia',
+  'Indonesia', 'Philippines', 'Japan', 'South Korea', 'China', 'Brazil', 'Mexico', 'Other'
+];
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
