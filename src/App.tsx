@@ -15,6 +15,13 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
+import LandingPage from "./pages/public/LandingPage";
+import AboutPage from "./pages/public/AboutPage";
+import BlogIndex from "./pages/public/BlogIndex";
+import BlogPost from "./pages/public/BlogPost";
+import PrivacyPage from "./pages/public/PrivacyPage";
+import TermsPage from "./pages/public/TermsPage";
+import ContactPage from "./pages/public/ContactPage";
 
 import NotFound from "./pages/NotFound";
 
@@ -34,10 +41,31 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Smart root: logged-in users see the Dashboard, guests see the public Landing page.
+// This keeps all existing in-app links to "/" working while exposing crawlable
+// content (required for AdSense and search indexing).
+function SmartRoot() {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  return user ? <Dashboard /> : <LandingPage />;
+}
+
 const AppRoutes = () => (
   <Routes>
+    {/* Public content (crawlable, ad-eligible) */}
+    <Route path="/" element={<SmartRoot />} />
+    <Route path="/about" element={<AboutPage />} />
+    <Route path="/blog" element={<BlogIndex />} />
+    <Route path="/blog/:slug" element={<BlogPost />} />
+    <Route path="/privacy" element={<PrivacyPage />} />
+    <Route path="/terms" element={<TermsPage />} />
+    <Route path="/contact" element={<ContactPage />} />
+
+    {/* Auth */}
     <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
-    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+    {/* Protected app */}
+    <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/create" element={<ProtectedRoute><CreateSheet /></ProtectedRoute>} />
     <Route path="/exam/:id" element={<ProtectedRoute><ExamPage /></ProtectedRoute>} />
     <Route path="/result/:attemptId" element={<ProtectedRoute><ResultPage /></ProtectedRoute>} />
@@ -46,6 +74,7 @@ const AppRoutes = () => (
     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
     <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
