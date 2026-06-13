@@ -1,7 +1,7 @@
 {
-  "name": "Exam Master — OMR Exam Practice",
-  "short_name": "Exam Master",
-  "description": "OMR practice sheets, instant scoring, analytics, and Study Chat — prep for your exams.",
+  "name": "Smart AI OMR Analysis",
+  "short_name": "Smart OMR",
+  "description": "AI-powered OMR analysis — practice sheets, instant scoring, analytics, and study chat.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
