@@ -48,7 +48,7 @@ export default function AuthPage() {
             EM
           </div>
           <h1 className="text-3xl font-bold font-display">
-            <span className="gradient-text">Exam Master</span>
+            <span className="gradient-text">Smart AI OMR Analysis</span>
           </h1>
           <p className="text-muted-foreground text-sm flex items-center justify-center gap-1">
             <Sparkles className="w-3.5 h-3.5" /> AI-Powered Smart Learning

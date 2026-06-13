@@ -24,7 +24,7 @@ export function AppHeader() {
               EM
             </div>
             <h1 className="text-xl font-bold font-display">
-              <span className="gradient-text">Exam Master</span>
+              <span className="gradient-text">Smart AI OMR Analysis</span>
             </h1>
           </Link>
 
