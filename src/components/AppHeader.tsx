@@ -23,9 +23,9 @@ export function AppHeader() {
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-sm" style={{ background: 'var(--gradient-primary)' }}>
               EM
             </div>
-            <h1 className="text-xl font-bold font-display">
+            <span className="text-xl font-bold font-display">
               <span className="gradient-text">Smart AI OMR Analysis</span>
-            </h1>
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
@@ -53,11 +53,12 @@ export function AppHeader() {
               {navItems.map((item) => {
                 const isActive = location.pathname === item.to;
                 return (
-                  <Link key={item.to} to={item.to}>
+                  <Link key={item.to} to={item.to} aria-label={item.label}>
                     <Button
                       variant={isActive ? 'default' : 'ghost'}
                       size="icon"
                       className="w-9 h-9"
+                      aria-label={item.label}
                     >
                       <item.icon className="w-4 h-4" />
                     </Button>
