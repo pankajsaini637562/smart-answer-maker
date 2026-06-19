@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AppHeader } from '@/components/AppHeader';
+import { SEO } from '@/components/SEO';
 import { saveSheet, generateId } from '@/lib/storage';
 import { OMRSheet, SUBJECTS } from '@/types/exam';
 import { toast } from 'sonner';
@@ -61,7 +62,9 @@ export default function CreateSheet() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Create OMR Sheet | Smart AI OMR Analysis" description="Design a new OMR practice sheet with custom subjects, timing, and negative marking." />
       <AppHeader />
+      <main>
 
       <div className="container py-6">
         <div className="flex items-center gap-3 mb-6 animate-fade-in">

@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AppHeader } from '@/components/AppHeader';
+import { SEO } from '@/components/SEO';
 import { getResults, deleteResult, getScoreboard, clearScoreboard } from '@/lib/storage';
 import { ExamResult, ScoreboardEntry } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
@@ -45,7 +46,9 @@ export default function HistoryPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Exam History | Smart AI OMR Analysis" description="Review past OMR attempts, scoreboard rankings, and detailed exam results." />
       <AppHeader />
+      <main>
 
       <div className="container py-6 space-y-8">
         <div className="animate-fade-in">

@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { AppHeader } from '@/components/AppHeader';
+import { SEO } from '@/components/SEO';
 import { getSheets, deleteSheet } from '@/lib/storage';
 import { OMRSheet } from '@/types/exam';
 import { formatDistanceToNow } from 'date-fns';
@@ -25,7 +26,9 @@ export default function SheetsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="My OMR Sheets | Smart AI OMR Analysis" description="Browse, manage, and launch your saved OMR practice sheets for exam prep." />
       <AppHeader />
+      <main>
 
       <div className="container py-6">
         <div className="flex items-center justify-between mb-6 animate-fade-in">
