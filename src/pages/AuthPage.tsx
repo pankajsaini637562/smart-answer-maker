@@ -138,7 +138,7 @@ export default function AuthPage() {
             </CardContent>
           </form>
         </Card>
-      </div>
+      </main>
     </div>
   );
 }
