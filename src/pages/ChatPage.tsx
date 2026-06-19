@@ -699,7 +699,7 @@ export default function ChatPage() {
             )}
           </Card>
         </div>
-      </div>
+      </main>
 
       {/* Invite dialog */}
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
