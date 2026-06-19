@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { AppHeader } from '@/components/AppHeader';
+import { SEO } from '@/components/SEO';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -123,6 +124,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
+        <SEO title="Profile | Smart AI OMR Analysis" description="Manage your profile, academic details, and account settings." noindex />
         <AppHeader />
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -142,7 +144,7 @@ export default function ProfilePage() {
       </div>
 
       <AppHeader />
-      <div className="container py-6 max-w-2xl space-y-6">
+      <main className="container py-6 max-w-2xl space-y-6">
         <div className="flex items-center gap-3 animate-fade-in">
           <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
@@ -266,7 +268,7 @@ export default function ProfilePage() {
         <Button variant="outline" onClick={handleSignOut} className="w-full rounded-xl h-11 gap-2 text-destructive hover:text-destructive hover:bg-destructive/5">
           <LogOut className="w-4 h-4" /> Sign Out
         </Button>
-      </div>
+      </main>
     </div>
   );
 }

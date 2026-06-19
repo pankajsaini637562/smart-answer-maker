@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ReportCard } from '@/components/ReportCard';
 import { ShareModal } from '@/components/ShareModal';
 import { XPNotification } from '@/components/XPNotification';
+import { SEO } from '@/components/SEO';
 import { getResult, getSheet } from '@/lib/storage';
 import { recordExamCompletion, getXPProgress, getLevelFromXP } from '@/lib/gamification';
 import { updateAdaptiveProfile } from '@/lib/adaptiveEngine';
@@ -76,6 +77,7 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Exam Result | Smart AI OMR Analysis" description="View your scored OMR result with grade, analytics, and shareable report card." noindex />
       <header className="border-b bg-card print:hidden">
         <div className="container py-4">
           <div className="flex items-center justify-between">

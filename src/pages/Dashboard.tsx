@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
 import { AppHeader } from '@/components/AppHeader';
+import { SEO } from '@/components/SEO';
 import { GamificationBar } from '@/components/GamificationBar';
 import { BadgesGrid } from '@/components/BadgesGrid';
 import { getSheets, getScoreboard, getResults } from '@/lib/storage';
@@ -42,6 +43,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Dashboard | Smart AI OMR Analysis" description="Track scores, streaks, and study progress on your AI-powered OMR practice dashboard." />
       <AppHeader />
 
       {/* Hero Section */}

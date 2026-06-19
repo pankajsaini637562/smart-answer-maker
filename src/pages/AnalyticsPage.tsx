@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppHeader } from '@/components/AppHeader';
+import { SEO } from '@/components/SEO';
 import { TopicAnalyticsCard } from '@/components/TopicAnalyticsCard';
 import { TopicComparisonView } from '@/components/TopicComparisonView';
 import { WeakTopicHeatmap } from '@/components/WeakTopicHeatmap';
@@ -155,6 +156,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="AI Analytics | Smart AI OMR Analysis" description="Smart performance insights, topic mastery, and predictive score analytics." />
       <AppHeader />
       <main className="container py-8 space-y-6">
         {/* Header */}

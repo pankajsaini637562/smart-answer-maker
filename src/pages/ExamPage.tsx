@@ -9,6 +9,7 @@ import { QuestionRow } from '@/components/QuestionRow';
 import { Timer } from '@/components/Timer';
 import { NavigationGrid } from '@/components/NavigationGrid';
 import { AnswerKeyInput } from '@/components/AnswerKeyInput';
+import { SEO } from '@/components/SEO';
 import { getSheet, saveSheet, saveAttempt, getInProgressAttempt, generateId, saveResult } from '@/lib/storage';
 import { OMRSheet, ExamAttempt, ExamResult, QuestionResult } from '@/types/exam';
 import { toast } from 'sonner';
@@ -235,6 +236,7 @@ export default function ExamPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Take Exam | Smart AI OMR Analysis" description="Attempt your OMR exam with live timer and bubble selection." noindex />
       {/* Header */}
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container py-3">
