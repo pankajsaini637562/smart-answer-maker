@@ -268,7 +268,7 @@ export default function ProfilePage() {
         <Button variant="outline" onClick={handleSignOut} className="w-full rounded-xl h-11 gap-2 text-destructive hover:text-destructive hover:bg-destructive/5">
           <LogOut className="w-4 h-4" /> Sign Out
         </Button>
-      </div>
+      </main>
     </div>
   );
 }
