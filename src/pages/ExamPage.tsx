@@ -9,6 +9,7 @@ import { QuestionRow } from '@/components/QuestionRow';
 import { Timer } from '@/components/Timer';
 import { NavigationGrid } from '@/components/NavigationGrid';
 import { AnswerKeyInput } from '@/components/AnswerKeyInput';
+import { SEO } from '@/components/SEO';
 import { getSheet, saveSheet, saveAttempt, getInProgressAttempt, generateId, saveResult } from '@/lib/storage';
 import { OMRSheet, ExamAttempt, ExamResult, QuestionResult } from '@/types/exam';
 import { toast } from 'sonner';

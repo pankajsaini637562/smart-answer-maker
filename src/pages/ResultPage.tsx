@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ReportCard } from '@/components/ReportCard';
 import { ShareModal } from '@/components/ShareModal';
 import { XPNotification } from '@/components/XPNotification';
+import { SEO } from '@/components/SEO';
 import { getResult, getSheet } from '@/lib/storage';
 import { recordExamCompletion, getXPProgress, getLevelFromXP } from '@/lib/gamification';
 import { updateAdaptiveProfile } from '@/lib/adaptiveEngine';
