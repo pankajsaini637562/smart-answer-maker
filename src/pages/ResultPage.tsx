@@ -77,6 +77,7 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Exam Result | Smart AI OMR Analysis" description="View your scored OMR result with grade, analytics, and shareable report card." noindex />
       <header className="border-b bg-card print:hidden">
         <div className="container py-4">
           <div className="flex items-center justify-between">

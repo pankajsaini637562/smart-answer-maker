@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { SEO } from '@/components/SEO';
 
 const CLASSES = ['6th', '7th', '8th', '9th', '10th', '11th', '12th', 'Dropper', 'College'];
 const COUNTRIES = [
@@ -42,7 +43,8 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+      <SEO title="Sign In | Smart AI OMR Analysis" description="Sign in with your name and class to start AI-powered OMR practice." />
+      <main className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2 animate-fade-in">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-primary-foreground font-bold text-xl mx-auto" style={{ background: 'var(--gradient-primary)' }}>
             EM

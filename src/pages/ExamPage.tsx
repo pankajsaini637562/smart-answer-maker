@@ -236,6 +236,7 @@ export default function ExamPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Take Exam | Smart AI OMR Analysis" description="Attempt your OMR exam with live timer and bubble selection." noindex />
       {/* Header */}
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container py-3">
