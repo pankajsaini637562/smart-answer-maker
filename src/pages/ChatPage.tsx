@@ -422,8 +422,9 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Study Chat | Smart AI OMR Analysis" description="Collaborate with study groups and chat with the AI coach for exam doubts." />
       <AppHeader />
-      <div className="container mx-auto px-2 sm:px-4 py-4 max-w-6xl">
+      <main className="container mx-auto px-2 sm:px-4 py-4 max-w-6xl">
         <div className="grid grid-cols-1 md:grid-cols-[320px,1fr] gap-3">
           {/* LEFT: tabs (chats / discover / profile) */}
           <Card className={`md:h-[78vh] h-[calc(100vh-160px)] flex flex-col ${activeGroup ? 'hidden md:flex' : 'flex'}`}>
