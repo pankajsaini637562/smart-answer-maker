@@ -280,10 +280,33 @@ export default function ChatPage() {
     const file = e.target.files?.[0];
     if (!file || !user || !activeGroup) return;
     if (file.size > 20 * 1024 * 1024) { toast.error('Max 20MB'); return; }
+
+    // MIME allowlist — block HTML/SVG/scripts that browsers would render inline from a signed URL
+    const ALLOWED_MIME = [
+      'application/pdf',
+      'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'text/plain', 'text/csv',
+      'application/zip',
+    ];
+    if (!ALLOWED_MIME.includes(file.type)) {
+      toast.error('File type not allowed. Use PDF, image, Office, text, or zip files.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     setUploading(true);
     try {
       const path = `${activeGroup.id}/${Date.now()}-${file.name}`;
-      const { error: upErr } = await supabase.storage.from('group-files').upload(path, file);
+      // Force octet-stream so browsers download instead of rendering inline (defense-in-depth vs stored XSS)
+      const { error: upErr } = await supabase.storage.from('group-files').upload(path, file, {
+        contentType: 'application/octet-stream',
+      });
       if (upErr) throw upErr;
       const { error: insErr } = await supabase.from('group_files').insert({
         group_id: activeGroup.id,
@@ -303,6 +326,7 @@ export default function ChatPage() {
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
+
 
   const downloadFile = async (f: GroupFile) => {
     const { data, error } = await supabase.storage.from('group-files').createSignedUrl(f.file_path, 60);
