@@ -1,34 +1,77 @@
-## Why your site isn't showing in Google yet
+## Build Commands for This Project (GitHub / Local)
 
-Your site `smart-answer-maker.lovable.app` is **verified in Search Console**, but verification ≠ indexing. Google has to *crawl* and *index* the site before it appears in search results. For a brand-new site this typically takes **1–4 weeks**, sometimes longer for a `.lovable.app` subdomain (lower domain authority than a custom domain).
+This is a standard **Vite + React + TypeScript** project. After cloning from GitHub:
 
-## What I'll do to speed it up
+### 1. Prerequisites
+- Node.js 18+ and npm (install via [nvm](https://github.com/nvm-sh/nvm))
 
-1. **Submit the sitemap to Search Console** via the API
-   - Endpoint: `PUT /webmasters/v3/sites/{site}/sitemaps/{feedpath}`
-   - Feed: `https://smart-answer-maker.lovable.app/sitemap.xml`
-   - This tells Google exactly which URLs to crawl.
+### 2. Install dependencies
+```sh
+npm install
+```
 
-2. **Request indexing for the homepage** (URL Inspection / Indexing API where available) — note: Google's Indexing API officially only supports JobPosting/BroadcastEvent, so the reliable path is sitemap submission + waiting. I'll submit the sitemap and confirm it's accepted.
+### 3. Development (local preview with hot reload)
+```sh
+npm run dev
+```
+Runs on `http://localhost:8080`
 
-3. **Expand `public/sitemap.xml`** to include more routes so Google discovers the full app:
-   - `/`, `/auth`, plus public pages found in `src/App.tsx` routes (Dashboard, Sheets, Analytics, History, Profile, Chat, CreateSheet — only those that should be public/indexable).
-   - I'll read `src/App.tsx` first to pick the right set; auth-gated routes will be excluded or kept `noindex`.
+### 4. Production build
+```sh
+npm run build
+```
+Outputs static files to `dist/`
 
-4. **Strengthen on-page SEO signals** so when Google does crawl, ranking improves for "smart answer maker" / "smart ai omr analysis":
-   - Add the brand phrase "Smart Answer Maker" explicitly into the `<title>` and meta description in `index.html` (currently only "Smart AI OMR Analysis" appears).
-   - Add it to `og:title` and the JSON-LD `name` / `alternateName`.
+### 5. Development-mode build (with extra debug info)
+```sh
+npm run build:dev
+```
 
-## What you should do
+### 6. Preview the production build locally
+```sh
+npm run preview
+```
 
-- **Be patient** — even with all of the above, first appearance in Google can take 1–3 weeks.
-- **Consider a custom domain** (e.g. `smartanswermaker.com`). Subdomains on shared hosts like `*.lovable.app` rank weaker and slower than your own domain.
-- **Get backlinks** — share the URL on social media, forums (Reddit r/NEET, Quora), and student communities. Backlinks are the #1 signal that accelerates indexing.
+### 7. Lint
+```sh
+npm run lint
+```
 
-## Technical details
+### 8. Run tests
+```sh
+npm test
+```
 
-- Files touched: `index.html` (title/description/JSON-LD), `public/sitemap.xml` (add routes).
-- API call: `PUT https://connector-gateway.lovable.dev/google_search_console/webmasters/v3/sites/https%3A%2F%2Fsmart-answer-maker.lovable.app%2F/sitemaps/https%3A%2F%2Fsmart-answer-maker.lovable.app%2Fsitemap.xml`
-- No backend or schema changes.
+---
 
-Approve to proceed.
+### Deploying the `dist/` folder
+The `dist/` output is plain static files — deploy to any static host:
+- **Vercel / Netlify**: connect the GitHub repo, framework = Vite, build = `npm run build`, output = `dist`
+- **GitHub Pages / Cloudflare Pages**: same build settings
+- **Self-hosted**: serve `dist/` with nginx/Caddy/any static server
+
+---
+
+### Android (Capacitor) build
+If you want the Android APK/AAB (Play Store), see `android-signing-template/README.md`. Short version after `npm run build`:
+```sh
+npx cap add android       # first time only
+npx cap sync android
+cd android && ./gradlew assembleRelease     # APK
+cd android && ./gradlew bundleRelease       # AAB for Play Store
+```
+
+---
+
+### Required environment variables (`.env` at project root)
+The Lovable Cloud backend needs these — copy them from the existing `.env` in Lovable, or from your backend project:
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+VITE_SUPABASE_PROJECT_ID=...
+```
+Without these, the app builds but auth/database calls fail at runtime.
+
+---
+
+Let me know if you want me to add a `README.md` update, a GitHub Actions CI workflow (auto-build on push), or Vercel/Netlify config files.
