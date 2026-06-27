@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://smart-answer-maker.lovable.app/sitemap.xml
+Sitemap: https://smartaiomranalyis.lovable.app/sitemap.xml
