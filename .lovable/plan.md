@@ -1,77 +1,44 @@
-## Build Commands for This Project (GitHub / Local)
+## Goal
+Boost Google rankings and visibility for **Smart AI OMR Analysis** (smartaiomranalyis.lovable.app) with stronger on-page SEO, richer structured data, and better discoverability.
 
-This is a standard **Vite + React + TypeScript** project. After cloning from GitHub:
+## What I'll do
 
-### 1. Prerequisites
-- Node.js 18+ and npm (install via [nvm](https://github.com/nvm-sh/nvm))
+### 1. Stronger on-page metadata (`index.html`)
+- Rewrite `<title>` with high-intent keywords: "Smart AI OMR Analysis — Free OMR Sheet Checker & Answer Maker Online"
+- Expand `<meta name="description">` (~155 chars) with keywords: OMR scanner, answer sheet checker, exam analysis, MCQ test, free.
+- Add `<meta name="keywords">` (smart ai omr, omr sheet checker, answer maker, mcq scanner, exam analysis app, etc.)
+- Add `<meta name="author">`, `theme-color`, `application-name`.
+- Add complete Open Graph + Twitter Card tags (title, description, image, url, type, site_name).
+- Add `hreflang="en"` and `<meta name="language">`.
 
-### 2. Install dependencies
-```sh
-npm install
-```
+### 2. Richer JSON-LD structured data
+- **WebSite** schema with `SearchAction` (Google sitelinks search box).
+- **SoftwareApplication** schema (category: EducationalApplication, free, rating).
+- **Organization** schema with logo + sameAs.
+- **FAQPage** schema answering top queries ("What is Smart AI OMR?", "How to scan OMR sheet?", "Is it free?").
+- **BreadcrumbList** for main routes.
 
-### 3. Development (local preview with hot reload)
-```sh
-npm run dev
-```
-Runs on `http://localhost:8080`
+### 3. Per-route SEO via existing `SEO` component
+- Audit each public page (Auth, Create, Sheets, History, Analytics, Chat, Profile) — ensure unique keyword-rich titles and descriptions targeting long-tail queries.
 
-### 4. Production build
-```sh
-npm run build
-```
-Outputs static files to `dist/`
+### 4. Semantic content boost on landing/auth page
+- Add an SEO-friendly hidden-but-visible content section (h1, h2, short intro paragraph) describing the product, features, and use cases — gives Google crawlable text. (Frontend only, no business logic change.)
 
-### 5. Development-mode build (with extra debug info)
-```sh
-npm run build:dev
-```
+### 5. Sitemap & robots refresh
+- Update `public/sitemap.xml` with fresh `lastmod`, priorities, changefreq.
+- Confirm `robots.txt` allows crawl + points to sitemap.
 
-### 6. Preview the production build locally
-```sh
-npm run preview
-```
+### 6. Submit to Google
+- Use Search Console connector to resubmit sitemap and request URL inspection/indexing for `/` and `/auth`.
 
-### 7. Lint
-```sh
-npm run lint
-```
+## What I won't touch
+- Backend logic, auth, database, payments.
+- Existing AdSense / Analytics tags.
+- Branding (name stays Smart AI OMR Analysis).
 
-### 8. Run tests
-```sh
-npm test
-```
+## Expected outcome
+- Pages indexed faster with brand + keyword queries (smart ai omr, smart answer maker, omr checker).
+- Rich result eligibility (sitelinks search box, FAQ rich snippet, app rating).
+- Stronger social previews.
 
----
-
-### Deploying the `dist/` folder
-The `dist/` output is plain static files — deploy to any static host:
-- **Vercel / Netlify**: connect the GitHub repo, framework = Vite, build = `npm run build`, output = `dist`
-- **GitHub Pages / Cloudflare Pages**: same build settings
-- **Self-hosted**: serve `dist/` with nginx/Caddy/any static server
-
----
-
-### Android (Capacitor) build
-If you want the Android APK/AAB (Play Store), see `android-signing-template/README.md`. Short version after `npm run build`:
-```sh
-npx cap add android       # first time only
-npx cap sync android
-cd android && ./gradlew assembleRelease     # APK
-cd android && ./gradlew bundleRelease       # AAB for Play Store
-```
-
----
-
-### Required environment variables (`.env` at project root)
-The Lovable Cloud backend needs these — copy them from the existing `.env` in Lovable, or from your backend project:
-```
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_PUBLISHABLE_KEY=...
-VITE_SUPABASE_PROJECT_ID=...
-```
-Without these, the app builds but auth/database calls fail at runtime.
-
----
-
-Let me know if you want me to add a `README.md` update, a GitHub Actions CI workflow (auto-build on push), or Vercel/Netlify config files.
+Approve to implement.
