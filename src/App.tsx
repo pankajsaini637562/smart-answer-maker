@@ -45,6 +45,7 @@ function HomeRoute() {
 const AppRoutes = () => (
   <Routes>
     <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/" element={<HomeRoute />} />
     <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/create" element={<ProtectedRoute><CreateSheet /></ProtectedRoute>} />
