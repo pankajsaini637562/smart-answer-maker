@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, GraduationCap, Loader2 } from 'lucide-react';
+import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { SEO } from '@/components/SEO';
@@ -19,31 +20,63 @@ const COUNTRIES = [
 ];
 
 export default function AuthPage() {
-  const { signInAnonymously } = useAuth();
+  const { signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
+
+  // Sign up
   const [name, setName] = useState('');
   const [studentClass, setStudentClass] = useState('');
   const [country, setCountry] = useState('');
   const [school, setSchool] = useState('');
   const [phone, setPhone] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Shared
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) { toast.error('Please enter your name'); return; }
-    if (!studentClass) { toast.error('Please select your class'); return; }
-    if (!country) { toast.error('Please select your country'); return; }
+    if (!name.trim()) return toast.error('Please enter your name');
+    if (!studentClass) return toast.error('Please select your class');
+    if (!country) return toast.error('Please select your country');
+    if (!email.trim()) return toast.error('Please enter your email');
+    if (password.length < 6) return toast.error('Password must be at least 6 characters');
     setLoading(true);
-    const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
+    const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
     setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success(`Welcome, ${name}! 🎉`);
+    if (error) return toast.error(error.message);
+    toast.success('Account created! Check your email to confirm, then sign in.');
+    setMode('signin');
+    setPassword('');
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password) return toast.error('Enter your email and password');
+    setLoading(true);
+    const { error } = await signIn(email.trim(), password);
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success('Welcome back! 🎉');
     navigate('/');
+  };
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return toast.error('Enter your email');
+    setLoading(true);
+    const { error } = await resetPassword(email.trim());
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success('Password reset link sent! Check your email.');
+    setMode('signin');
   };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <SEO title="Sign In | Smart AI OMR Analysis" description="Sign in with your name and class to start AI-powered OMR practice." />
+      <SEO title="Sign In | Smart AI OMR Analysis" description="Sign in or create your free Smart AI OMR account to start AI-powered exam practice." />
       <main className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2 animate-fade-in">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-primary-foreground font-bold text-xl mx-auto" style={{ background: 'var(--gradient-primary)' }}>
@@ -58,85 +91,122 @@ export default function AuthPage() {
         </div>
 
         <Card className="modern-card animate-slide-up">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="font-display flex items-center justify-center gap-2">
-              <GraduationCap className="w-5 h-5 text-primary" /> Get Started
-            </CardTitle>
-            <CardDescription>Enter your details to begin</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Your Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="e.g. Rahul Sharma"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="rounded-xl h-11"
-                  maxLength={50}
-                />
-              </div>
+          {mode === 'forgot' ? (
+            <>
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="font-display">Reset your password</CardTitle>
+                <CardDescription>We'll email you a secure reset link.</CardDescription>
+              </CardHeader>
+              <form onSubmit={handleForgot}>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email-forgot">Email</Label>
+                    <Input id="email-forgot" type="email" value={email} onChange={e => setEmail(e.target.value)} className="rounded-xl h-11" placeholder="you@example.com" />
+                  </div>
+                  <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                    Send reset link
+                  </Button>
+                  <button type="button" onClick={() => setMode('signin')} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mx-auto">
+                    <ArrowLeft className="w-3 h-3" /> Back to sign in
+                  </button>
+                </CardContent>
+              </form>
+            </>
+          ) : (
+            <Tabs value={mode} onValueChange={(v) => setMode(v as 'signin' | 'signup')}>
+              <TabsList className="grid w-full grid-cols-2 m-4 mb-0 w-[calc(100%-2rem)]">
+                <TabsTrigger value="signin">Sign in</TabsTrigger>
+                <TabsTrigger value="signup">Create account</TabsTrigger>
+              </TabsList>
 
-              <div className="space-y-2">
-                <Label htmlFor="class">Class *</Label>
-                <Select value={studentClass} onValueChange={setStudentClass}>
-                  <SelectTrigger className="rounded-xl h-11">
-                    <SelectValue placeholder="Select your class" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+              <TabsContent value="signin" className="mt-0">
+                <CardHeader className="text-center pb-2">
+                  <CardTitle className="font-display flex items-center justify-center gap-2">
+                    <GraduationCap className="w-5 h-5 text-primary" /> Welcome back
+                  </CardTitle>
+                  <CardDescription>Sign in with your email and password</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleSignIn}>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email-in">Email</Label>
+                      <Input id="email-in" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="rounded-xl h-11" placeholder="you@example.com" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password-in">Password</Label>
+                        <button type="button" onClick={() => setMode('forgot')} className="text-xs text-primary hover:underline">
+                          Forgot password?
+                        </button>
+                      </div>
+                      <Input id="password-in" type="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" placeholder="••••••••" />
+                    </div>
+                    <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+                      Sign in
+                    </Button>
+                  </CardContent>
+                </form>
+              </TabsContent>
 
-              <div className="space-y-2">
-                <Label htmlFor="country">Country *</Label>
-                <Select value={country} onValueChange={setCountry}>
-                  <SelectTrigger className="rounded-xl h-11">
-                    <SelectValue placeholder="Select your country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="school">School / Institute (optional)</Label>
-                <Input
-                  id="school"
-                  placeholder="e.g. Delhi Public School"
-                  value={school}
-                  onChange={e => setSchool(e.target.value)}
-                  className="rounded-xl h-11"
-                  maxLength={100}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone (optional)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="e.g. 9876543210"
-                  value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  className="rounded-xl h-11"
-                  maxLength={15}
-                />
-              </div>
-
-              <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
-                {loading ? 'Setting up…' : 'Start Learning'}
-              </Button>
-
-              <p className="text-[11px] text-muted-foreground text-center">
-                No email or password needed. Just enter your details and go!
-              </p>
-            </CardContent>
-          </form>
+              <TabsContent value="signup" className="mt-0">
+                <CardHeader className="text-center pb-2">
+                  <CardTitle className="font-display flex items-center justify-center gap-2">
+                    <GraduationCap className="w-5 h-5 text-primary" /> Create your account
+                  </CardTitle>
+                  <CardDescription>We'll email a confirmation so you can sign in anywhere.</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleSignUp}>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Your Name *</Label>
+                      <Input id="name" placeholder="e.g. Rahul Sharma" value={name} onChange={e => setName(e.target.value)} className="rounded-xl h-11" maxLength={50} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="class">Class *</Label>
+                        <Select value={studentClass} onValueChange={setStudentClass}>
+                          <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Class" /></SelectTrigger>
+                          <SelectContent>{CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="country">Country *</Label>
+                        <Select value={country} onValueChange={setCountry}>
+                          <SelectTrigger className="rounded-xl h-11"><SelectValue placeholder="Country" /></SelectTrigger>
+                          <SelectContent>{COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="school">School / Institute (optional)</Label>
+                      <Input id="school" placeholder="e.g. Delhi Public School" value={school} onChange={e => setSchool(e.target.value)} className="rounded-xl h-11" maxLength={100} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone (optional)</Label>
+                      <Input id="phone" type="tel" placeholder="e.g. 9876543210" value={phone} onChange={e => setPhone(e.target.value)} className="rounded-xl h-11" maxLength={15} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email-up">Email *</Label>
+                      <Input id="email-up" type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} className="rounded-xl h-11" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password-up">Password *</Label>
+                      <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" minLength={6} />
+                    </div>
+                    <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
+                      Create account
+                    </Button>
+                    <p className="text-[11px] text-muted-foreground text-center">
+                      You'll receive a confirmation email at your address.
+                    </p>
+                  </CardContent>
+                </form>
+              </TabsContent>
+            </Tabs>
+          )}
         </Card>
       </main>
     </div>

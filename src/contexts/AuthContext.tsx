@@ -6,6 +6,10 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  signUp: (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
   signInAnonymously: (name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -33,13 +37,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const signUp = async (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string) => {
+    const redirectUrl = `${window.location.origin}/`;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: { display_name: name, class: studentClass, country, school: school || '', phone: phone || '' },
+      },
+    });
+    if (error) return { error };
+
+    if (data.user) {
+      await supabase.from('profiles').update({
+        display_name: name,
+        class: studentClass,
+        country,
+        school: school || '',
+        phone: phone || '',
+        updated_at: new Date().toISOString(),
+      } as any).eq('id', data.user.id);
+    }
+    return { error: null };
+  };
+
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
+  };
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error };
+  };
+
   const signInAnonymously = async (name: string, studentClass: string, country: string, school?: string, phone?: string) => {
     const { data, error } = await supabase.auth.signInAnonymously({
       options: { data: { display_name: name } },
     });
     if (error) return { error };
 
-    // Update profile with student details
     if (data.user) {
       await supabase.from('profiles').update({
         display_name: name,
@@ -59,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInAnonymously, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, resetPassword, updatePassword, signInAnonymously, signOut }}>
       {children}
     </AuthContext.Provider>
   );

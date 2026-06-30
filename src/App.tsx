@@ -16,6 +16,7 @@ import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,7 @@ function HomeRoute() {
 const AppRoutes = () => (
   <Routes>
     <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/" element={<HomeRoute />} />
     <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/create" element={<ProtectedRoute><CreateSheet /></ProtectedRoute>} />
