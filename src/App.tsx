@@ -15,6 +15,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
+import LandingPage from "./pages/LandingPage";
 
 import NotFound from "./pages/NotFound";
 
@@ -30,14 +31,21 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to="/app" replace />;
   return <>{children}</>;
+}
+
+function HomeRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  return user ? <Dashboard /> : <LandingPage />;
 }
 
 const AppRoutes = () => (
   <Routes>
     <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
-    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+    <Route path="/" element={<HomeRoute />} />
+    <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/create" element={<ProtectedRoute><CreateSheet /></ProtectedRoute>} />
     <Route path="/exam/:id" element={<ProtectedRoute><ExamPage /></ProtectedRoute>} />
     <Route path="/result/:attemptId" element={<ProtectedRoute><ResultPage /></ProtectedRoute>} />
