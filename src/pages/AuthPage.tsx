@@ -179,7 +179,7 @@ export default function AuthPage() {
                   <CardTitle className="font-display flex items-center justify-center gap-2">
                     <GraduationCap className="w-5 h-5 text-primary" /> Create your account
                   </CardTitle>
-                  <CardDescription>We'll email a confirmation so you can sign in anywhere.</CardDescription>
+                  <CardDescription>Email &amp; password are optional — add them to sign in from other devices.</CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSignUp}>
                   <CardContent className="space-y-4">
