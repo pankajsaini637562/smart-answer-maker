@@ -362,17 +362,29 @@ export default function ChatPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { toast.error('Max 5MB'); return; }
-    if (!file.type.startsWith('image/')) { toast.error('Please pick an image'); return; }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Only JPG, PNG, WebP, or GIF images are allowed.');
+      return;
+    }
     setPendingAvatar(file);
   };
 
   const saveAvatar = async () => {
     if (!user || !pendingAvatar) return;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(pendingAvatar.type)) {
+      toast.error('Only JPG, PNG, WebP, or GIF images are allowed.');
+      return;
+    }
     setSavingAvatar(true);
     try {
       const ext = pendingAvatar.name.split('.').pop() || 'jpg';
       const path = `${user.id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, pendingAvatar, { upsert: true });
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, pendingAvatar, {
+        upsert: true,
+        contentType: pendingAvatar.type,
+      });
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
       const { error: updErr } = await supabase.from('profiles').update({ avatar_url: pub.publicUrl }).eq('id', user.id);
