@@ -212,19 +212,19 @@ export default function AuthPage() {
                       <Input id="phone" type="tel" placeholder="e.g. 9876543210" value={phone} onChange={e => setPhone(e.target.value)} className="rounded-xl h-11" maxLength={15} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email-up">Email *</Label>
+                      <Label htmlFor="email-up">Email (optional)</Label>
                       <Input id="email-up" type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} className="rounded-xl h-11" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password-up">Password *</Label>
-                      <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" minLength={6} />
+                      <Label htmlFor="password-up">Password (optional)</Label>
+                      <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" />
                     </div>
                     <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
                       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
                       Create account
                     </Button>
                     <p className="text-[11px] text-muted-foreground text-center">
-                      You'll receive a confirmation email at your address.
+                      Skip email &amp; password to start instantly. Add them to sign in from other devices — no verification needed.
                     </p>
                   </CardContent>
                 </form>
