@@ -20,7 +20,7 @@ const COUNTRIES = [
 ];
 
 export default function AuthPage() {
-  const { signUp, signIn, resetPassword } = useAuth();
+  const { signUp, signIn, resetPassword, signInAnonymously } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
