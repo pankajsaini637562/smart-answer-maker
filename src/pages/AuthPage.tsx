@@ -20,7 +20,7 @@ const COUNTRIES = [
 ];
 
 export default function AuthPage() {
-  const { signUp, signIn, resetPassword } = useAuth();
+  const { signUp, signIn, resetPassword, signInAnonymously } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
@@ -41,15 +41,39 @@ export default function AuthPage() {
     if (!name.trim()) return toast.error('Please enter your name');
     if (!studentClass) return toast.error('Please select your class');
     if (!country) return toast.error('Please select your country');
-    if (!email.trim()) return toast.error('Please enter your email');
-    if (password.length < 6) return toast.error('Password must be at least 6 characters');
+
+    const hasEmail = email.trim().length > 0;
+    const hasPassword = password.length > 0;
+
+    // If either email or password is provided, both are required (min 6 chars)
+    if (hasEmail || hasPassword) {
+      if (!hasEmail) return toast.error('Please enter your email (or leave both email and password blank)');
+      if (password.length < 6) return toast.error('Password must be at least 6 characters');
+    }
+
     setLoading(true);
-    const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success('Account created! Check your email to confirm, then sign in.');
-    setMode('signin');
-    setPassword('');
+    if (hasEmail && hasPassword) {
+      const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
+      setLoading(false);
+      if (error) return toast.error(error.message);
+      // Email is auto-confirmed — sign in immediately
+      const { error: signInErr } = await signIn(email.trim(), password);
+      if (signInErr) {
+        toast.success('Account created! Please sign in.');
+        setMode('signin');
+        setPassword('');
+        return;
+      }
+      toast.success('Welcome! 🎉');
+      navigate('/');
+    } else {
+      // No email/password — use anonymous auth so all features stay the same
+      const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
+      setLoading(false);
+      if (error) return toast.error(error.message);
+      toast.success('Welcome! 🎉');
+      navigate('/');
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -155,7 +179,7 @@ export default function AuthPage() {
                   <CardTitle className="font-display flex items-center justify-center gap-2">
                     <GraduationCap className="w-5 h-5 text-primary" /> Create your account
                   </CardTitle>
-                  <CardDescription>We'll email a confirmation so you can sign in anywhere.</CardDescription>
+                  <CardDescription>Email &amp; password are optional — add them to sign in from other devices.</CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSignUp}>
                   <CardContent className="space-y-4">
@@ -188,19 +212,19 @@ export default function AuthPage() {
                       <Input id="phone" type="tel" placeholder="e.g. 9876543210" value={phone} onChange={e => setPhone(e.target.value)} className="rounded-xl h-11" maxLength={15} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email-up">Email *</Label>
+                      <Label htmlFor="email-up">Email (optional)</Label>
                       <Input id="email-up" type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} className="rounded-xl h-11" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password-up">Password *</Label>
-                      <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" minLength={6} />
+                      <Label htmlFor="password-up">Password (optional)</Label>
+                      <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" />
                     </div>
                     <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
                       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
                       Create account
                     </Button>
                     <p className="text-[11px] text-muted-foreground text-center">
-                      You'll receive a confirmation email at your address.
+                      Skip email &amp; password to start instantly. Add them to sign in from other devices — no verification needed.
                     </p>
                   </CardContent>
                 </form>
