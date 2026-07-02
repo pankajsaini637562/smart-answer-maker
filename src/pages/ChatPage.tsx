@@ -199,8 +199,16 @@ export default function ChatPage() {
 
   // -------- Actions --------
   const uploadGroupAvatar = async (groupId: string, file: File): Promise<string | null> => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Only JPG, PNG, WebP, or GIF images are allowed.');
+      return null;
+    }
     const path = `group-avatars/${groupId}-${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    const { error } = await supabase.storage.from('avatars').upload(path, file, {
+      upsert: true,
+      contentType: file.type,
+    });
     if (error) { toast.error(error.message); return null; }
     const { data } = supabase.storage.from('avatars').getPublicUrl(path);
     return data.publicUrl;
