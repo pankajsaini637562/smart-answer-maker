@@ -41,15 +41,39 @@ export default function AuthPage() {
     if (!name.trim()) return toast.error('Please enter your name');
     if (!studentClass) return toast.error('Please select your class');
     if (!country) return toast.error('Please select your country');
-    if (!email.trim()) return toast.error('Please enter your email');
-    if (password.length < 6) return toast.error('Password must be at least 6 characters');
+
+    const hasEmail = email.trim().length > 0;
+    const hasPassword = password.length > 0;
+
+    // If either email or password is provided, both are required (min 6 chars)
+    if (hasEmail || hasPassword) {
+      if (!hasEmail) return toast.error('Please enter your email (or leave both email and password blank)');
+      if (password.length < 6) return toast.error('Password must be at least 6 characters');
+    }
+
     setLoading(true);
-    const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success('Account created! Check your email to confirm, then sign in.');
-    setMode('signin');
-    setPassword('');
+    if (hasEmail && hasPassword) {
+      const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
+      setLoading(false);
+      if (error) return toast.error(error.message);
+      // Email is auto-confirmed — sign in immediately
+      const { error: signInErr } = await signIn(email.trim(), password);
+      if (signInErr) {
+        toast.success('Account created! Please sign in.');
+        setMode('signin');
+        setPassword('');
+        return;
+      }
+      toast.success('Welcome! 🎉');
+      navigate('/');
+    } else {
+      // No email/password — use anonymous auth so all features stay the same
+      const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
+      setLoading(false);
+      if (error) return toast.error(error.message);
+      toast.success('Welcome! 🎉');
+      navigate('/');
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
