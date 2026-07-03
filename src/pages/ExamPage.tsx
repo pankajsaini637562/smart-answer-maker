@@ -67,16 +67,40 @@ export default function ExamPage() {
     }
   }, [id, navigate]);
 
-  // Auto-save every 10 seconds
+  // Keep latest values in refs so the auto-save interval doesn't need to be
+  // torn down every second when timeSpent updates.
+  const attemptRef = useRef(attempt);
+  const timeSpentRef = useRef(timeSpent);
+  useEffect(() => { attemptRef.current = attempt; }, [attempt]);
+  useEffect(() => { timeSpentRef.current = timeSpent; }, [timeSpent]);
+
+  // Auto-save every 5 seconds so elapsed time survives refresh/resume.
   useEffect(() => {
     if (!attempt) return;
-    
     const interval = setInterval(() => {
-      saveAttempt({ ...attempt, timeSpent });
-    }, 10000);
-
+      const current = attemptRef.current;
+      if (!current || current.status !== 'in-progress') return;
+      saveAttempt({ ...current, timeSpent: timeSpentRef.current });
+    }, 5000);
     return () => clearInterval(interval);
-  }, [attempt, timeSpent]);
+    // Only re-run when the attempt identity changes (new exam started).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attempt?.id]);
+
+  // Persist elapsed time when the tab is hidden or unloaded.
+  useEffect(() => {
+    const persist = () => {
+      const current = attemptRef.current;
+      if (!current || current.status !== 'in-progress') return;
+      saveAttempt({ ...current, timeSpent: timeSpentRef.current });
+    };
+    window.addEventListener('beforeunload', persist);
+    document.addEventListener('visibilitychange', persist);
+    return () => {
+      window.removeEventListener('beforeunload', persist);
+      document.removeEventListener('visibilitychange', persist);
+    };
+  }, []);
 
   const handleSelectAnswer = useCallback((optionIndex: number) => {
     if (!attempt) return;
