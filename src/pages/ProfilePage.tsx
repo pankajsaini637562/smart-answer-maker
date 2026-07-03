@@ -12,6 +12,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { SEO } from '@/components/SEO';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { getResults } from '@/lib/storage';
 import { toast } from 'sonner';
 
 const TARGET_EXAMS = ['NEET', 'JEE Main', 'JEE Advanced', 'UPSC', 'SSC', 'GATE', 'CAT', 'CLAT', 'CUET', 'Board Exams', 'Other'];
