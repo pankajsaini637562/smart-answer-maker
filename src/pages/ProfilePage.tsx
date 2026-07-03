@@ -12,6 +12,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { SEO } from '@/components/SEO';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { getResults } from '@/lib/storage';
 import { toast } from 'sonner';
 
 const TARGET_EXAMS = ['NEET', 'JEE Main', 'JEE Advanced', 'UPSC', 'SSC', 'GATE', 'CAT', 'CLAT', 'CUET', 'Board Exams', 'Other'];
@@ -83,10 +84,12 @@ export default function ProfilePage() {
   };
 
   const loadStats = async () => {
-    const { data: results } = await supabase.from('results').select('accuracy, time_spent').eq('user_id', user!.id);
-    if (results && results.length > 0) {
+    // Exam results are persisted client-side (see src/lib/storage.ts), matching
+    // Dashboard/History/Analytics. Read from the same source so counts agree.
+    const results = getResults();
+    if (results.length > 0) {
       const avg = Math.round(results.reduce((s, r) => s + Number(r.accuracy), 0) / results.length);
-      const total = results.reduce((s, r) => s + r.time_spent, 0);
+      const total = results.reduce((s, r) => s + r.timeSpent, 0);
       setStats({ totalExams: results.length, avgAccuracy: avg, totalTime: total });
     }
   };
