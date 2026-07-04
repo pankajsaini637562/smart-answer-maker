@@ -1,6 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
+
+function safeNext(raw: string | null): string {
+  if (!raw) return '/';
+  // Only allow same-origin relative paths.
+  if (!raw.startsWith('/') || raw.startsWith('//')) return '/';
+  return raw;
+}
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
