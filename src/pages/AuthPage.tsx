@@ -74,14 +74,14 @@ export default function AuthPage() {
         return;
       }
       toast.success('Welcome! 🎉');
-      navigate('/');
+      navigate(nextPath);
     } else {
       // No email/password — use anonymous auth so all features stay the same
       const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
       setLoading(false);
       if (error) return toast.error(error.message);
       toast.success('Welcome! 🎉');
-      navigate('/');
+      navigate(nextPath);
     }
   };
 
@@ -93,7 +93,7 @@ export default function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success('Welcome back! 🎉');
-    navigate('/');
+    navigate(nextPath);
   };
 
   const handleForgot = async (e: React.FormEvent) => {
