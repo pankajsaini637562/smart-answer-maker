@@ -1,6 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
+
+function safeNext(raw: string | null): string {
+  if (!raw) return '/';
+  // Only allow same-origin relative paths.
+  if (!raw.startsWith('/') || raw.startsWith('//')) return '/';
+  return raw;
+}
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +29,8 @@ const COUNTRIES = [
 export default function AuthPage() {
   const { signUp, signIn, resetPassword, signInAnonymously } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextPath = safeNext(searchParams.get('next'));
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
 
@@ -65,14 +74,14 @@ export default function AuthPage() {
         return;
       }
       toast.success('Welcome! 🎉');
-      navigate('/');
+      navigate(nextPath);
     } else {
       // No email/password — use anonymous auth so all features stay the same
       const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
       setLoading(false);
       if (error) return toast.error(error.message);
       toast.success('Welcome! 🎉');
-      navigate('/');
+      navigate(nextPath);
     }
   };
 
@@ -84,7 +93,7 @@ export default function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success('Welcome back! 🎉');
-    navigate('/');
+    navigate(nextPath);
   };
 
   const handleForgot = async (e: React.FormEvent) => {

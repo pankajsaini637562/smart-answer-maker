@@ -18,6 +18,7 @@ import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
+import OAuthConsentPage from "./pages/OAuthConsentPage";
 
 import NotFound from "./pages/NotFound";
 
@@ -33,7 +34,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
-  if (user) return <Navigate to="/app" replace />;
+  if (user) {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('next');
+    const target = raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/app';
+    return <Navigate to={target} replace />;
+  }
   return <>{children}</>;
 }
 
@@ -58,6 +64,7 @@ const AppRoutes = () => (
     <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/leaderboard" element={<LeaderboardPage />} />
+    <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
