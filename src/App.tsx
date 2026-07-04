@@ -17,6 +17,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 
 import NotFound from "./pages/NotFound";
 
