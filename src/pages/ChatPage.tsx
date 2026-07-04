@@ -204,7 +204,9 @@ export default function ChatPage() {
       toast.error('Only JPG, PNG, WebP, or GIF images are allowed.');
       return null;
     }
-    const path = `group-avatars/${groupId}-${Date.now()}-${file.name}`;
+    const extMap: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
+    const ext = extMap[file.type] || 'jpg';
+    const path = `group-avatars/${groupId}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from('avatars').upload(path, file, {
       upsert: true,
       contentType: file.type,
