@@ -17,6 +17,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +57,7 @@ const AppRoutes = () => (
     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
     <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+    <Route path="/leaderboard" element={<LeaderboardPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

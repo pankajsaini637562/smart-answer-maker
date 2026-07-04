@@ -436,6 +436,20 @@ export type Database = {
           id: string
         }[]
       }
+      get_leaderboard: {
+        Args: { _limit?: number }
+        Returns: {
+          avatar_url: string
+          class: string
+          country: string
+          display_name: string
+          level: number
+          streak: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }[]
+      }
       group_member_count: { Args: { _group_id: string }; Returns: number }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
