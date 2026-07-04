@@ -70,9 +70,10 @@ export default function ProfilePage() {
     if (!allowedTypes.includes(file.type)) { toast.error('Only JPEG, PNG, WebP or GIF images are allowed'); return; }
     if (file.size > 2 * 1024 * 1024) { toast.error('Image must be under 2 MB'); return; }
     setUploadingAvatar(true);
-    const ext = file.name.split('.').pop() || 'jpg';
+    const extMap: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
+    const ext = extMap[file.type] || 'jpg';
     const path = `${user.id}/avatar-${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
     if (upErr) { toast.error(upErr.message); setUploadingAvatar(false); return; }
     const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
     const url = pub.publicUrl;
