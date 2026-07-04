@@ -18,6 +18,7 @@ import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
+import OAuthConsentPage from "./pages/OAuthConsentPage";
 
 import NotFound from "./pages/NotFound";
 
