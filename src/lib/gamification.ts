@@ -1,6 +1,26 @@
 // Gamification System - XP, Levels, Badges, Streaks
+import { supabase } from '@/integrations/supabase/client';
 
 const GAMIFICATION_KEY = 'exam_master_gamification';
+
+// Sync local gamification state to Supabase so it appears on the public leaderboard.
+export async function syncGamificationToCloud(state: GamificationState): Promise<void> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase.from('gamification').upsert({
+      id: user.id,
+      xp: state.xp,
+      level: state.level,
+      streak: state.streak,
+      last_active_date: state.lastActiveDate || null,
+      badges: state.badges.filter(b => b.unlockedAt).map(b => b.id) as any,
+      updated_at: new Date().toISOString(),
+    } as any, { onConflict: 'id' });
+  } catch (e) {
+    console.warn('Leaderboard sync failed', e);
+  }
+}
 
 export interface Badge {
   id: string;
