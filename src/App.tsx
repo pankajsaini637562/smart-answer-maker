@@ -33,7 +33,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
-  if (user) return <Navigate to="/app" replace />;
+  if (user) {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('next');
+    const target = raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/app';
+    return <Navigate to={target} replace />;
+  }
   return <>{children}</>;
 }
 
