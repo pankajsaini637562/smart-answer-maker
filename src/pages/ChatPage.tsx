@@ -381,7 +381,8 @@ export default function ChatPage() {
     }
     setSavingAvatar(true);
     try {
-      const ext = pendingAvatar.name.split('.').pop() || 'jpg';
+      const extMap: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
+      const ext = extMap[pendingAvatar.type] || 'jpg';
       const path = `${user.id}/avatar-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from('avatars').upload(path, pendingAvatar, {
         upsert: true,
