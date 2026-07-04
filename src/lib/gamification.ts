@@ -248,6 +248,9 @@ export function refreshStreak(): GamificationState {
       saveState(state);
     }
   }
-  
+
+  // Ensure existing users appear on the leaderboard on app open
+  if (state.xp > 0) syncGamificationToCloud(state);
+
   return state;
 }
