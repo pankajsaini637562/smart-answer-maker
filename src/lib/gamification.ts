@@ -228,6 +228,8 @@ export function recordExamCompletion(accuracy: number, correct: number, timeSpen
   const leveledUp = state.level > oldLevel;
 
   saveState(state);
+  // Fire-and-forget cloud sync for the public leaderboard
+  syncGamificationToCloud(state);
   return { state, xpEarned, xpBreakdown: breakdown, newBadges, leveledUp };
 }
 
