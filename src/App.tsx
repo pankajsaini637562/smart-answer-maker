@@ -64,6 +64,7 @@ const AppRoutes = () => (
     <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/leaderboard" element={<LeaderboardPage />} />
+    <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
