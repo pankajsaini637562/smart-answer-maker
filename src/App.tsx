@@ -19,6 +19,13 @@ import LandingPage from "./pages/LandingPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import OAuthConsentPage from "./pages/OAuthConsentPage";
+import MaterialsPage from "./pages/MaterialsPage";
+import MaterialDetailPage from "./pages/MaterialDetailPage";
+import LibraryPage from "./pages/LibraryPage";
+import ReferPage from "./pages/ReferPage";
+import AdminPage from "./pages/AdminPage";
+import { useEffect } from "react";
+import { captureReferralFromUrl } from "./lib/referral";
 
 import NotFound from "./pages/NotFound";
 
