@@ -27,6 +27,7 @@ const COUNTRIES = [
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [displayName, setDisplayName] = useState('');
