@@ -19,6 +19,13 @@ import LandingPage from "./pages/LandingPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import OAuthConsentPage from "./pages/OAuthConsentPage";
+import MaterialsPage from "./pages/MaterialsPage";
+import MaterialDetailPage from "./pages/MaterialDetailPage";
+import LibraryPage from "./pages/LibraryPage";
+import ReferPage from "./pages/ReferPage";
+import AdminPage from "./pages/AdminPage";
+import { useEffect } from "react";
+import { captureReferralFromUrl } from "./lib/referral";
 
 import NotFound from "./pages/NotFound";
 
@@ -64,10 +71,20 @@ const AppRoutes = () => (
     <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/leaderboard" element={<LeaderboardPage />} />
+    <Route path="/materials" element={<MaterialsPage />} />
+    <Route path="/materials/:id" element={<MaterialDetailPage />} />
+    <Route path="/library" element={<ProtectedRoute><LibraryPage /></ProtectedRoute>} />
+    <Route path="/refer" element={<ProtectedRoute><ReferPage /></ProtectedRoute>} />
+    <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
     <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
+
+function ReferralCapture() {
+  useEffect(() => { captureReferralFromUrl(); }, []);
+  return null;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -77,6 +94,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ReferralCapture />
             <AppRoutes />
           </BrowserRouter>
         </TooltipProvider>

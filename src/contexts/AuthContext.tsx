@@ -1,6 +1,18 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { getPendingReferral, clearPendingReferral } from '@/lib/referral';
+
+async function attachReferralByCode(userId: string) {
+  const code = getPendingReferral();
+  if (!code) return;
+  const { data: referrer } = await supabase
+    .from('profiles').select('id').eq('referral_code', code).maybeSingle();
+  if (referrer?.id && referrer.id !== userId) {
+    await supabase.from('profiles').update({ referred_by: referrer.id } as any).eq('id', userId);
+  }
+  clearPendingReferral();
+}
 
 interface AuthContextType {
   user: User | null;
@@ -58,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
+      await attachReferralByCode(data.user.id);
     }
     return { error: null };
   };
@@ -94,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
+      await attachReferralByCode(data.user.id);
     }
 
     return { error: null };

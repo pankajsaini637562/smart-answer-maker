@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_emails: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
       attempts: {
         Row: {
           accuracy: number
@@ -228,6 +243,54 @@ export type Database = {
         }
         Relationships: []
       }
+      materials: {
+        Row: {
+          class: string | null
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_path: string
+          id: string
+          is_free: boolean
+          is_published: boolean
+          price_inr: number
+          subject: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          class?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_path: string
+          id?: string
+          is_free?: boolean
+          is_published?: boolean
+          price_inr?: number
+          subject?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          class?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_path?: string
+          id?: string
+          is_free?: boolean
+          is_published?: boolean
+          price_inr?: number
+          subject?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           created_at: string
@@ -272,6 +335,8 @@ export type Database = {
           display_name: string | null
           id: string
           phone: string | null
+          referral_code: string | null
+          referred_by: string | null
           school: string | null
           study_hours_goal: number | null
           target_exam: string | null
@@ -285,6 +350,8 @@ export type Database = {
           display_name?: string | null
           id: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           school?: string | null
           study_hours_goal?: number | null
           target_exam?: string | null
@@ -298,12 +365,121 @@ export type Database = {
           display_name?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           school?: string | null
           study_hours_goal?: number | null
           target_exam?: string | null
           updated_at?: string
         }
         Relationships: []
+      }
+      purchases: {
+        Row: {
+          admin_note: string | null
+          amount_inr: number
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          discount_percent: number
+          final_amount_inr: number
+          id: string
+          material_id: string
+          receipt_no: string | null
+          referrer_user_id: string | null
+          screenshot_path: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          utr: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          amount_inr: number
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          discount_percent?: number
+          final_amount_inr: number
+          id?: string
+          material_id: string
+          receipt_no?: string | null
+          referrer_user_id?: string | null
+          screenshot_path?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          utr?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          amount_inr?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          discount_percent?: number
+          final_amount_inr?: number
+          id?: string
+          material_id?: string
+          receipt_no?: string | null
+          referrer_user_id?: string | null
+          screenshot_path?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          utr?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_credits: {
+        Row: {
+          created_at: string
+          id: string
+          percent: number
+          source_purchase_id: string | null
+          used_purchase_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          percent?: number
+          source_purchase_id?: string | null
+          used_purchase_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          percent?: number
+          source_purchase_id?: string | null
+          used_purchase_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_credits_source_purchase_id_fkey"
+            columns: ["source_purchase_id"]
+            isOneToOne: false
+            referencedRelation: "purchases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_credits_used_purchase_id_fkey"
+            columns: ["used_purchase_id"]
+            isOneToOne: false
+            referencedRelation: "purchases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       results: {
         Row: {
@@ -421,6 +597,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_referral_code: { Args: never; Returns: string }
       get_group_by_invite: {
         Args: { _token: string }
         Returns: {
@@ -451,6 +628,7 @@ export type Database = {
         }[]
       }
       group_member_count: { Args: { _group_id: string }; Returns: number }
+      is_admin: { Args: { _uid: string }; Returns: boolean }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean

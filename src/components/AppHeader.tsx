@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown } from 'lucide-react';
+import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown, BookOpen, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
+  { to: '/materials', label: 'Materials', icon: BookOpen },
   { to: '/sheets', label: 'Sheets', icon: FileText },
   { to: '/history', label: 'History', icon: Trophy },
   { to: '/leaderboard', label: 'Leaderboard', icon: Crown },
@@ -15,6 +17,8 @@ const navItems = [
 export function AppHeader() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const { isAdmin } = useIsAdmin();
+  const items = isAdmin ? [...navItems, { to: '/admin', label: 'Admin', icon: Shield }] : navItems;
 
   return (
     <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-50">
@@ -30,7 +34,7 @@ export function AppHeader() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
-            {navItems.map((item) => {
+            {items.map((item) => {
               const isActive = location.pathname === item.to;
               return (
                 <Link key={item.to} to={item.to}>
@@ -51,7 +55,7 @@ export function AppHeader() {
           <div className="flex items-center gap-1.5">
             {/* Mobile nav */}
             <nav className="flex md:hidden items-center gap-0.5">
-              {navItems.map((item) => {
+              {items.map((item) => {
                 const isActive = location.pathname === item.to;
                 return (
                   <Link key={item.to} to={item.to} aria-label={item.label}>
