@@ -94,6 +94,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ReferralCapture />
             <AppRoutes />
           </BrowserRouter>
         </TooltipProvider>
