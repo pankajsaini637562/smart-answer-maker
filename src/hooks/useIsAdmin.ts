@@ -16,7 +16,7 @@ export function useIsAdmin() {
     }
     check();
     return () => { cancel = true; };
-  }, [user?.email]);
+  }, [user?.id]);
 
   return { isAdmin, loading };
 }
