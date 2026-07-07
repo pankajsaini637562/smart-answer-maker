@@ -209,6 +209,29 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* Quick links */}
+        <div className="grid grid-cols-3 gap-3 animate-slide-up stagger-2">
+          <Link to="/library"><Card className="modern-card hover:border-primary transition-colors"><CardContent className="p-3 text-center">
+            <BookOpen className="w-5 h-5 mx-auto text-primary mb-1" />
+            <p className="text-xs font-medium">My Library</p>
+          </CardContent></Card></Link>
+          <Link to="/refer"><Card className="modern-card hover:border-primary transition-colors"><CardContent className="p-3 text-center">
+            <Gift className="w-5 h-5 mx-auto text-primary mb-1" />
+            <p className="text-xs font-medium">Refer & Earn</p>
+          </CardContent></Card></Link>
+          {isAdmin ? (
+            <Link to="/admin"><Card className="modern-card hover:border-primary transition-colors"><CardContent className="p-3 text-center">
+              <Shield className="w-5 h-5 mx-auto text-primary mb-1" />
+              <p className="text-xs font-medium">Admin</p>
+            </CardContent></Card></Link>
+          ) : (
+            <Link to="/materials"><Card className="modern-card hover:border-primary transition-colors"><CardContent className="p-3 text-center">
+              <BookOpen className="w-5 h-5 mx-auto text-primary mb-1" />
+              <p className="text-xs font-medium">Browse</p>
+            </CardContent></Card></Link>
+          )}
+        </div>
+
         {/* Edit Profile */}
         <Card className="premium-card animate-slide-up stagger-2">
           <CardHeader className="relative">
