@@ -34,7 +34,7 @@ export function AppHeader() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
-            {navItems.map((item) => {
+            {items.map((item) => {
               const isActive = location.pathname === item.to;
               return (
                 <Link key={item.to} to={item.to}>
@@ -55,7 +55,7 @@ export function AppHeader() {
           <div className="flex items-center gap-1.5">
             {/* Mobile nav */}
             <nav className="flex md:hidden items-center gap-0.5">
-              {navItems.map((item) => {
+              {items.map((item) => {
                 const isActive = location.pathname === item.to;
                 return (
                   <Link key={item.to} to={item.to} aria-label={item.label}>
