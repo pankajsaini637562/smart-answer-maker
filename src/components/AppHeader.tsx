@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown } from 'lucide-react';
+import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown, BookOpen, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
+  { to: '/materials', label: 'Materials', icon: BookOpen },
   { to: '/sheets', label: 'Sheets', icon: FileText },
   { to: '/history', label: 'History', icon: Trophy },
   { to: '/leaderboard', label: 'Leaderboard', icon: Crown },
