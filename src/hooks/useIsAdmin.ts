@@ -1,0 +1,26 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+
+export function useIsAdmin() {
+  const { user } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancel = false;
+    async function check() {
+      if (!user?.email) { setIsAdmin(false); setLoading(false); return; }
+      const { data } = await supabase
+        .from('admin_emails')
+        .select('email')
+        .ilike('email', user.email)
+        .maybeSingle();
+      if (!cancel) { setIsAdmin(!!data); setLoading(false); }
+    }
+    check();
+    return () => { cancel = true; };
+  }, [user?.email]);
+
+  return { isAdmin, loading };
+}
