@@ -10,12 +10,8 @@ export function useIsAdmin() {
   useEffect(() => {
     let cancel = false;
     async function check() {
-      if (!user?.email) { setIsAdmin(false); setLoading(false); return; }
-      const { data } = await supabase
-        .from('admin_emails')
-        .select('email')
-        .ilike('email', user.email)
-        .maybeSingle();
+      if (!user?.id) { setIsAdmin(false); setLoading(false); return; }
+      const { data } = await supabase.rpc('is_admin', { _uid: user.id });
       if (!cancel) { setIsAdmin(!!data); setLoading(false); }
     }
     check();
