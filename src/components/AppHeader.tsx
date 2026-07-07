@@ -17,6 +17,8 @@ const navItems = [
 export function AppHeader() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const { isAdmin } = useIsAdmin();
+  const items = isAdmin ? [...navItems, { to: '/admin', label: 'Admin', icon: Shield }] : navItems;
 
   return (
     <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-50">
