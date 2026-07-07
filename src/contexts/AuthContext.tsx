@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
+      await attachReferralByCode(data.user.id);
     }
     return { error: null };
   };
