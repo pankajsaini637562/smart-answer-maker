@@ -71,10 +71,20 @@ const AppRoutes = () => (
     <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/leaderboard" element={<LeaderboardPage />} />
+    <Route path="/materials" element={<MaterialsPage />} />
+    <Route path="/materials/:id" element={<MaterialDetailPage />} />
+    <Route path="/library" element={<ProtectedRoute><LibraryPage /></ProtectedRoute>} />
+    <Route path="/refer" element={<ProtectedRoute><ReferPage /></ProtectedRoute>} />
+    <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
     <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
+
+function ReferralCapture() {
+  useEffect(() => { captureReferralFromUrl(); }, []);
+  return null;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
