@@ -1,85 +1,108 @@
-# Plan: Vike SSR/SSG migration + public, crawlable surface for every route
 
-You picked **Vike (SSR/SSG)** + making the **landing page** and **all app routes** publicly crawlable. Important reality check up front, then the plan.
+# Study Material Marketplace
 
-## Reality check (please read)
+Add a new section where admins upload notes/study material and students buy paid ones via UPI or access free ones instantly. Includes a referral discount system and downloadable receipts.
 
-1. **App routes can't expose real user data publicly.** `/history`, `/analytics`, `/chat`, `/profile`, `/sheets` show data tied to the logged-in student. Making the *real* views public would leak PII and break RLS intent. So "all app routes public" really means: **build a public, marketing-style page for each route** (`/analytics` → "About our analytics" with screenshots + features) and keep the authenticated app at the same URL behind a login gate that activates only when a user is signed in. Prerendered HTML = marketing copy. Hydrated app for logged-in users = current dashboard.
+## New sections in the app
 
-2. **Vike migration is a large refactor.** Every page becomes a `+Page.tsx` / `+config.ts` pair. React Router goes away. Auth context, protected routes, and Supabase client need to be SSR-safe (no `window`, no localStorage at import time). Expect noticeable churn across `src/`.
+- **Study Materials** (`/materials`) — public catalog of all approved materials, filterable by Free / Paid, subject, class.
+- **Material Details** (`/materials/:id`) — description, price, preview, buy / download button.
+- **My Library** (`/library`) — user's owned/accessed materials with download links.
+- **Refer & Earn** (`/refer`) — user's invite link, referral stats, discount status.
+- **Admin Panel** (`/admin`) — visible only to admin emails:
+  - Upload material (title, description, subject, class, price, free/paid, file)
+  - Pending payments queue → approve / reject with note
+  - Purchases & referral overview
+- **Profile updates** — new fields: `upi_id_for_payout` (not used yet), and new stat tiles for "Materials owned", "Referrals", "Discount earned"; a "Refer & Earn" quick link and, for admins, an "Admin Panel" button.
 
-3. **SSG vs SSR.** Since there are no per-request dynamic public pages, I'll use **prerender (SSG)** — Vike builds static HTML for each public route at `npm run build`. Output is still deployable to Vercel as a static site (your current `vercel.json` works with minor changes). No Node server needed.
+## Purchase flow
 
-## Scope
+1. Student opens a paid material → sees price. If they have a valid referral discount, discounted price is shown.
+2. Clicks **Buy** → modal shows:
+   - UPI ID `7891041852@fam`, amount, a UPI deep-link and QR
+   - Fields: **UTR / Transaction ID** (required), optional screenshot upload
+3. On submit, a `purchases` row is created with status `pending`.
+4. Admin sees it in the pending queue → **Approve** (grants access, generates receipt) or **Reject** (with reason).
+5. On approval:
+   - Access is granted (row visible in My Library)
+   - **Receipt** is generated client-side (PDF) and downloadable immediately from Purchase Details or My Library
+   - Referrer (if any) earns their reward
 
-### A. Vike scaffolding
-- `bun add vike vike-react`
-- New `vite.config.ts` plugin: `vike({ prerender: true })`
-- New entry points: `src/pages/+config.ts` (shared), `renderer/+onRenderHtml.tsx`, `renderer/+onRenderClient.tsx`, `renderer/Layout.tsx`
-- Remove `react-router-dom`, replace `<BrowserRouter>` and `<Routes>` with Vike's file-based routing
-- Move `HelmetProvider`, `QueryClient`, `AuthProvider`, `ThemeProvider`, `TooltipProvider`, toasters into `Layout.tsx`
+## Referral flow
 
-### B. Route migration (file-based)
-Each existing page becomes a Vike page directory:
+- Every user gets a unique `referral_code` on signup (stored on profile).
+- Invite link: `https://<app>/?ref=CODE` (captured to localStorage on landing; applied at signup).
+- **Referred user**: gets a **10% discount** automatically on their first paid purchase.
+- **Referrer**: after their referred friend completes a paid purchase (admin-approved), receives a **10% discount credit** usable on their next paid purchase (one credit per successful referral, stackable up to a cap of 50%).
+- Free courses do not trigger referral rewards.
 
-```text
-pages/
-  index/                  +Page.tsx (public landing — new marketing content)
-  auth/                   +Page.tsx (public; wraps current AuthPage)
-  app/                    +Page.tsx (current Dashboard, guarded client-side)
-  create/                 +Page.tsx (guarded)
-  sheets/                 +Page.tsx (public marketing + guarded app view)
-  history/                +Page.tsx (public marketing + guarded app view)
-  analytics/              +Page.tsx (public marketing + guarded app view)
-  chat/                   +Page.tsx (public marketing + guarded app view)
-  profile/                +Page.tsx (guarded only)
-  exam/@id/               +Page.tsx (guarded, prerender:false)
-  result/@attemptId/      +Page.tsx (guarded, prerender:false)
-```
+## Free vs paid
 
-Each public page renders a `<PublicMarketing>` component on the server (prerendered, crawlable) and swaps to the live app component on the client when `useAuth().user` is present.
+- Free materials: instant access on click, no approval, no payment, added straight to My Library.
+- Paid materials: full UPI + approval flow above.
 
-### C. Public marketing content (new)
-- **Landing (`/`)** — hero, features grid, FAQ (uses existing JSON-LD), CTA → `/auth`
-- **`/sheets`** — "Create OMR sheets" feature page
-- **`/history`** — "Track your exam history" feature page
-- **`/analytics`** — "AI-powered exam analytics" feature page
-- **`/chat`** — "Study Chat groups" feature page
-- **`/auth`** — sign-in/up (already public, just ported)
+## Admin access
 
-All marketing pages get per-route `+Head.tsx` with unique title, description, canonical, og:*, and route-appropriate JSON-LD (`SoftwareApplication`, `FAQPage`, `BreadcrumbList`).
+Admin emails are hardcoded in one config file (`src/lib/adminEmails.ts`). Any authed user whose email matches gets admin UI + policies.
 
-### D. SSR-safety fixes
-- `src/integrations/supabase/client.ts` — already lazy on `window`; verify no top-level `localStorage` access
-- `src/contexts/AuthContext.tsx` — guard `localStorage` / `window` with `typeof window !== 'undefined'`
-- `src/components/ThemeProvider.tsx` — same guard for theme detection
-- Any `useEffect`-free top-level `window` access → move into effects
+## Receipt
 
-### E. Build & deploy
-- Update `package.json` build: `vite build` (Vike handles prerender automatically)
-- Update `vercel.json` rewrites: drop SPA fallback, let Vike's prerendered HTML serve directly; only fallback unprerendered (guarded app) routes to `index.html`
-- Update `public/sitemap.xml` to list all prerendered URLs
+Generated in-browser with `jspdf` using existing app branding (Space Grotesk + purple accent, glassmorphism logo). Contains: receipt no, date, buyer name/email, material title, amount, UTR, discount applied, admin approval timestamp. Downloadable from purchase details and My Library. Also re-downloadable anytime.
 
-### F. Cleanup
-- Delete `src/App.tsx` (replaced by Vike layout/routing)
-- Delete `src/pages/NotFound.tsx`, replaced with Vike's `_error.page.tsx`
-- Remove `react-router-dom` dependency
-- Remove `src/components/SEO.tsx` (replaced by Vike `+Head.tsx`)
+---
+
+## Technical details
+
+### Database (new migration)
+
+- `materials`
+  - `id uuid pk`, `title text`, `description text`, `subject text`, `class text`, `is_free bool`, `price_inr int`, `file_path text` (in `study-materials` storage bucket), `cover_url text`, `created_by uuid`, `is_published bool default true`, timestamps
+- `purchases`
+  - `id`, `user_id`, `material_id`, `amount_inr int`, `discount_percent int`, `final_amount_inr int`, `utr text`, `screenshot_path text nullable`, `status text` (`pending|approved|rejected`), `admin_note text`, `approved_by`, `approved_at`, `referrer_user_id nullable`, `receipt_no text`, timestamps
+- `referral_credits`
+  - `id`, `user_id` (owner of credit), `source_purchase_id`, `percent int`, `used_purchase_id nullable`, `created_at`
+- Extend `profiles`: `referral_code text unique`, `referred_by uuid nullable`
+- New storage buckets:
+  - `study-materials` (private; signed URLs on download; access checked in edge function)
+  - `payment-proofs` (private; owner + admin read)
+
+### RLS & roles
+
+- Admin check via SQL function `public.is_admin(uid)` reading a small config table `admin_emails` seeded with `7891041852@fam`'s owner email at first launch — but per user's choice, we hardcode. So `is_admin` reads `auth.users.email` and compares to a fixed list stored in a Postgres function. Simpler: create table `admin_emails(email text pk)` and seed it; `is_admin(uid)` joins on `auth.users.email`.
+- Policies:
+  - `materials`: everyone can select where `is_published`; only admins insert/update/delete
+  - `purchases`: user selects own; admin selects all; user inserts own pending; admin updates status
+  - `referral_credits`: user selects own; system inserts via trigger on purchase approval
+
+### Edge function
+
+- `download-material` — validates user has an approved purchase or material is free, returns a signed URL from the private bucket.
+- Trigger `on_purchase_approved`: awards referral credit to referrer, marks referred user's discount as consumed.
+
+### Frontend
+
+- New pages under `src/pages/materials/*`, `src/pages/admin/*`, `src/pages/ReferPage.tsx`, `src/pages/LibraryPage.tsx`.
+- Add nav entries: "Materials" for everyone; "Admin" only if `useIsAdmin()` true.
+- `src/lib/referral.ts` — capture `?ref=CODE` from URL to localStorage, attach at signup.
+- `src/lib/receipt.ts` — `jspdf` receipt generator.
+- Install: `jspdf`, `qrcode.react`.
+- Profile page gets: referral code + copy button, credit balance, admin panel link if admin, new stat tiles.
+
+### Payments
+
+Manual UPI + admin approval as chosen. No payment gateway integration. UPI ID `7891041852@fam` is stored as a constant in `src/lib/paymentsConfig.ts` and shown in the buy modal along with a `upi://pay?pa=...&am=...&tn=...` deep link and QR.
+
+### Files to create / edit (high level)
+
+- Migration: materials, purchases, referral_credits, profiles extension, admin_emails, storage buckets, RLS, trigger
+- Edge function: `download-material`
+- New pages: MaterialsPage, MaterialDetailPage, LibraryPage, ReferPage, AdminPanelPage, AdminUploadPage, AdminPurchasesPage
+- New components: BuyModal, ReceiptPreview, MaterialCard, PendingPurchaseRow
+- Edits: `AppHeader.tsx` (nav), `App.tsx` (routes), `AuthPage.tsx` (capture referral on signup), `ProfilePage.tsx` (referral/admin/stats), `LandingPage.tsx` (capture `?ref=`)
 
 ## Out of scope
-- Backend/Supabase changes
-- Real-data SSR for authed views (would require service-role on edge — security tradeoff not worth it)
-- og:image generation (can do later if you want)
-- Capacitor / mobile build changes (still works against `dist/`)
 
-## Risks
-- **Auth flicker**: on first paint, prerendered marketing shows, then hydration swaps to app view for logged-in users. Mitigated with a brief skeleton.
-- **Breakage surface is wide**: React Router → Vike touches every page file.
-- **Build time grows**: prerender step runs once per route at build.
-
-## Expected outcome
-- Every listed route returns full crawlable HTML to Googlebot with unique title/description/JSON-LD.
-- Logged-in users still see the live app at the same URLs.
-- Lighthouse SEO and indexability rise across all public pages.
-
-**Approve to implement, or tell me to scale back** (e.g. landing page only, skip marketing for app routes, or use lightweight `vite-plugin-prerender` instead of full Vike).
+- Automated UPI verification (no gateway)
+- Payouts to admin — assumed to be handled outside the app
+- Refunds flow
+- Marketing emails
