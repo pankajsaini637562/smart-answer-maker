@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT } from '@/lib/paymentsConfig';
+import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT, buildCouponCode } from '@/lib/paymentsConfig';
 import { toast } from 'sonner';
 
 interface Material {
