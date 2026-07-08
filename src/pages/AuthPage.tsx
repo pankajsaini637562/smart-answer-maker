@@ -64,14 +64,11 @@ export default function AuthPage() {
     if (!/^[A-Z0-9]{4,16}$/.test(code)) { setReferralStatus('invalid'); setReferrerName(''); return; }
     setReferralStatus('checking');
     const t = setTimeout(async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id, display_name')
-        .eq('referral_code', code)
-        .maybeSingle();
-      if (data?.id) {
+      const { data } = await supabase.rpc('lookup_referrer_by_code', { _code: code });
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row?.id) {
         setReferralStatus('valid');
-        setReferrerName((data as any).display_name || 'a friend');
+        setReferrerName(row.display_name || 'a friend');
       } else {
         setReferralStatus('invalid');
         setReferrerName('');
