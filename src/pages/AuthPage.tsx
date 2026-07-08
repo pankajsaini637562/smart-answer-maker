@@ -43,10 +43,42 @@ export default function AuthPage() {
   const [country, setCountry] = useState('');
   const [school, setSchool] = useState('');
   const [phone, setPhone] = useState('');
+  const [referralInput, setReferralInput] = useState('');
+  const [referralStatus, setReferralStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [referrerName, setReferrerName] = useState<string>('');
 
   // Shared
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Pre-fill referral code from ?ref link or previously captured code
+  useEffect(() => {
+    const pending = getPendingReferral();
+    if (pending && !referralInput) setReferralInput(pending);
+  }, []);
+
+  // Validate referral code as user types (debounced)
+  useEffect(() => {
+    const code = referralInput.trim().toUpperCase();
+    if (!code) { setReferralStatus('idle'); setReferrerName(''); return; }
+    if (!/^[A-Z0-9]{4,16}$/.test(code)) { setReferralStatus('invalid'); setReferrerName(''); return; }
+    setReferralStatus('checking');
+    const t = setTimeout(async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, display_name')
+        .eq('referral_code', code)
+        .maybeSingle();
+      if (data?.id) {
+        setReferralStatus('valid');
+        setReferrerName((data as any).display_name || 'a friend');
+      } else {
+        setReferralStatus('invalid');
+        setReferrerName('');
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [referralInput]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
