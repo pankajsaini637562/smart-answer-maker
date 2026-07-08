@@ -21,11 +21,11 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => Promise<{ error: any; referrerId?: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
-  signInAnonymously: (name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
+  signInAnonymously: (name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => Promise<{ error: any; referrerId?: string | null }>;
   signOut: () => Promise<void>;
 }
 
