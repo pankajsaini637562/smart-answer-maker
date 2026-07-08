@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string) => {
+  const signUp = async (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -64,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     if (error) return { error };
 
+    let referrerId: string | null = null;
     if (data.user) {
       await supabase.from('profiles').update({
         display_name: name,
@@ -73,9 +74,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
-      await attachReferralByCode(data.user.id);
+      const r = await attachReferralByCode(data.user.id, referralCode);
+      referrerId = r.referrerId;
     }
-    return { error: null };
+    return { error: null, referrerId };
   };
 
   const signIn = async (email: string, password: string) => {
