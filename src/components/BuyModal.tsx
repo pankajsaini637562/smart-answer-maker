@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT } from '@/lib/paymentsConfig';
+import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT, buildCouponCode } from '@/lib/paymentsConfig';
 import { toast } from 'sonner';
 
 interface Material {
@@ -32,6 +32,7 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
   const [discountPercent, setDiscountPercent] = useState(0);
   const [referrerId, setReferrerId] = useState<string | null>(null);
   const [creditsCount, setCreditsCount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !user) return;
@@ -44,20 +45,26 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
 
       let pct = 0;
       let ref: string | null = null;
+      let coupon: string | null = null;
       if ((prof as any)?.referred_by && !paidCount) {
         pct += REFERRAL_DISCOUNT_PERCENT;
         ref = (prof as any).referred_by;
+        coupon = buildCouponCode('welcome', (prof as any).referred_by, REFERRAL_DISCOUNT_PERCENT);
       }
 
       // Unused referral credits earned by this user
       const { data: credits } = await supabase.from('referral_credits')
-        .select('percent').eq('user_id', user.id).is('used_purchase_id', null);
+        .select('id, percent').eq('user_id', user.id).is('used_purchase_id', null);
       const creditPct = (credits || []).reduce((s: number, c: any) => s + c.percent, 0);
       setCreditsCount(credits?.length || 0);
+      if (!coupon && credits && credits.length > 0) {
+        coupon = buildCouponCode('thanks', (credits[0] as any).id, (credits[0] as any).percent);
+      }
       pct = Math.min(pct + creditPct, MAX_STACKED_DISCOUNT);
 
       setDiscountPercent(pct);
       setReferrerId(ref);
+      setAppliedCoupon(coupon);
     })();
   }, [open, user]);
 
@@ -130,8 +137,17 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
               <span>Total to Pay</span>
               <span className="flex items-center text-primary text-lg"><IndianRupee className="w-4 h-4" />{finalAmount}</span>
             </div>
+            {appliedCoupon && (
+              <div className="rounded-lg border border-dashed border-emerald-500/50 bg-emerald-500/5 px-3 py-2 flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold">Coupon applied</p>
+                  <p className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">{appliedCoupon}</p>
+                </div>
+                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+              </div>
+            )}
             {creditsCount > 0 && (
-              <p className="text-[11px] text-muted-foreground">Using {creditsCount} referral credit{creditsCount > 1 ? 's' : ''}.</p>
+              <p className="text-[11px] text-muted-foreground">Using {creditsCount} referral credit{creditsCount > 1 ? 's' : ''} — one-time use per friend referred.</p>
             )}
           </div>
 

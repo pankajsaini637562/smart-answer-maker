@@ -3,26 +3,29 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { getPendingReferral, clearPendingReferral } from '@/lib/referral';
 
-async function attachReferralByCode(userId: string) {
-  const code = getPendingReferral();
-  if (!code) return;
+async function attachReferralByCode(userId: string, explicitCode?: string): Promise<{ referrerId: string | null }> {
+  const code = (explicitCode || getPendingReferral() || '').toUpperCase();
+  if (!code) return { referrerId: null };
   const { data: referrer } = await supabase
     .from('profiles').select('id').eq('referral_code', code).maybeSingle();
+  let referrerId: string | null = null;
   if (referrer?.id && referrer.id !== userId) {
     await supabase.from('profiles').update({ referred_by: referrer.id } as any).eq('id', userId);
+    referrerId = referrer.id;
   }
   clearPendingReferral();
+  return { referrerId };
 }
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => Promise<{ error: any; referrerId?: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
-  signInAnonymously: (name: string, studentClass: string, country: string, school?: string, phone?: string) => Promise<{ error: any }>;
+  signInAnonymously: (name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => Promise<{ error: any; referrerId?: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -49,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string) => {
+  const signUp = async (email: string, password: string, name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -61,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     if (error) return { error };
 
+    let referrerId: string | null = null;
     if (data.user) {
       await supabase.from('profiles').update({
         display_name: name,
@@ -70,9 +74,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
-      await attachReferralByCode(data.user.id);
+      const r = await attachReferralByCode(data.user.id, referralCode);
+      referrerId = r.referrerId;
     }
-    return { error: null };
+    return { error: null, referrerId };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -92,12 +97,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signInAnonymously = async (name: string, studentClass: string, country: string, school?: string, phone?: string) => {
+  const signInAnonymously = async (name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => {
     const { data, error } = await supabase.auth.signInAnonymously({
       options: { data: { display_name: name } },
     });
     if (error) return { error };
 
+    let referrerId: string | null = null;
     if (data.user) {
       await supabase.from('profiles').update({
         display_name: name,
@@ -107,10 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
-      await attachReferralByCode(data.user.id);
+      const r = await attachReferralByCode(data.user.id, referralCode);
+      referrerId = r.referrerId;
     }
 
-    return { error: null };
+    return { error: null, referrerId };
   };
 
   const signOut = async () => {

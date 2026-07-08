@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft, Gift, Check, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { getPendingReferral, buildInviteLink } from '@/lib/referral';
+import { REFERRAL_DISCOUNT_PERCENT, buildCouponCode } from '@/lib/paymentsConfig';
 
 function safeNext(raw: string | null): string {
   if (!raw) return '/';
@@ -40,10 +43,42 @@ export default function AuthPage() {
   const [country, setCountry] = useState('');
   const [school, setSchool] = useState('');
   const [phone, setPhone] = useState('');
+  const [referralInput, setReferralInput] = useState('');
+  const [referralStatus, setReferralStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [referrerName, setReferrerName] = useState<string>('');
 
   // Shared
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Pre-fill referral code from ?ref link or previously captured code
+  useEffect(() => {
+    const pending = getPendingReferral();
+    if (pending && !referralInput) setReferralInput(pending);
+  }, []);
+
+  // Validate referral code as user types (debounced)
+  useEffect(() => {
+    const code = referralInput.trim().toUpperCase();
+    if (!code) { setReferralStatus('idle'); setReferrerName(''); return; }
+    if (!/^[A-Z0-9]{4,16}$/.test(code)) { setReferralStatus('invalid'); setReferrerName(''); return; }
+    setReferralStatus('checking');
+    const t = setTimeout(async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, display_name')
+        .eq('referral_code', code)
+        .maybeSingle();
+      if (data?.id) {
+        setReferralStatus('valid');
+        setReferrerName((data as any).display_name || 'a friend');
+      } else {
+        setReferralStatus('invalid');
+        setReferrerName('');
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [referralInput]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +95,17 @@ export default function AuthPage() {
       if (password.length < 6) return toast.error('Password must be at least 6 characters');
     }
 
+    const refCodeToApply = referralStatus === 'valid' ? referralInput.trim().toUpperCase() : undefined;
+    const announceReferral = (referrerId: string | null | undefined) => {
+      if (referrerId && refCodeToApply) {
+        const coupon = buildCouponCode('welcome', refCodeToApply, REFERRAL_DISCOUNT_PERCENT);
+        toast.success(`🎉 Friend joined! Coupon ${coupon} unlocked — ${REFERRAL_DISCOUNT_PERCENT}% off your first paid course.`, { duration: 6000 });
+      }
+    };
+
     setLoading(true);
     if (hasEmail && hasPassword) {
-      const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
+      const { error, referrerId } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim(), refCodeToApply);
       setLoading(false);
       if (error) return toast.error(error.message);
       // Email is auto-confirmed — sign in immediately
@@ -74,13 +117,15 @@ export default function AuthPage() {
         return;
       }
       toast.success('Welcome! 🎉');
+      announceReferral(referrerId);
       navigate(nextPath);
     } else {
       // No email/password — use anonymous auth so all features stay the same
-      const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
+      const { error, referrerId } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim(), refCodeToApply);
       setLoading(false);
       if (error) return toast.error(error.message);
       toast.success('Welcome! 🎉');
+      announceReferral(referrerId);
       navigate(nextPath);
     }
   };
@@ -227,6 +272,42 @@ export default function AuthPage() {
                     <div className="space-y-2">
                       <Label htmlFor="password-up">Password (optional)</Label>
                       <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="referral" className="flex items-center gap-1.5">
+                        <Gift className="w-3.5 h-3.5 text-primary" /> Referral code (optional)
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="referral"
+                          placeholder="Have a friend's code? Enter it here"
+                          value={referralInput}
+                          onChange={e => setReferralInput(e.target.value.toUpperCase())}
+                          className={`rounded-xl h-11 pr-10 font-mono uppercase tracking-wider ${
+                            referralStatus === 'valid' ? 'border-emerald-500 focus-visible:ring-emerald-500' :
+                            referralStatus === 'invalid' ? 'border-destructive/60' : ''
+                          }`}
+                          maxLength={16}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {referralStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+                          {referralStatus === 'valid' && <Check className="w-4 h-4 text-emerald-500" />}
+                          {referralStatus === 'invalid' && <X className="w-4 h-4 text-destructive" />}
+                        </div>
+                      </div>
+                      {referralStatus === 'valid' && (
+                        <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-2.5 text-xs space-y-1">
+                          <p className="flex items-center gap-1.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                            <Check className="w-3.5 h-3.5" /> Friend joined via {referrerName}!
+                          </p>
+                          <p className="text-emerald-700/80 dark:text-emerald-300/80">
+                            Your <span className="font-mono font-bold">{buildCouponCode('welcome', referralInput, REFERRAL_DISCOUNT_PERCENT)}</span> coupon will apply <b>{REFERRAL_DISCOUNT_PERCENT}% off</b> automatically on your first paid course.
+                          </p>
+                        </div>
+                      )}
+                      {referralStatus === 'invalid' && referralInput.trim() && (
+                        <p className="text-xs text-destructive">Code not found. Double-check with your friend.</p>
+                      )}
                     </div>
                     <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
                       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
