@@ -137,8 +137,17 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
               <span>Total to Pay</span>
               <span className="flex items-center text-primary text-lg"><IndianRupee className="w-4 h-4" />{finalAmount}</span>
             </div>
+            {appliedCoupon && (
+              <div className="rounded-lg border border-dashed border-emerald-500/50 bg-emerald-500/5 px-3 py-2 flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold">Coupon applied</p>
+                  <p className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">{appliedCoupon}</p>
+                </div>
+                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+              </div>
+            )}
             {creditsCount > 0 && (
-              <p className="text-[11px] text-muted-foreground">Using {creditsCount} referral credit{creditsCount > 1 ? 's' : ''}.</p>
+              <p className="text-[11px] text-muted-foreground">Using {creditsCount} referral credit{creditsCount > 1 ? 's' : ''} — one-time use per friend referred.</p>
             )}
           </div>
 
