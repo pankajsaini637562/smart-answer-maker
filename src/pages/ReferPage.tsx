@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Share2, Copy, Check, Gift, Users, Sparkles } from 'lucide-react';
+import { Share2, Copy, Check, Gift, Users, Sparkles, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AppHeader } from '@/components/AppHeader';
 import { SEO } from '@/components/SEO';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { buildInviteLink } from '@/lib/referral';
-import { REFERRAL_DISCOUNT_PERCENT } from '@/lib/paymentsConfig';
+import { REFERRAL_DISCOUNT_PERCENT, buildCouponCode } from '@/lib/paymentsConfig';
 import { toast } from 'sonner';
+
+interface Coupon { id: string; code: string; percent: number; }
 
 export default function ReferPage() {
   const { user } = useAuth();
   const [code, setCode] = useState('');
   const [referrals, setReferrals] = useState(0);
-  const [creditsPct, setCreditsPct] = useState(0);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [copied, setCopied] = useState(false);
+  const [couponsOpen, setCouponsOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -25,11 +29,18 @@ export default function ReferPage() {
       setCode((data as any)?.referral_code || '');
       const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('referred_by', user.id);
       setReferrals(count || 0);
-      const { data: credits } = await supabase.from('referral_credits').select('percent').eq('user_id', user.id).is('used_purchase_id', null);
-      setCreditsPct((credits || []).reduce((s: number, c: any) => s + c.percent, 0));
+      const { data: credits } = await supabase.from('referral_credits')
+        .select('id, percent').eq('user_id', user.id).is('used_purchase_id', null);
+      const list: Coupon[] = (credits || []).map((c: any) => ({
+        id: c.id,
+        percent: c.percent,
+        code: buildCouponCode('thanks', c.id, c.percent),
+      }));
+      setCoupons(list);
     })();
   }, [user]);
 
+  const creditsPct = coupons.reduce((s, c) => s + c.percent, 0);
   const link = code ? buildInviteLink(code) : '';
 
   const copy = () => {
@@ -37,6 +48,11 @@ export default function ReferPage() {
     setCopied(true);
     toast.success('Invite link copied!');
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const copyCoupon = (c: Coupon) => {
+    navigator.clipboard.writeText(c.code);
+    toast.success(`Coupon ${c.code} copied — applies automatically at checkout.`);
   };
 
   const share = async () => {
