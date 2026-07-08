@@ -79,10 +79,14 @@ Deno.serve(async (req) => {
 
     // Auto-record free access
     if (material.is_free && !isAdmin) {
-      await admin.from('purchases').upsert({
-        user_id: user.id, material_id, amount_inr: 0, final_amount_inr: 0,
-        status: 'free',
-      } as any, { onConflict: 'user_id,material_id' } as any).select();
+      const { data: existing } = await admin.from('purchases')
+        .select('id').eq('user_id', user.id).eq('material_id', material_id).maybeSingle();
+      if (!existing) {
+        await admin.from('purchases').insert({
+          user_id: user.id, material_id, amount_inr: 0, final_amount_inr: 0,
+          status: 'free',
+        } as any);
+      }
     }
 
     return new Response(JSON.stringify({ url: signed.signedUrl }), {

@@ -98,7 +98,7 @@ export default function MaterialDetailPage() {
             {m.description && <p className="text-sm text-muted-foreground whitespace-pre-line">{m.description}</p>}
 
             {!user ? (
-              <Link to="/auth?next=/materials/${id}"><Button className="w-full h-11 rounded-xl">Sign in to access</Button></Link>
+              <Link to={`/auth?next=/materials/${id}`}><Button className="w-full h-11 rounded-xl">Sign in to access</Button></Link>
             ) : owned ? (
               <div className="space-y-2">
                 <Button onClick={download} disabled={downloading} className="w-full h-11 rounded-xl gap-2">
