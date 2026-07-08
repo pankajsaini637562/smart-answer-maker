@@ -26,6 +26,7 @@ import ReferPage from "./pages/ReferPage";
 import AdminPage from "./pages/AdminPage";
 import { useEffect } from "react";
 import { captureReferralFromUrl } from "./lib/referral";
+import { ReferralPromoBanner } from "./components/ReferralPromoBanner";
 
 import NotFound from "./pages/NotFound";
 
@@ -95,6 +96,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ReferralCapture />
+            <ReferralPromoBanner />
             <AppRoutes />
           </BrowserRouter>
         </TooltipProvider>
