@@ -6,8 +6,8 @@ import { getPendingReferral, clearPendingReferral } from '@/lib/referral';
 async function attachReferralByCode(userId: string, explicitCode?: string): Promise<{ referrerId: string | null }> {
   const code = (explicitCode || getPendingReferral() || '').toUpperCase();
   if (!code) return { referrerId: null };
-  const { data: referrer } = await supabase
-    .from('profiles').select('id').eq('referral_code', code).maybeSingle();
+  const { data } = await supabase.rpc('lookup_referrer_by_code', { _code: code });
+  const referrer = Array.isArray(data) ? data[0] : null;
   let referrerId: string | null = null;
   if (referrer?.id && referrer.id !== userId) {
     await supabase.from('profiles').update({ referred_by: referrer.id } as any).eq('id', userId);
