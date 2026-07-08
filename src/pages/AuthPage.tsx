@@ -273,6 +273,42 @@ export default function AuthPage() {
                       <Label htmlFor="password-up">Password (optional)</Label>
                       <Input id="password-up" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} className="rounded-xl h-11" />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="referral" className="flex items-center gap-1.5">
+                        <Gift className="w-3.5 h-3.5 text-primary" /> Referral code (optional)
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="referral"
+                          placeholder="Have a friend's code? Enter it here"
+                          value={referralInput}
+                          onChange={e => setReferralInput(e.target.value.toUpperCase())}
+                          className={`rounded-xl h-11 pr-10 font-mono uppercase tracking-wider ${
+                            referralStatus === 'valid' ? 'border-emerald-500 focus-visible:ring-emerald-500' :
+                            referralStatus === 'invalid' ? 'border-destructive/60' : ''
+                          }`}
+                          maxLength={16}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {referralStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+                          {referralStatus === 'valid' && <Check className="w-4 h-4 text-emerald-500" />}
+                          {referralStatus === 'invalid' && <X className="w-4 h-4 text-destructive" />}
+                        </div>
+                      </div>
+                      {referralStatus === 'valid' && (
+                        <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-2.5 text-xs space-y-1">
+                          <p className="flex items-center gap-1.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                            <Check className="w-3.5 h-3.5" /> Friend joined via {referrerName}!
+                          </p>
+                          <p className="text-emerald-700/80 dark:text-emerald-300/80">
+                            Your <span className="font-mono font-bold">{buildCouponCode('welcome', referralInput, REFERRAL_DISCOUNT_PERCENT)}</span> coupon will apply <b>{REFERRAL_DISCOUNT_PERCENT}% off</b> automatically on your first paid course.
+                          </p>
+                        </div>
+                      )}
+                      {referralStatus === 'invalid' && referralInput.trim() && (
+                        <p className="text-xs text-destructive">Code not found. Double-check with your friend.</p>
+                      )}
+                    </div>
                     <Button type="submit" className="w-full rounded-xl h-11 gap-2" disabled={loading}>
                       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
                       Create account
