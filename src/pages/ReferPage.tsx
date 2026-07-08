@@ -92,11 +92,23 @@ export default function ReferPage() {
             <p className="text-2xl font-bold font-mono">{referrals}</p>
             <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Friends joined</p>
           </CardContent></Card>
-          <Card className="modern-card"><CardContent className="p-4 text-center">
-            <Sparkles className="w-5 h-5 mx-auto text-primary mb-1" />
-            <p className="text-2xl font-bold font-mono">{creditsPct}%</p>
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Discount available</p>
-          </CardContent></Card>
+          <button
+            type="button"
+            onClick={() => coupons.length > 0 && setCouponsOpen(true)}
+            disabled={coupons.length === 0}
+            className="text-left"
+          >
+            <Card className={`modern-card h-full transition ${coupons.length > 0 ? 'hover:border-primary/50 cursor-pointer' : 'opacity-80'}`}>
+              <CardContent className="p-4 text-center">
+                <Sparkles className="w-5 h-5 mx-auto text-primary mb-1" />
+                <p className="text-2xl font-bold font-mono">{creditsPct}%</p>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Discount available</p>
+                {coupons.length > 0 && (
+                  <p className="text-[10px] text-primary mt-1 font-semibold">Tap to view coupon{coupons.length > 1 ? 's' : ''}</p>
+                )}
+              </CardContent>
+            </Card>
+          </button>
         </div>
 
         <Card className="modern-card"><CardContent className="p-4 space-y-2">
