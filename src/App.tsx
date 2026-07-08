@@ -96,6 +96,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ReferralCapture />
+            <ReferralPromoBanner />
             <AppRoutes />
           </BrowserRouter>
         </TooltipProvider>
