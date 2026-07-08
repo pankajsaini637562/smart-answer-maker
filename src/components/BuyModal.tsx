@@ -45,20 +45,26 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
 
       let pct = 0;
       let ref: string | null = null;
+      let coupon: string | null = null;
       if ((prof as any)?.referred_by && !paidCount) {
         pct += REFERRAL_DISCOUNT_PERCENT;
         ref = (prof as any).referred_by;
+        coupon = buildCouponCode('welcome', (prof as any).referred_by, REFERRAL_DISCOUNT_PERCENT);
       }
 
       // Unused referral credits earned by this user
       const { data: credits } = await supabase.from('referral_credits')
-        .select('percent').eq('user_id', user.id).is('used_purchase_id', null);
+        .select('id, percent').eq('user_id', user.id).is('used_purchase_id', null);
       const creditPct = (credits || []).reduce((s: number, c: any) => s + c.percent, 0);
       setCreditsCount(credits?.length || 0);
+      if (!coupon && credits && credits.length > 0) {
+        coupon = buildCouponCode('thanks', (credits[0] as any).id, (credits[0] as any).percent);
+      }
       pct = Math.min(pct + creditPct, MAX_STACKED_DISCOUNT);
 
       setDiscountPercent(pct);
       setReferrerId(ref);
+      setAppliedCoupon(coupon);
     })();
   }, [open, user]);
 
