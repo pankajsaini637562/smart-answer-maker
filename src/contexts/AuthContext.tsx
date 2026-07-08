@@ -3,15 +3,18 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { getPendingReferral, clearPendingReferral } from '@/lib/referral';
 
-async function attachReferralByCode(userId: string) {
-  const code = getPendingReferral();
-  if (!code) return;
+async function attachReferralByCode(userId: string, explicitCode?: string): Promise<{ referrerId: string | null }> {
+  const code = (explicitCode || getPendingReferral() || '').toUpperCase();
+  if (!code) return { referrerId: null };
   const { data: referrer } = await supabase
     .from('profiles').select('id').eq('referral_code', code).maybeSingle();
+  let referrerId: string | null = null;
   if (referrer?.id && referrer.id !== userId) {
     await supabase.from('profiles').update({ referred_by: referrer.id } as any).eq('id', userId);
+    referrerId = referrer.id;
   }
   clearPendingReferral();
+  return { referrerId };
 }
 
 interface AuthContextType {
