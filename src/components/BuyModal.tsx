@@ -32,6 +32,7 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
   const [discountPercent, setDiscountPercent] = useState(0);
   const [referrerId, setReferrerId] = useState<string | null>(null);
   const [creditsCount, setCreditsCount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !user) return;
