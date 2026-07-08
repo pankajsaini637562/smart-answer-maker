@@ -637,6 +637,13 @@ export type Database = {
         Args: { _token: string; _user_name: string }
         Returns: string
       }
+      lookup_referrer_by_code: {
+        Args: { _code: string }
+        Returns: {
+          display_name: string
+          id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
