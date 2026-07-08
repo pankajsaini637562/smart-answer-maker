@@ -97,12 +97,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signInAnonymously = async (name: string, studentClass: string, country: string, school?: string, phone?: string) => {
+  const signInAnonymously = async (name: string, studentClass: string, country: string, school?: string, phone?: string, referralCode?: string) => {
     const { data, error } = await supabase.auth.signInAnonymously({
       options: { data: { display_name: name } },
     });
     if (error) return { error };
 
+    let referrerId: string | null = null;
     if (data.user) {
       await supabase.from('profiles').update({
         display_name: name,
@@ -112,10 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone: phone || '',
         updated_at: new Date().toISOString(),
       } as any).eq('id', data.user.id);
-      await attachReferralByCode(data.user.id);
+      const r = await attachReferralByCode(data.user.id, referralCode);
+      referrerId = r.referrerId;
     }
 
-    return { error: null };
+    return { error: null, referrerId };
   };
 
   const signOut = async () => {
