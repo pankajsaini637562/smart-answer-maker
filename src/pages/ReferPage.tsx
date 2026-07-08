@@ -120,6 +120,35 @@ export default function ReferPage() {
           </ol>
         </CardContent></Card>
       </main>
+
+      <Dialog open={couponsOpen} onOpenChange={setCouponsOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <Ticket className="w-5 h-5 text-primary" /> Your discount coupons
+            </DialogTitle>
+            <DialogDescription>
+              These coupons apply automatically at checkout. One-time use per friend referred.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            {coupons.map(c => (
+              <div key={c.id} className="rounded-xl border border-primary/30 bg-primary/5 p-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-mono font-bold text-lg text-primary">{c.code}</p>
+                  <p className="text-xs text-muted-foreground">{c.percent}% off next paid course</p>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => copyCoupon(c)} className="rounded-xl gap-1.5">
+                  <Copy className="w-3.5 h-3.5" /> Copy
+                </Button>
+              </div>
+            ))}
+            <p className="text-[11px] text-muted-foreground text-center">
+              You don't need to paste the code — the discount is applied automatically for your account.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
