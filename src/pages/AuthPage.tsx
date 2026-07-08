@@ -95,9 +95,17 @@ export default function AuthPage() {
       if (password.length < 6) return toast.error('Password must be at least 6 characters');
     }
 
+    const refCodeToApply = referralStatus === 'valid' ? referralInput.trim().toUpperCase() : undefined;
+    const announceReferral = (referrerId: string | null | undefined) => {
+      if (referrerId && refCodeToApply) {
+        const coupon = buildCouponCode('welcome', refCodeToApply, REFERRAL_DISCOUNT_PERCENT);
+        toast.success(`🎉 Friend joined! Coupon ${coupon} unlocked — ${REFERRAL_DISCOUNT_PERCENT}% off your first paid course.`, { duration: 6000 });
+      }
+    };
+
     setLoading(true);
     if (hasEmail && hasPassword) {
-      const { error } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim());
+      const { error, referrerId } = await signUp(email.trim(), password, name.trim(), studentClass, country, school.trim(), phone.trim(), refCodeToApply);
       setLoading(false);
       if (error) return toast.error(error.message);
       // Email is auto-confirmed — sign in immediately
@@ -109,13 +117,15 @@ export default function AuthPage() {
         return;
       }
       toast.success('Welcome! 🎉');
+      announceReferral(referrerId);
       navigate(nextPath);
     } else {
       // No email/password — use anonymous auth so all features stay the same
-      const { error } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim());
+      const { error, referrerId } = await signInAnonymously(name.trim(), studentClass, country, school.trim(), phone.trim(), refCodeToApply);
       setLoading(false);
       if (error) return toast.error(error.message);
       toast.success('Welcome! 🎉');
+      announceReferral(referrerId);
       navigate(nextPath);
     }
   };
