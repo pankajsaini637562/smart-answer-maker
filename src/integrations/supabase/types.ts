@@ -445,6 +445,7 @@ export type Database = {
           id: string
           percent: number
           source_purchase_id: string | null
+          source_signup_user_id: string | null
           used_purchase_id: string | null
           user_id: string
         }
@@ -453,6 +454,7 @@ export type Database = {
           id?: string
           percent?: number
           source_purchase_id?: string | null
+          source_signup_user_id?: string | null
           used_purchase_id?: string | null
           user_id: string
         }
@@ -461,6 +463,7 @@ export type Database = {
           id?: string
           percent?: number
           source_purchase_id?: string | null
+          source_signup_user_id?: string | null
           used_purchase_id?: string | null
           user_id?: string
         }

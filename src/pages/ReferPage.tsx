@@ -115,8 +115,8 @@ export default function ReferPage() {
           <h3 className="font-semibold font-display">How it works</h3>
           <ol className="text-sm text-muted-foreground space-y-1.5 list-decimal list-inside">
             <li>Share your invite link with friends.</li>
-            <li>They sign up and get {REFERRAL_DISCOUNT_PERCENT}% off their first paid course.</li>
-            <li>Once they buy, you earn a {REFERRAL_DISCOUNT_PERCENT}% discount credit — usable on your next paid course.</li>
+            <li>They sign up with your code and instantly get {REFERRAL_DISCOUNT_PERCENT}% off their first paid course.</li>
+            <li>You also instantly earn a {REFERRAL_DISCOUNT_PERCENT}% discount coupon — usable on your next paid course. One coupon per friend.</li>
           </ol>
         </CardContent></Card>
       </main>
