@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Sparkles, GraduationCap, Loader2, Mail, Lock, ArrowLeft, Gift, Check, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { getPendingReferral, buildInviteLink } from '@/lib/referral';
+import { REFERRAL_DISCOUNT_PERCENT, buildCouponCode } from '@/lib/paymentsConfig';
 
 function safeNext(raw: string | null): string {
   if (!raw) return '/';
