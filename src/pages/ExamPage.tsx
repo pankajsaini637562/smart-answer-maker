@@ -52,6 +52,7 @@ export default function ExamPage() {
         sheetTitle: loadedSheet.title,
         answers: Array(loadedSheet.totalQuestions).fill(null),
         markedForReview: Array(loadedSheet.totalQuestions).fill(false),
+        questionTimes: Array(loadedSheet.totalQuestions).fill(0),
         startTime: new Date(),
         endTime: null,
         timeSpent: 0,
