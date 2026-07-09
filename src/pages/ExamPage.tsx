@@ -52,6 +52,7 @@ export default function ExamPage() {
         sheetTitle: loadedSheet.title,
         answers: Array(loadedSheet.totalQuestions).fill(null),
         markedForReview: Array(loadedSheet.totalQuestions).fill(false),
+        questionTimes: Array(loadedSheet.totalQuestions).fill(0),
         startTime: new Date(),
         endTime: null,
         timeSpent: 0,
@@ -87,12 +88,43 @@ export default function ExamPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attempt?.id]);
 
+  // Silent per-question timing: accumulate seconds against the currently
+  // viewed question and flush when the student navigates away or submits.
+  const questionEnterRef = useRef<number>(Date.now());
+  const currentQuestionRef = useRef(currentQuestion);
+  useEffect(() => { currentQuestionRef.current = currentQuestion; }, [currentQuestion]);
+
+  const flushCurrentQuestionTime = useCallback(() => {
+    const current = attemptRef.current;
+    if (!current) return current;
+    const now = Date.now();
+    const delta = Math.max(0, Math.round((now - questionEnterRef.current) / 1000));
+    questionEnterRef.current = now;
+    if (!delta) return current;
+    const times = [...(current.questionTimes || Array(current.answers.length).fill(0))];
+    const idx = currentQuestionRef.current;
+    times[idx] = (times[idx] || 0) + delta;
+    const updated = { ...current, questionTimes: times };
+    attemptRef.current = updated;
+    setAttempt(updated);
+    saveAttempt(updated);
+    return updated;
+  }, []);
+
+  // Flush the running question timer whenever the user moves to a new question.
+  useEffect(() => {
+    questionEnterRef.current = Date.now();
+    return () => { flushCurrentQuestionTime(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestion]);
+
   // Persist elapsed time when the tab is hidden or unloaded.
   useEffect(() => {
     const persist = () => {
       const current = attemptRef.current;
       if (!current || current.status !== 'in-progress') return;
-      saveAttempt({ ...current, timeSpent: timeSpentRef.current });
+      flushCurrentQuestionTime();
+      saveAttempt({ ...attemptRef.current!, timeSpent: timeSpentRef.current });
     };
     window.addEventListener('beforeunload', persist);
     document.addEventListener('visibilitychange', persist);
@@ -100,7 +132,7 @@ export default function ExamPage() {
       window.removeEventListener('beforeunload', persist);
       document.removeEventListener('visibilitychange', persist);
     };
-  }, []);
+  }, [flushCurrentQuestionTime]);
 
   const handleSelectAnswer = useCallback((optionIndex: number) => {
     if (!attempt) return;
@@ -157,12 +189,16 @@ export default function ExamPage() {
   const handleSubmitWithKey = (answerKey: number[]) => {
     if (!attempt || !sheet) return;
 
+    // Flush any time still counting toward the current question before we score.
+    const flushed = flushCurrentQuestionTime() || attempt;
+    const times = flushed.questionTimes || Array(flushed.answers.length).fill(0);
+
     let correct = 0;
     let wrong = 0;
     let unattempted = 0;
     const questionResults: QuestionResult[] = [];
 
-    attempt.answers.forEach((answer, index) => {
+    flushed.answers.forEach((answer, index) => {
       const correctAnswer = answerKey[index];
       let isCorrect = false;
       let marksObtained = 0;
@@ -191,6 +227,7 @@ export default function ExamPage() {
         correctAnswer: correctAnswer ?? 0,
         isCorrect,
         marksObtained,
+        timeSpent: times[index] || 0,
       });
     });
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, RotateCcw, Home, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReportCard } from '@/components/ReportCard';
+import { AiExamAnalysis } from '@/components/AiExamAnalysis';
 import { ShareModal } from '@/components/ShareModal';
 import { XPNotification } from '@/components/XPNotification';
 import { SEO } from '@/components/SEO';
@@ -103,6 +104,9 @@ export default function ResultPage() {
       <main className="container py-8">
         <div className="max-w-4xl mx-auto">
           <ReportCard result={result} sheet={sheet} />
+
+          <AiExamAnalysis result={result} sheet={sheet} />
+
 
           <div className="flex flex-wrap gap-4 justify-center mt-8 print:hidden">
             <Button variant="outline" className="gap-2" onClick={() => setShareOpen(true)}>
