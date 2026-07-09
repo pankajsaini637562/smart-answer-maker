@@ -24,6 +24,7 @@ export interface ExamAttempt {
   sheetTitle: string;
   answers: (number | null)[]; // user's selected answers (0-indexed), null means unanswered
   markedForReview: boolean[];
+  questionTimes?: number[]; // silent per-question time tracking (seconds)
   startTime: Date;
   endTime: Date | null;
   timeSpent: number; // in seconds
@@ -57,6 +58,7 @@ export interface QuestionResult {
   correctAnswer: number | number[];
   isCorrect: boolean;
   marksObtained: number;
+  timeSpent?: number; // seconds spent on this question
 }
 
 export interface ScoreboardEntry {
