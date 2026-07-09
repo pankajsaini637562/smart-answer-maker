@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Sparkles, Loader2, Target, Gauge, Lightbulb, TrendingUp, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Loader2, Target, Gauge, Lightbulb, TrendingUp, AlertTriangle, CheckCircle2, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { ExamResult, OMRSheet } from '@/types/exam';
 import { toast } from 'sonner';
+import jsPDF from 'jspdf';
 
 type Analysis = {
   overall_report?: string;
