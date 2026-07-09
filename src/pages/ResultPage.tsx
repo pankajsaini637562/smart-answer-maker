@@ -105,6 +105,9 @@ export default function ResultPage() {
         <div className="max-w-4xl mx-auto">
           <ReportCard result={result} sheet={sheet} />
 
+          <AiExamAnalysis result={result} sheet={sheet} />
+
+
           <div className="flex flex-wrap gap-4 justify-center mt-8 print:hidden">
             <Button variant="outline" className="gap-2" onClick={() => setShareOpen(true)}>
               <Share2 className="w-4 h-4" /> Share Result
