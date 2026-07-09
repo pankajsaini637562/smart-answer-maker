@@ -100,10 +100,21 @@ export function AiExamAnalysis({ result, sheet }: { result: ExamResult; sheet: O
               Per-question breakdown, speed vs accuracy, topic mastery & study plan — powered by GPT‑5.5
             </p>
           </div>
-          <Button onClick={runAnalysis} disabled={loading} className="gap-2 rounded-xl">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {analysis ? 'Regenerate' : 'Analyze with AI'}
-          </Button>
+          <div className="flex gap-2">
+            {analysis && (
+              <Button
+                variant="outline"
+                onClick={() => downloadPdf(result, sheet, analysis)}
+                className="gap-2 rounded-xl"
+              >
+                <Download className="w-4 h-4" /> PDF
+              </Button>
+            )}
+            <Button onClick={runAnalysis} disabled={loading} className="gap-2 rounded-xl">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {analysis ? 'Regenerate' : 'Analyze with AI'}
+            </Button>
+          </div>
         </CardHeader>
       </Card>
 
