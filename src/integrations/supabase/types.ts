@@ -630,6 +630,7 @@ export type Database = {
           xp: number
         }[]
       }
+      get_my_referrer_code: { Args: never; Returns: string }
       group_member_count: { Args: { _group_id: string }; Returns: number }
       is_admin: { Args: { _uid: string }; Returns: boolean }
       is_group_member: {
