@@ -318,7 +318,7 @@ function downloadPdf(result: ExamResult, sheet: OMRSheet, a: Analysis) {
     writeLines('Advanced AI Analysis', 18, 'bold', 8);
     writeLines(`${sheet.title}${sheet.subject ? ` · ${sheet.subject}` : ''}`, 11, 'normal', 4);
     writeLines(
-      `Accuracy: ${result.accuracy.toFixed(1)}%  ·  Score: ${result.score}/${result.totalMarks}  ·  Time: ${Math.round(result.timeSpent / 60)} min`,
+      `Accuracy: ${result.accuracy.toFixed(1)}%  ·  Score: ${result.score}/${result.maxScore}  ·  Time: ${Math.round(result.timeSpent / 60)} min`,
       10, 'normal', 8,
     );
     doc.setDrawColor(200); doc.line(margin, y, pageW - margin, y); y += 10;
