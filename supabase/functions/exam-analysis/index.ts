@@ -31,10 +31,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
-    const { data: claims, error: cErr } = await supabase.auth.getClaims(
+    const { data: userData, error: uErr } = await supabase.auth.getUser(
       authHeader.replace("Bearer ", ""),
     );
-    if (cErr || !claims?.claims?.sub) return json({ error: "Unauthorized" }, 401);
+    if (uErr || !userData?.user?.id) return json({ error: "Unauthorized" }, 401);
 
     const raw = await req.text();
     if (raw.length > MAX_BODY_BYTES) return json({ error: "Payload too large" }, 413);
