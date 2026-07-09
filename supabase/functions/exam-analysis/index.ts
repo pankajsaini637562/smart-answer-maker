@@ -1,3 +1,4 @@
+// Exam analysis edge function — GPT-5.5 powered per-question breakdown.
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -11,10 +12,10 @@ const MAX_BODY_BYTES = 60_000;
 const MAX_QUESTIONS = 200;
 
 type QIn = {
-  n: number;          // question number
-  correct: boolean;   // scored correct
-  attempted: boolean; // student answered
-  time: number;       // seconds spent (silently tracked)
+  n: number;
+  correct: boolean;
+  attempted: boolean;
+  time: number;
 };
 
 serve(async (req) => {
@@ -25,16 +26,14 @@ serve(async (req) => {
     if (!authHeader?.startsWith("Bearer ")) {
       return json({ error: "Unauthorized" }, 401);
     }
+    const token = authHeader.replace("Bearer ", "");
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
     );
-    const { data: claims, error: cErr } = await supabase.auth.getClaims(
-      authHeader.replace("Bearer ", ""),
-    );
-    if (cErr || !claims?.claims?.sub) return json({ error: "Unauthorized" }, 401);
+    const { data: userData, error: uErr } = await supabase.auth.getUser(token);
+    if (uErr || !userData?.user?.id) return json({ error: "Unauthorized" }, 401);
 
     const raw = await req.text();
     if (raw.length > MAX_BODY_BYTES) return json({ error: "Payload too large" }, 413);
@@ -73,22 +72,14 @@ ${JSON.stringify(questions)}
 
 Produce JSON with this exact shape:
 {
-  "overall_report": string,          // 3-5 sentence personalized study report
-  "strengths": string[],             // 2-4 short bullets
-  "weaknesses": string[],            // 2-4 short bullets
-  "pacing_note": string,             // one sentence on speed vs accuracy
-  "study_plan": string[],            // 3-5 concrete next steps for this week
-  "per_question": [                  // one entry per question, same order
-    { "n": number, "difficulty": "easy"|"medium"|"hard", "tip": string }
-  ],
-  "topic_mastery": [                 // 2-5 inferred sub-topics
-    { "topic": string, "mastery_pct": number, "why": string }
-  ],
-  "speed_zones": {                   // AI-highlighted problem zones for scatter
-    "too_slow_wrong": number[],      // question numbers
-    "too_fast_wrong": number[],
-    "efficient_correct": number[]
-  }
+  "overall_report": string,
+  "strengths": string[],
+  "weaknesses": string[],
+  "pacing_note": string,
+  "study_plan": string[],
+  "per_question": [ { "n": number, "difficulty": "easy"|"medium"|"hard", "tip": string } ],
+  "topic_mastery": [ { "topic": string, "mastery_pct": number, "why": string } ],
+  "speed_zones": { "too_slow_wrong": number[], "too_fast_wrong": number[], "efficient_correct": number[] }
 }`;
 
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
