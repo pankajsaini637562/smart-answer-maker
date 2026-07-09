@@ -189,12 +189,16 @@ export default function ExamPage() {
   const handleSubmitWithKey = (answerKey: number[]) => {
     if (!attempt || !sheet) return;
 
+    // Flush any time still counting toward the current question before we score.
+    const flushed = flushCurrentQuestionTime() || attempt;
+    const times = flushed.questionTimes || Array(flushed.answers.length).fill(0);
+
     let correct = 0;
     let wrong = 0;
     let unattempted = 0;
     const questionResults: QuestionResult[] = [];
 
-    attempt.answers.forEach((answer, index) => {
+    flushed.answers.forEach((answer, index) => {
       const correctAnswer = answerKey[index];
       let isCorrect = false;
       let marksObtained = 0;
@@ -223,6 +227,7 @@ export default function ExamPage() {
         correctAnswer: correctAnswer ?? 0,
         isCorrect,
         marksObtained,
+        timeSpent: times[index] || 0,
       });
     });
 
