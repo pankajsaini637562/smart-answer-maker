@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, RotateCcw, Home, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReportCard } from '@/components/ReportCard';
+import { AiExamAnalysis } from '@/components/AiExamAnalysis';
 import { ShareModal } from '@/components/ShareModal';
 import { XPNotification } from '@/components/XPNotification';
 import { SEO } from '@/components/SEO';
