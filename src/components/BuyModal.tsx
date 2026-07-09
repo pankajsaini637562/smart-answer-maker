@@ -49,7 +49,11 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
       if ((prof as any)?.referred_by && !paidCount) {
         pct += REFERRAL_DISCOUNT_PERCENT;
         ref = (prof as any).referred_by;
-        coupon = buildCouponCode('welcome', (prof as any).referred_by, REFERRAL_DISCOUNT_PERCENT);
+        // Use the friend's referral code (same seed used at signup) so the
+        // coupon shown here matches the one announced in the signup toast.
+        const { data: refCode } = await supabase.rpc('get_my_referrer_code' as any);
+        const seed = (typeof refCode === 'string' && refCode) ? refCode : (prof as any).referred_by;
+        coupon = buildCouponCode('welcome', seed, REFERRAL_DISCOUNT_PERCENT);
       }
 
       // Unused referral credits earned by this user
