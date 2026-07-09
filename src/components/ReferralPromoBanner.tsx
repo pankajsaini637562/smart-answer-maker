@@ -18,7 +18,12 @@ export function ReferralPromoBanner() {
     if (typeof window === 'undefined') return;
     if (localStorage.getItem(DISMISS_KEY)) return;
     // Delay a moment so it doesn't jump in on first paint
-    const t = setTimeout(() => setOpen(true), 900);
+    const t = setTimeout(() => {
+      // Mark as shown immediately so it never reappears, even if the user
+      // closes the tab or refreshes without pressing Close.
+      localStorage.setItem(DISMISS_KEY, '1');
+      setOpen(true);
+    }, 900);
     return () => clearTimeout(t);
   }, [loading]);
 
