@@ -286,3 +286,98 @@ export function AiExamAnalysis({ result, sheet }: { result: ExamResult; sheet: O
     </section>
   );
 }
+
+function downloadPdf(result: ExamResult, sheet: OMRSheet, a: Analysis) {
+  try {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 40;
+    const maxW = pageW - margin * 2;
+    let y = margin;
+
+    const ensureSpace = (h: number) => {
+      if (y + h > pageH - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    };
+    const writeLines = (text: string, size = 10, style: 'normal' | 'bold' | 'italic' = 'normal', gap = 4) => {
+      doc.setFont('helvetica', style);
+      doc.setFontSize(size);
+      const lines = doc.splitTextToSize(text, maxW);
+      for (const line of lines) {
+        ensureSpace(size + gap);
+        doc.text(line, margin, y);
+        y += size + gap;
+      }
+    };
+    const heading = (t: string) => { y += 6; writeLines(t, 13, 'bold', 6); };
+
+    // Title
+    writeLines('Advanced AI Analysis', 18, 'bold', 8);
+    writeLines(`${sheet.title}${sheet.subject ? ` · ${sheet.subject}` : ''}`, 11, 'normal', 4);
+    writeLines(
+      `Accuracy: ${result.accuracy.toFixed(1)}%  ·  Score: ${result.score}/${result.totalMarks}  ·  Time: ${Math.round(result.timeSpent / 60)} min`,
+      10, 'normal', 8,
+    );
+    doc.setDrawColor(200); doc.line(margin, y, pageW - margin, y); y += 10;
+
+    if (a.overall_report) { heading('Overall Report'); writeLines(a.overall_report, 10); }
+    if (a.pacing_note) { writeLines(`Pacing: ${a.pacing_note}`, 10, 'italic'); }
+    if (a.strengths?.length) { heading('Strengths'); a.strengths.forEach(s => writeLines(`• ${s}`, 10)); }
+    if (a.weaknesses?.length) { heading('Focus Areas'); a.weaknesses.forEach(s => writeLines(`• ${s}`, 10)); }
+
+    if (a.topic_mastery?.length) {
+      heading('Topic Mastery');
+      a.topic_mastery.forEach(t => {
+        writeLines(`${t.topic} — ${t.mastery_pct}%`, 10, 'bold', 2);
+        writeLines(t.why, 9, 'normal', 4);
+      });
+    }
+    if (a.study_plan?.length) {
+      heading("This Week's Plan");
+      a.study_plan.forEach((s, i) => writeLines(`${i + 1}. ${s}`, 10));
+    }
+    if (a.per_question?.length) {
+      heading('Per-Question Breakdown');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+      ensureSpace(14);
+      doc.text('Q', margin, y);
+      doc.text('Result', margin + 30, y);
+      doc.text('Time', margin + 90, y);
+      doc.text('Diff.', margin + 130, y);
+      doc.text('AI Tip', margin + 175, y);
+      y += 12;
+      doc.setFont('helvetica', 'normal');
+      a.per_question.forEach(q => {
+        const qr = result.questionResults.find(r => r.questionNumber === q.n);
+        const status = !qr ? '—' : qr.isCorrect ? 'Correct' : qr.userAnswer === null ? 'Skipped' : 'Wrong';
+        const tipLines = doc.splitTextToSize(q.tip || '', maxW - 175);
+        const rowH = Math.max(12, tipLines.length * 11);
+        ensureSpace(rowH);
+        doc.setFontSize(9);
+        doc.text(String(q.n), margin, y);
+        doc.text(status, margin + 30, y);
+        doc.text(`${qr?.timeSpent ?? 0}s`, margin + 90, y);
+        doc.text(q.difficulty, margin + 130, y);
+        doc.text(tipLines, margin + 175, y);
+        y += rowH;
+      });
+    }
+
+    const total = doc.getNumberOfPages();
+    for (let i = 1; i <= total; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(140);
+      doc.text(`Exam Master · Page ${i} of ${total}`, margin, pageH - 20);
+      doc.setTextColor(0);
+    }
+
+    const safe = (sheet.title || 'analysis').replace(/[^a-z0-9]+/gi, '_').slice(0, 40);
+    doc.save(`AI_Analysis_${safe}.pdf`);
+    toast.success('PDF downloaded');
+  } catch (e: any) {
+    toast.error(e?.message || 'Failed to generate PDF');
+  }
+}
