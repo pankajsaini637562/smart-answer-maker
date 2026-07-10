@@ -15,17 +15,15 @@ export function ReferralPromoBanner() {
 
   useEffect(() => {
     if (loading) return;
+    if (!user) return; // Only show to signed-in users, not on landing/home
     if (typeof window === 'undefined') return;
     if (localStorage.getItem(DISMISS_KEY)) return;
-    // Delay a moment so it doesn't jump in on first paint
     const t = setTimeout(() => {
-      // Mark as shown immediately so it never reappears, even if the user
-      // closes the tab or refreshes without pressing Close.
       localStorage.setItem(DISMISS_KEY, '1');
       setOpen(true);
     }, 900);
     return () => clearTimeout(t);
-  }, [loading]);
+  }, [loading, user]);
 
   const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, '1');
