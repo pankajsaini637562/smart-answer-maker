@@ -15,20 +15,13 @@ export function ReferralPromoBanner() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) return; // Only show to signed-in users, not on landing/home
-    if (typeof window === 'undefined') return;
-    if (localStorage.getItem(DISMISS_KEY)) return;
-    const t = setTimeout(() => {
-      localStorage.setItem(DISMISS_KEY, '1');
-      setOpen(true);
-    }, 900);
+    if (!user) return;
+    const t = setTimeout(() => setOpen(true), 900);
     return () => clearTimeout(t);
   }, [loading, user]);
 
-  const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, '1');
-    setOpen(false);
-  };
+  const dismiss = () => setOpen(false);
+
 
   const goRefer = () => {
     dismiss();
