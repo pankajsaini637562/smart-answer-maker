@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { SEO } from '@/components/SEO';
 import {
   ScanLine, BarChart3, Trophy, Users, Sparkles, ShieldCheck,
-  Star, ArrowRight, CheckCircle2, Brain, Clock, Target
+  Star, ArrowRight, CheckCircle2, Brain, Clock, Target, GraduationCap
 } from 'lucide-react';
 
 const features = [
@@ -69,6 +69,9 @@ export default function LandingPage() {
             <span>Smart AI OMR</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+            <Link to="/courses" className="hover:text-foreground flex items-center gap-1.5">
+              <GraduationCap className="w-4 h-4" /> Courses
+            </Link>
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#reviews" className="hover:text-foreground">Reviews</a>
             <a href="#faq" className="hover:text-foreground">FAQ</a>
