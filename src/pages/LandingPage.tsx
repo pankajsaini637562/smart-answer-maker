@@ -69,6 +69,9 @@ export default function LandingPage() {
             <span>Smart AI OMR</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+            <Link to="/courses" className="hover:text-foreground flex items-center gap-1.5">
+              <GraduationCap className="w-4 h-4" /> Courses
+            </Link>
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#reviews" className="hover:text-foreground">Reviews</a>
             <a href="#faq" className="hover:text-foreground">FAQ</a>
