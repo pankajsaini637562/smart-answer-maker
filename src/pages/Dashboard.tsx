@@ -86,6 +86,8 @@ export default function Dashboard() {
       </section>
 
       <main className="container py-8 space-y-10">
+        <section className="animate-slide-up"><CoursesHeroCard /></section>
+
         {/* Header Ad */}
 
         {/* Stats */}
