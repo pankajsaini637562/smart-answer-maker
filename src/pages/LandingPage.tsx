@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { SEO } from '@/components/SEO';
 import {
   ScanLine, BarChart3, Trophy, Users, Sparkles, ShieldCheck,
-  Star, ArrowRight, CheckCircle2, Brain, Clock, Target
+  Star, ArrowRight, CheckCircle2, Brain, Clock, Target, GraduationCap
 } from 'lucide-react';
 
 const features = [
