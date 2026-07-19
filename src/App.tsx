@@ -24,6 +24,10 @@ import MaterialDetailPage from "./pages/MaterialDetailPage";
 import LibraryPage from "./pages/LibraryPage";
 import ReferPage from "./pages/ReferPage";
 import AdminPage from "./pages/AdminPage";
+import CoursesPage from "./pages/CoursesPage";
+import CourseDetailPage from "./pages/CourseDetailPage";
+import CourseLearnPage from "./pages/CourseLearnPage";
+import InstructorPage from "./pages/InstructorPage";
 import { useEffect } from "react";
 import { captureReferralFromUrl } from "./lib/referral";
 import { ReferralPromoBanner } from "./components/ReferralPromoBanner";
@@ -77,6 +81,10 @@ const AppRoutes = () => (
     <Route path="/library" element={<ProtectedRoute><LibraryPage /></ProtectedRoute>} />
     <Route path="/refer" element={<ProtectedRoute><ReferPage /></ProtectedRoute>} />
     <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+    <Route path="/courses" element={<CoursesPage />} />
+    <Route path="/courses/:id" element={<CourseDetailPage />} />
+    <Route path="/courses/:id/learn" element={<ProtectedRoute><CourseLearnPage /></ProtectedRoute>} />
+    <Route path="/instructor" element={<ProtectedRoute><InstructorPage /></ProtectedRoute>} />
     <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>

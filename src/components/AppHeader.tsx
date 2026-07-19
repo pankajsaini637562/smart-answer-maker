@@ -1,12 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown, BookOpen, Shield } from 'lucide-react';
+import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown, BookOpen, Shield, GraduationCap, PenSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useIsInstructor } from '@/hooks/useIsInstructor';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
+  { to: '/courses', label: 'Courses', icon: GraduationCap },
   { to: '/materials', label: 'Materials', icon: BookOpen },
   { to: '/sheets', label: 'Sheets', icon: FileText },
   { to: '/history', label: 'History', icon: Trophy },
@@ -18,7 +20,10 @@ export function AppHeader() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const { isAdmin } = useIsAdmin();
-  const items = isAdmin ? [...navItems, { to: '/admin', label: 'Admin', icon: Shield }] : navItems;
+  const { isInstructor } = useIsInstructor();
+  let items = navItems;
+  if (isInstructor) items = [...items, { to: '/instructor', label: 'Teach', icon: PenSquare }];
+  if (isAdmin) items = [...items, { to: '/admin', label: 'Admin', icon: Shield }];
 
   return (
     <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-50">
