@@ -6,6 +6,7 @@ import { StatCard } from '@/components/StatCard';
 import { AppHeader } from '@/components/AppHeader';
 import { SEO } from '@/components/SEO';
 import { GamificationBar } from '@/components/GamificationBar';
+import { CoursesHeroCard } from '@/components/CoursesHeroCard';
 import { BadgesGrid } from '@/components/BadgesGrid';
 import { getSheets, getScoreboard, getResults } from '@/lib/storage';
 import { refreshStreak, getGamificationState } from '@/lib/gamification';
@@ -85,6 +86,8 @@ export default function Dashboard() {
       </section>
 
       <main className="container py-8 space-y-10">
+        <section className="animate-slide-up"><CoursesHeroCard /></section>
+
         {/* Header Ad */}
 
         {/* Stats */}

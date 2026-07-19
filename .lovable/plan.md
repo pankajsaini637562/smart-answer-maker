@@ -1,108 +1,61 @@
 
-# Study Material Marketplace
+## Overview
+Add a full **Courses** section (Physics Wallah–style) as a separate dashboard, accessed from a featured hero card on Home. Uses Lovable's built-in payments (Stripe or Paddle — provider chosen at enable time) instead of the existing UPI+admin flow used by Materials. Adds an **instructor** role so approved teachers can publish courses.
 
-Add a new section where admins upload notes/study material and students buy paid ones via UPI or access free ones instantly. Includes a referral discount system and downloadable receipts.
+## Home entry
+- Add a large featured hero card on `Dashboard.tsx` ("Explore Courses — Learn like PW") linking to `/courses`.
+- Add "Courses" to the top nav (`AppHeader.tsx`) and mobile nav.
 
-## New sections in the app
+## New routes
+- `/courses` — catalog dashboard: category chips (Class 9–12, JEE, NEET, Boards, Skills), search, filters (subject, price, free/paid), course cards (cover, title, instructor, rating, price, "Enrolled" badge).
+- `/courses/:id` — detail page: hero (cover, title, instructor, price, Enroll button), tabs — Overview / Curriculum (chapters → lessons) / Resources (PDFs) / Tests (linked OMR sheets) / Reviews.
+- `/courses/:id/learn` — enrolled-only: sidebar chapter/lesson list, main pane shows lesson content (title, description, attached PDF, linked test button), "Mark complete" toggles progress.
+- `/instructor` — instructor dashboard: create/edit courses, add chapters & lessons, upload PDFs, link OMR sheets as tests, publish/unpublish.
 
-- **Study Materials** (`/materials`) — public catalog of all approved materials, filterable by Free / Paid, subject, class.
-- **Material Details** (`/materials/:id`) — description, price, preview, buy / download button.
-- **My Library** (`/library`) — user's owned/accessed materials with download links.
-- **Refer & Earn** (`/refer`) — user's invite link, referral stats, discount status.
-- **Admin Panel** (`/admin`) — visible only to admin emails:
-  - Upload material (title, description, subject, class, price, free/paid, file)
-  - Pending payments queue → approve / reject with note
-  - Purchases & referral overview
-- **Profile updates** — new fields: `upi_id_for_payout` (not used yet), and new stat tiles for "Materials owned", "Referrals", "Discount earned"; a "Refer & Earn" quick link and, for admins, an "Admin Panel" button.
+## Database (new tables, RLS + GRANTs per convention)
+- `course_categories` (slug, name, icon) — public read.
+- `courses` (title, slug, description, cover_url, category_id, instructor_id, price_inr, is_free, is_published, rating_avg, rating_count). Public read when `is_published`; instructor/admin write.
+- `course_chapters` (course_id, title, position). Public read for published courses.
+- `course_lessons` (chapter_id, title, description, resource_pdf_path, linked_sheet_id, position, is_preview). Non-preview lessons readable only to enrolled users or instructor/admin.
+- `course_enrollments` (user_id, course_id, enrolled_at, source: 'paid'|'free'|'gift'). User can read own; insert only via server (edge function on payment webhook / free-enroll RPC).
+- `course_lesson_progress` (user_id, lesson_id, completed_at). User manages own rows.
+- `course_reviews` (user_id, course_id, rating 1–5, comment). Enrolled users insert/update own; public read.
+- Extend `user_roles` with new enum value `instructor` (add via `ALTER TYPE app_role ADD VALUE 'instructor'`). Reuse existing `has_role()` helper.
+- Storage bucket `course-content` (private) for lesson PDFs; `course-covers` (public) for cover images.
 
-## Purchase flow
+## Payments
+- Enable Lovable's built-in payments — run `recommend_payment_provider` first, then enable Stripe (preferred for digital courses) or Paddle based on the recommendation.
+- Product per course synced with `batch_create_product` (price = course price, tax code set).
+- Checkout edge function creates a session; success webhook edge function inserts a `course_enrollments` row via service role.
+- Free courses (`is_free=true`) skip checkout — an `enroll_free_course` RPC inserts the enrollment directly.
+- Enrolled users see a persistent receipt on the course detail page (reuses existing `receipt.ts` PDF utility for a course receipt).
 
-1. Student opens a paid material → sees price. If they have a valid referral discount, discounted price is shown.
-2. Clicks **Buy** → modal shows:
-   - UPI ID `7891041852@fam`, amount, a UPI deep-link and QR
-   - Fields: **UTR / Transaction ID** (required), optional screenshot upload
-3. On submit, a `purchases` row is created with status `pending`.
-4. Admin sees it in the pending queue → **Approve** (grants access, generates receipt) or **Reject** (with reason).
-5. On approval:
-   - Access is granted (row visible in My Library)
-   - **Receipt** is generated client-side (PDF) and downloadable immediately from Purchase Details or My Library
-   - Referrer (if any) earns their reward
+## Instructor role
+- Users become instructor when an admin (existing `admin_emails` check) toggles them on a new "Instructors" tab of `/admin`.
+- `/instructor` route is gated by `has_role(auth.uid(), 'instructor')` OR admin.
+- Course/chapter/lesson RLS: instructor can write only rows where `courses.instructor_id = auth.uid()`; admin can write all.
 
-## Referral flow
+## Profile updates
+- Add a "My Courses" quick-link tile on `ProfilePage.tsx` linking to `/courses?tab=enrolled`.
+- If instructor: add "Instructor Dashboard" quick-link.
 
-- Every user gets a unique `referral_code` on signup (stored on profile).
-- Invite link: `https://<app>/?ref=CODE` (captured to localStorage on landing; applied at signup).
-- **Referred user**: gets a **10% discount** automatically on their first paid purchase.
-- **Referrer**: after their referred friend completes a paid purchase (admin-approved), receives a **10% discount credit** usable on their next paid purchase (one credit per successful referral, stackable up to a cap of 50%).
-- Free courses do not trigger referral rewards.
+## Files to create
+- `src/pages/CoursesPage.tsx`, `CourseDetailPage.tsx`, `CourseLearnPage.tsx`, `InstructorPage.tsx`.
+- `src/components/CourseCard.tsx`, `CourseHeroCard.tsx`, `CurriculumList.tsx`, `LessonPlayer.tsx`, `EnrollButton.tsx`.
+- `src/hooks/useIsInstructor.ts`, `src/lib/courses.ts` (fetchers).
+- `supabase/functions/create-course-checkout/index.ts`, `supabase/functions/course-payment-webhook/index.ts`.
 
-## Free vs paid
+## Files to modify
+- `src/App.tsx` — add 4 routes.
+- `src/components/AppHeader.tsx` — add Courses nav item (+ Instructor when applicable).
+- `src/pages/Dashboard.tsx` — add featured Courses hero card.
+- `src/pages/ProfilePage.tsx` — add My Courses / Instructor tiles.
+- `src/pages/AdminPage.tsx` — add Instructors management tab.
 
-- Free materials: instant access on click, no approval, no payment, added straight to My Library.
-- Paid materials: full UPI + approval flow above.
-
-## Admin access
-
-Admin emails are hardcoded in one config file (`src/lib/adminEmails.ts`). Any authed user whose email matches gets admin UI + policies.
-
-## Receipt
-
-Generated in-browser with `jspdf` using existing app branding (Space Grotesk + purple accent, glassmorphism logo). Contains: receipt no, date, buyer name/email, material title, amount, UTR, discount applied, admin approval timestamp. Downloadable from purchase details and My Library. Also re-downloadable anytime.
-
----
-
-## Technical details
-
-### Database (new migration)
-
-- `materials`
-  - `id uuid pk`, `title text`, `description text`, `subject text`, `class text`, `is_free bool`, `price_inr int`, `file_path text` (in `study-materials` storage bucket), `cover_url text`, `created_by uuid`, `is_published bool default true`, timestamps
-- `purchases`
-  - `id`, `user_id`, `material_id`, `amount_inr int`, `discount_percent int`, `final_amount_inr int`, `utr text`, `screenshot_path text nullable`, `status text` (`pending|approved|rejected`), `admin_note text`, `approved_by`, `approved_at`, `referrer_user_id nullable`, `receipt_no text`, timestamps
-- `referral_credits`
-  - `id`, `user_id` (owner of credit), `source_purchase_id`, `percent int`, `used_purchase_id nullable`, `created_at`
-- Extend `profiles`: `referral_code text unique`, `referred_by uuid nullable`
-- New storage buckets:
-  - `study-materials` (private; signed URLs on download; access checked in edge function)
-  - `payment-proofs` (private; owner + admin read)
-
-### RLS & roles
-
-- Admin check via SQL function `public.is_admin(uid)` reading a small config table `admin_emails` seeded with `7891041852@fam`'s owner email at first launch — but per user's choice, we hardcode. So `is_admin` reads `auth.users.email` and compares to a fixed list stored in a Postgres function. Simpler: create table `admin_emails(email text pk)` and seed it; `is_admin(uid)` joins on `auth.users.email`.
-- Policies:
-  - `materials`: everyone can select where `is_published`; only admins insert/update/delete
-  - `purchases`: user selects own; admin selects all; user inserts own pending; admin updates status
-  - `referral_credits`: user selects own; system inserts via trigger on purchase approval
-
-### Edge function
-
-- `download-material` — validates user has an approved purchase or material is free, returns a signed URL from the private bucket.
-- Trigger `on_purchase_approved`: awards referral credit to referrer, marks referred user's discount as consumed.
-
-### Frontend
-
-- New pages under `src/pages/materials/*`, `src/pages/admin/*`, `src/pages/ReferPage.tsx`, `src/pages/LibraryPage.tsx`.
-- Add nav entries: "Materials" for everyone; "Admin" only if `useIsAdmin()` true.
-- `src/lib/referral.ts` — capture `?ref=CODE` from URL to localStorage, attach at signup.
-- `src/lib/receipt.ts` — `jspdf` receipt generator.
-- Install: `jspdf`, `qrcode.react`.
-- Profile page gets: referral code + copy button, credit balance, admin panel link if admin, new stat tiles.
-
-### Payments
-
-Manual UPI + admin approval as chosen. No payment gateway integration. UPI ID `7891041852@fam` is stored as a constant in `src/lib/paymentsConfig.ts` and shown in the buy modal along with a `upi://pay?pa=...&am=...&tn=...` deep link and QR.
-
-### Files to create / edit (high level)
-
-- Migration: materials, purchases, referral_credits, profiles extension, admin_emails, storage buckets, RLS, trigger
-- Edge function: `download-material`
-- New pages: MaterialsPage, MaterialDetailPage, LibraryPage, ReferPage, AdminPanelPage, AdminUploadPage, AdminPurchasesPage
-- New components: BuyModal, ReceiptPreview, MaterialCard, PendingPurchaseRow
-- Edits: `AppHeader.tsx` (nav), `App.tsx` (routes), `AuthPage.tsx` (capture referral on signup), `ProfilePage.tsx` (referral/admin/stats), `LandingPage.tsx` (capture `?ref=`)
-
-## Out of scope
-
-- Automated UPI verification (no gateway)
-- Payouts to admin — assumed to be handled outside the app
-- Refunds flow
-- Marketing emails
+## Build order
+1. DB migration (tables, enum extension, RLS, GRANTs, storage buckets).
+2. Run `recommend_payment_provider` → enable chosen provider → wait for confirmation.
+3. Edge functions (checkout + webhook + free-enroll RPC).
+4. Client routes/components in parallel.
+5. Nav + profile updates.
+6. Test enrollment flow end-to-end.
