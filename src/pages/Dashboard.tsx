@@ -107,7 +107,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <section>
           <h2 className="section-title mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { to: '/create', icon: Plus, title: 'Create OMR Sheet', desc: 'Design a new exam sheet', color: 'primary' },
               { to: '/courses', icon: GraduationCap, title: 'Courses', desc: 'Browse video courses & notes', color: 'primary' },
