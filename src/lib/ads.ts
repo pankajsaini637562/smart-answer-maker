@@ -19,12 +19,12 @@ export async function initializeAds(): Promise<void> {
   }
 }
 
-/** Prepare + show the App Open ad. No-op on web/PWA. */
+/** Load + show the App Open ad. No-op on web/PWA. */
 export async function showAppOpenAd(): Promise<void> {
   if (!Capacitor.isNativePlatform() || !initialized) return;
   try {
-    await AdMob.prepareAppOpenAd({ adId: APP_OPEN_AD_UNIT_ID });
-    await AdMob.showAppOpenAd();
+    await AdMob.loadAppOpen({ adId: APP_OPEN_AD_UNIT_ID });
+    await AdMob.showAppOpen();
   } catch (e) {
     console.warn('App open ad failed', e);
   }
