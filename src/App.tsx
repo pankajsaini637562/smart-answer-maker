@@ -96,6 +96,15 @@ function ReferralCapture() {
   return null;
 }
 
+function AdsBootstrap() {
+  useEffect(() => {
+    // No-op on web/PWA; initializes the Google Mobile Ads SDK in the native app
+    // and shows the App Open ad unit on cold start.
+    initializeAds().then(() => showAppOpenAd());
+  }, []);
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
