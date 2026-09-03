@@ -225,6 +225,13 @@ export type Database = {
             referencedRelation: "course_lessons"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "course_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "course_lessons_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       course_lessons: {
@@ -924,7 +931,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      course_lessons_public: {
+        Row: {
+          chapter_id: string | null
+          course_id: string | null
+          created_at: string | null
+          id: string | null
+          is_preview: boolean | null
+          position: number | null
+          title: string | null
+        }
+        Insert: {
+          chapter_id?: string | null
+          course_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_preview?: boolean | null
+          position?: number | null
+          title?: string | null
+        }
+        Update: {
+          chapter_id?: string | null
+          course_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_preview?: boolean | null
+          position?: number | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_lessons_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "course_chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       enroll_free_course: { Args: { _course_id: string }; Returns: string }
