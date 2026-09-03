@@ -31,6 +31,7 @@ import InstructorPage from "./pages/InstructorPage";
 import { useEffect } from "react";
 import { captureReferralFromUrl } from "./lib/referral";
 import { ReferralPromoBanner } from "./components/ReferralPromoBanner";
+import { initializeAds, showAppOpenAd } from "./lib/ads";
 
 import NotFound from "./pages/NotFound";
 
@@ -95,6 +96,15 @@ function ReferralCapture() {
   return null;
 }
 
+function AdsBootstrap() {
+  useEffect(() => {
+    // No-op on web/PWA; initializes the Google Mobile Ads SDK in the native app
+    // and shows the App Open ad unit on cold start.
+    initializeAds().then(() => showAppOpenAd());
+  }, []);
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -104,6 +114,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ReferralCapture />
+            <AdsBootstrap />
             <ReferralPromoBanner />
             <AppRoutes />
           </BrowserRouter>

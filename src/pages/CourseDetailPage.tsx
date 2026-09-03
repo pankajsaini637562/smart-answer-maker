@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchCourse, fetchCurriculum, enrollFree, type Course, type Chapter, type Lesson } from '@/lib/courses';
+import { fetchCourse, fetchCurriculum, fetchPublicCurriculum, enrollFree, type Course, type Chapter, type Lesson } from '@/lib/courses';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -24,8 +24,10 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     fetchCourse(id).then(setCourse);
-    fetchCurriculum(id).then(({ chapters, lessons }) => { setChapters(chapters); setLessons(lessons); });
-  }, [id]);
+    // Visitors get the metadata-only outline; enrolled users get full lesson rows.
+    const loader = enrolled ? fetchCurriculum : fetchPublicCurriculum;
+    loader(id).then(({ chapters, lessons }) => { setChapters(chapters); setLessons(lessons); });
+  }, [id, enrolled]);
   useEffect(() => {
     if (!user) return;
     supabase.from('course_enrollments').select('id').eq('course_id', id).eq('user_id', user.id).maybeSingle()
