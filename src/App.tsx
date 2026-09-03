@@ -31,6 +31,7 @@ import InstructorPage from "./pages/InstructorPage";
 import { useEffect } from "react";
 import { captureReferralFromUrl } from "./lib/referral";
 import { ReferralPromoBanner } from "./components/ReferralPromoBanner";
+import { initializeAds, showAppOpenAd } from "./lib/ads";
 
 import NotFound from "./pages/NotFound";
 

@@ -24,8 +24,10 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     fetchCourse(id).then(setCourse);
-    fetchCurriculum(id).then(({ chapters, lessons }) => { setChapters(chapters); setLessons(lessons); });
-  }, [id]);
+    // Visitors get the metadata-only outline; enrolled users get full lesson rows.
+    const loader = enrolled ? fetchCurriculum : fetchPublicCurriculum;
+    loader(id).then(({ chapters, lessons }) => { setChapters(chapters); setLessons(lessons); });
+  }, [id, enrolled]);
   useEffect(() => {
     if (!user) return;
     supabase.from('course_enrollments').select('id').eq('course_id', id).eq('user_id', user.id).maybeSingle()
