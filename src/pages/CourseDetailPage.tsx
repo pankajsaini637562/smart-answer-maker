@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchCourse, fetchCurriculum, enrollFree, type Course, type Chapter, type Lesson } from '@/lib/courses';
+import { fetchCourse, fetchCurriculum, fetchPublicCurriculum, enrollFree, type Course, type Chapter, type Lesson } from '@/lib/courses';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';

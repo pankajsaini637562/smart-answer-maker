@@ -67,6 +67,17 @@ export async function fetchCurriculum(courseId: string) {
   return { chapters: (chapters ?? []) as Chapter[], lessons: (lessons ?? []) as Lesson[] };
 }
 
+// Public-safe curriculum outline (no video_url / PDF paths) for the course detail page.
+export async function fetchPublicCurriculum(courseId: string) {
+  const { data: chapters, error: cErr } = await supabase
+    .from('course_chapters').select('*').eq('course_id', courseId).order('position');
+  if (cErr) throw cErr;
+  const { data: lessons, error: lErr } = await supabase
+    .from('course_lessons_public' as any).select('*').eq('course_id', courseId).order('position');
+  if (lErr) throw lErr;
+  return { chapters: (chapters ?? []) as Chapter[], lessons: (lessons ?? []) as unknown as Lesson[] };
+}
+
 export async function fetchMyEnrollments(userId: string) {
   const { data, error } = await supabase
     .from('course_enrollments').select('course_id').eq('user_id', userId);
