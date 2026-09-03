@@ -114,6 +114,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ReferralCapture />
+            <AdsBootstrap />
             <ReferralPromoBanner />
             <AppRoutes />
           </BrowserRouter>
