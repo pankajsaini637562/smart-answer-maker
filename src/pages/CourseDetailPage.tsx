@@ -69,17 +69,17 @@ export default function CourseDetailPage() {
               {course.subject && <Badge variant="secondary">{course.subject}</Badge>}
               {course.level && <Badge variant="outline">{course.level}</Badge>}
               <span className="flex items-center gap-1 text-muted-foreground"><Users className="w-4 h-4" />{course.enrollment_count} enrolled</span>
-              {course.rating_count > 0 && <span className="flex items-center gap-1"><Star className="w-4 h-4 fill-amber-400 text-amber-400" />{course.rating_avg.toFixed(1)}</span>}
+              {course.rating_count > 0 && <span className="flex items-center gap-1"><Star className="w-4 h-4 fill-amber-400 text-warning" />{course.rating_avg.toFixed(1)}</span>}
             </div>
           </div>
           <Card className="modern-card">
-            <div className="aspect-video bg-gradient-to-br from-primary/25 to-accent flex items-center justify-center">
+            <div className="aspect-video bg-primary/10 flex items-center justify-center">
               {course.cover_url ? <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" />
                 : <BookOpen className="w-12 h-12 text-primary/70" />}
             </div>
             <CardContent className="p-5 space-y-3">
               {course.is_free
-                ? <p className="text-2xl font-bold text-emerald-500">Free</p>
+                ? <p className="text-2xl font-bold text-success">Free</p>
                 : <p className="text-2xl font-bold flex items-center"><IndianRupee className="w-6 h-6" />{course.price_inr}</p>}
               {enrolled ? (
                 <Link to={`/courses/${course.id}/learn`}><Button className="w-full gap-2"><PlayCircle className="w-4 h-4" />Continue learning</Button></Link>
@@ -89,7 +89,7 @@ export default function CourseDetailPage() {
                 </Button>
               )}
               <ul className="text-sm text-muted-foreground space-y-1 pt-2">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" />{chapters.length} chapters, {lessons.length} lessons</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-success" />{chapters.length} chapters, {lessons.length} lessons</li>
                 <li className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary" />Downloadable PDF notes</li>
                 <li className="flex items-center gap-2"><ClipboardList className="w-4 h-4 text-primary" />OMR mock tests included</li>
               </ul>

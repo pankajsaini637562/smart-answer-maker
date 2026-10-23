@@ -37,7 +37,7 @@ export default function SheetsPage() {
             <p className="text-sm text-muted-foreground">{sheets.length} sheets created</p>
           </div>
           <Link to="/create">
-            <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20">
+            <Button className="gap-2 rounded-xl shadow-sm">
               <Plus className="w-4 h-4" />
               New Sheet
             </Button>
@@ -46,7 +46,7 @@ export default function SheetsPage() {
 
         {sheets.length === 0 ? (
           <div className="text-center py-20 animate-fade-in">
-            <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+            <div className="w-20 h-20 rounded-xl bg-accent flex items-center justify-center mx-auto mb-6">
               <FileText className="w-10 h-10 text-accent-foreground" />
             </div>
             <h3 className="text-2xl font-bold font-display mb-2">No Sheets Yet</h3>
@@ -118,7 +118,7 @@ export default function SheetsPage() {
       </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display">Delete Sheet?</AlertDialogTitle>
             <AlertDialogDescription>

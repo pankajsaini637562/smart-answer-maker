@@ -241,7 +241,7 @@ export default function CreateSheet() {
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" className="flex-1 gap-2 rounded-xl h-12 shadow-lg shadow-primary/20">
+            <Button type="submit" className="flex-1 gap-2 rounded-xl h-12 shadow-sm">
               <Sparkles className="w-4 h-4" />
               Create Sheet
             </Button>

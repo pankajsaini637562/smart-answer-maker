@@ -36,3 +36,13 @@ export function buildCouponCode(kind: 'welcome' | 'thanks', seed: string, pct: n
   const prefix = kind === 'welcome' ? 'WELCOME' : 'THANKS';
   return `${prefix}${pct}-${short}`;
 }
+
+/**
+ * Mirrors the server rule: a first purchase by a referred friend gets the 50% welcome
+ * discount; otherwise exactly ONE unused coupon (oldest) is applied. Coupons never stack.
+ */
+export function pickDiscount(hasWelcome: boolean, unusedCoupons: { id: string; percent: number }[]) {
+  if (hasWelcome) return { percent: REFERRAL_DISCOUNT_PERCENT, couponId: null as string | null };
+  const c = unusedCoupons[0];
+  return { percent: c ? stackDiscount(c.percent) : 0, couponId: c ? c.id : null };
+}

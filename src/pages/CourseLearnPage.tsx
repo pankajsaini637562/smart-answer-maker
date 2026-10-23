@@ -72,7 +72,7 @@ export default function CourseLearnPage() {
                       <button onClick={() => setActive(l)}
                         className={cn('w-full text-left flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm transition-colors',
                           active?.id === l.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50')}>
-                        {completed.has(l.id) ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : <Circle className="w-4 h-4 text-muted-foreground shrink-0" />}
+                        {completed.has(l.id) ? <CheckCircle2 className="w-4 h-4 text-success shrink-0" /> : <Circle className="w-4 h-4 text-muted-foreground shrink-0" />}
                         <span className="truncate">{l.title}</span>
                       </button>
                     </li>

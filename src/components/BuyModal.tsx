@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT, buildCouponCode, finalPrice } from '@/lib/paymentsConfig';
+import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, buildCouponCode, finalPrice, pickDiscount } from '@/lib/paymentsConfig';
 import { toast } from 'sonner';
 
 interface Material {
@@ -58,13 +58,15 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
 
       // Unused referral credits earned by this user
       const { data: credits } = await supabase.from('referral_credits')
-        .select('id, percent').eq('user_id', user.id).is('used_purchase_id', null);
-      const creditPct = (credits || []).reduce((s: number, c: any) => s + c.percent, 0);
+        .select('id, percent, created_at').eq('user_id', user.id).is('used_purchase_id', null)
+        .order('created_at', { ascending: true });
       setCreditsCount(credits?.length || 0);
-      if (!coupon && credits && credits.length > 0) {
-        coupon = buildCouponCode('thanks', (credits[0] as any).id, (credits[0] as any).percent);
+      const picked = pickDiscount(pct > 0, (credits || []) as any);
+      if (!coupon && picked.couponId) {
+        const c = (credits || []).find((x: any) => x.id === picked.couponId) as any;
+        coupon = buildCouponCode('thanks', c.id, c.percent);
       }
-      pct = Math.min(pct + creditPct, MAX_STACKED_DISCOUNT);
+      pct = picked.percent;
 
       setDiscountPercent(pct);
       setReferrerId(ref);
@@ -132,9 +134,9 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
               <span className="flex items-center font-semibold"><IndianRupee className="w-3.5 h-3.5" />{material.price_inr}</span>
             </div>
             {discountPercent > 0 && (
-              <div className="flex items-center justify-between text-emerald-600">
+              <div className="flex items-center justify-between text-success">
                 <span className="text-sm">Discount</span>
-                <Badge className="bg-emerald-500/90 border-0 text-white">-{discountPercent}%</Badge>
+                <Badge className="bg-success/90 border-0 text-primary-foreground">-{discountPercent}%</Badge>
               </div>
             )}
             <div className="flex items-center justify-between text-base font-bold border-t pt-3">
@@ -142,12 +144,12 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
               <span className="flex items-center text-primary text-lg"><IndianRupee className="w-4 h-4" />{finalAmount}</span>
             </div>
             {appliedCoupon && (
-              <div className="rounded-lg border border-dashed border-emerald-500/50 bg-emerald-500/5 px-3 py-2 flex items-center justify-between gap-2">
+              <div className="rounded-lg border border-dashed border-success/50 bg-success/5 px-3 py-2 flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold">Coupon applied</p>
-                  <p className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">{appliedCoupon}</p>
+                  <p className="text-xs text-success  font-semibold">Coupon applied</p>
+                  <p className="font-mono font-bold text-success  text-sm">{appliedCoupon}</p>
                 </div>
-                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                <Check className="w-4 h-4 text-success shrink-0" />
               </div>
             )}
             {creditsCount > 0 && (
@@ -156,7 +158,7 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
           </div>
 
           <div className="flex flex-col items-center gap-2 py-2">
-            <div className="bg-white p-2 rounded-lg">
+            <div className="bg-card p-2 rounded-lg">
               <QRCodeCanvas value={upiLink} size={140} />
             </div>
             <p className="text-xs text-muted-foreground">Scan with any UPI app</p>

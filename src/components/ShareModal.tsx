@@ -67,13 +67,13 @@ export function ShareModal({ open, onOpenChange, data }: ShareModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-xl">
         <DialogHeader>
           <DialogTitle className="font-display text-lg">Share Your Score</DialogTitle>
         </DialogHeader>
 
         {/* Score Preview Card */}
-        <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent text-center space-y-1">
+        <div className="p-4 rounded-xl bg-primary/10 text-center space-y-1">
           <p className="text-4xl">{emoji}</p>
           <p className="text-2xl font-bold font-mono">{data.score}/{data.maxScore}</p>
           <p className="text-sm text-muted-foreground">{data.accuracy}% accuracy • {data.title}</p>

@@ -160,12 +160,12 @@ export default function ProfilePage() {
           <CardHeader className="pb-4 relative">
             <div className="flex items-center gap-4">
               <label className="relative cursor-pointer group/avatar premium-glow rounded-full">
-                <Avatar className="w-20 h-20 ring-2 ring-background shadow-xl">
+                <Avatar className="w-20 h-20 ring-2 ring-background shadow-sm">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
                   <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary font-display">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity">
-                  {uploadingAvatar ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
+                  {uploadingAvatar ? <Loader2 className="w-5 h-5 text-primary-foreground animate-spin" /> : <Camera className="w-5 h-5 text-primary-foreground" />}
                 </div>
                 <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
               </label>

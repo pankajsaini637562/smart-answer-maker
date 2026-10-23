@@ -572,7 +572,7 @@ export default function ChatPage() {
                     </Avatar>
                     <button
                       onClick={() => avatarInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg hover:scale-105 transition"
+                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-sm transition"
                       aria-label="Change photo"
                     >
                       <Camera className="w-4 h-4" />
@@ -680,7 +680,7 @@ export default function ChatPage() {
                                 {showHeader && !mine && (
                                   <span className="text-xs text-muted-foreground px-1 mb-0.5">{name}</span>
                                 )}
-                                <div className={`px-3 py-2 rounded-2xl text-sm break-words shadow-sm ${
+                                <div className={`px-3 py-2 rounded-xl text-sm break-words shadow-sm ${
                                   mine
                                     ? 'bg-primary text-primary-foreground rounded-br-sm'
                                     : 'bg-accent rounded-bl-sm'

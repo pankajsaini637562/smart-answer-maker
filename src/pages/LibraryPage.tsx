@@ -64,9 +64,9 @@ export default function LibraryPage() {
               <div className="flex-1 min-w-0">
                 <Link to={`/materials/${p.material_id}`} className="font-semibold hover:underline block truncate">{p.materials?.title}</Link>
                 <div className="text-xs text-muted-foreground flex gap-2 items-center mt-0.5">
-                  {p.status === 'approved' && <Badge className="bg-emerald-500/90 text-white border-0">Approved</Badge>}
-                  {p.status === 'free' && <Badge className="bg-emerald-500/90 text-white border-0">Free</Badge>}
-                  {p.status === 'pending' && <Badge className="bg-amber-500 text-white border-0 gap-1"><Clock className="w-3 h-3" /> Pending</Badge>}
+                  {p.status === 'approved' && <Badge className="bg-success/90 text-primary-foreground border-0">Approved</Badge>}
+                  {p.status === 'free' && <Badge className="bg-success/90 text-primary-foreground border-0">Free</Badge>}
+                  {p.status === 'pending' && <Badge className="bg-warning text-primary-foreground border-0 gap-1"><Clock className="w-3 h-3" /> Pending</Badge>}
                   {p.status === 'rejected' && <Badge variant="destructive" className="gap-1"><XCircle className="w-3 h-3" /> Rejected</Badge>}
                   <span>{new Date(p.created_at).toLocaleDateString()}</span>
                 </div>

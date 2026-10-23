@@ -68,7 +68,7 @@ export default function Dashboard() {
             </div>
             <div className="flex gap-3 animate-scale-in">
               <Link to="/create">
-                <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-lg shadow-primary/20">
+                <Button size="lg" className="gap-2 rounded-xl px-6 h-12 text-base shadow-sm">
                   <Plus className="w-5 h-5" />
                   New OMR Sheet
                 </Button>
@@ -118,7 +118,7 @@ export default function Dashboard() {
               <Link key={action.to} to={action.to} className="block group">
                 <Card className="h-full modern-card cursor-pointer">
                   <CardHeader className="pb-3">
-                    <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center mb-3 transition-transform duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center mb-3 transition-transform duration-300">
                       <action.icon className="w-6 h-6 text-accent-foreground" />
                     </div>
                     <CardTitle className="text-lg font-display flex items-center justify-between">
@@ -216,7 +216,7 @@ export default function Dashboard() {
         {/* Empty State */}
         {sheets.length === 0 && (
           <section className="text-center py-20">
-            <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+            <div className="w-20 h-20 rounded-xl bg-accent flex items-center justify-center mx-auto mb-6">
               <FileText className="w-10 h-10 text-accent-foreground" />
             </div>
             <h2 className="text-2xl font-bold font-display mb-2">No OMR Sheets Yet</h2>
@@ -224,7 +224,7 @@ export default function Dashboard() {
               Create your first OMR sheet to start practicing for exams
             </p>
             <Link to="/create">
-              <Button size="lg" className="gap-2 rounded-xl px-8 h-12 shadow-lg shadow-primary/20">
+              <Button size="lg" className="gap-2 rounded-xl px-8 h-12 shadow-sm">
                 <Plus className="w-5 h-5" /> Create Your First Sheet
               </Button>
             </Link>

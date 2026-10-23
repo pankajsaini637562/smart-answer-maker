@@ -5,13 +5,13 @@ import { Card } from '@/components/ui/card';
 export function CoursesHeroCard() {
   return (
     <Link to="/courses" className="block group">
-      <Card className="relative overflow-hidden border-0 shadow-xl shadow-primary/20">
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(270 80% 55%) 100%)' }} />
-        <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-        <div className="absolute -left-6 -bottom-6 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
+      <Card className="relative overflow-hidden border-0 shadow-sm">
+        <div className="absolute inset-0" style={{ background: 'hsl(var(--primary))' }} />
+        <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-primary-foreground/15 blur-2xl" />
+        <div className="absolute -left-6 -bottom-6 w-32 h-32 rounded-full bg-primary-foreground/15 blur-2xl" />
         <div className="relative p-6 md:p-8 text-primary-foreground grid md:grid-cols-[1fr_auto] items-center gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/15 text-xs font-semibold">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-foreground/15 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" /> NEW · Learn like PW
             </div>
             <h2 className="text-2xl md:text-3xl font-bold font-display leading-tight">
@@ -25,7 +25,7 @@ export function CoursesHeroCard() {
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
-          <div className="hidden md:flex items-center justify-center w-32 h-32 rounded-3xl bg-white/15">
+          <div className="hidden md:flex items-center justify-center w-32 h-32 rounded-xl bg-primary-foreground/15">
             <GraduationCap className="w-16 h-16" />
           </div>
           <div className="md:hidden flex items-center gap-2 text-xs">
