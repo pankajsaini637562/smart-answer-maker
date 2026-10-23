@@ -148,7 +148,7 @@ export default function ProfilePage() {
       <AppHeader />
       <main className="container py-6 max-w-2xl space-y-6">
         <div className="flex items-center gap-3 animate-fade-in">
-          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
+          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl" aria-label="Go back"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
             <h2 className="text-2xl font-bold font-display gradient-text">Profile & Settings</h2>
             <p className="text-sm text-muted-foreground">{displayName || 'Student'} • {studentClass || 'N/A'}</p>

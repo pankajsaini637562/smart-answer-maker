@@ -83,7 +83,7 @@ export default function ResultPage() {
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link to="/"><Button variant="ghost" size="icon"><ArrowLeft className="w-5 h-5" /></Button></Link>
+              <Link to="/"><Button variant="ghost" size="icon" aria-label="Go back"><ArrowLeft className="w-5 h-5" /></Button></Link>
               <div>
                 <h1 className="text-xl font-semibold">Report Card</h1>
                 <p className="text-sm text-muted-foreground">{result.sheetTitle}</p>

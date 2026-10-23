@@ -161,7 +161,7 @@ export default function AnalyticsPage() {
       <main className="container py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3 animate-fade-in">
-          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
+          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl" aria-label="Go back"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
             <h2 className="text-2xl font-bold font-display flex items-center gap-2">
               <Brain className="w-6 h-6 text-primary" /> AI Analytics Engine

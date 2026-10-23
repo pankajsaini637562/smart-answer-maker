@@ -496,7 +496,7 @@ export default function ChatPage() {
                   </div>
                   <Dialog open={createOpen} onOpenChange={setCreateOpen}>
                     <DialogTrigger asChild>
-                      <Button size="icon" className="h-9 w-9 shrink-0"><Plus className="w-4 h-4" /></Button>
+                      <Button size="icon" className="h-9 w-9 shrink-0" aria-label="Add"><Plus className="w-4 h-4" /></Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
@@ -706,7 +706,7 @@ export default function ChatPage() {
                           onChange={(e) => setText(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
                         />
-                        <Button onClick={sendMessage} disabled={!text.trim()} size="icon" className="shrink-0">
+                        <Button onClick={sendMessage} disabled={!text.trim()} size="icon" className="shrink-0" aria-label="Send">
                           <Send className="w-4 h-4" />
                         </Button>
                       </div>

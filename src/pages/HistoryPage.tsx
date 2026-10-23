@@ -136,7 +136,7 @@ export default function HistoryPage() {
                           <p className="text-xs text-muted-foreground">/{result.maxScore}</p>
                         </div>
                         <Link to={`/result/${result.attemptId}`}>
-                          <Button variant="ghost" size="icon" className="rounded-xl">
+                          <Button variant="ghost" size="icon" className="rounded-xl" aria-label="Show">
                             <Eye className="w-4 h-4" />
                           </Button>
                         </Link>

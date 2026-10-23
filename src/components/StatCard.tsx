@@ -44,7 +44,7 @@ export function StatCard({
           )}
         </div>
         {Icon && (
-          <div className={cn('p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-110', iconBg[variant])}>
+          <div className={cn('p-2.5 rounded-xl transition-transform duration-300', iconBg[variant])}>
             <Icon className="w-5 h-5" />
           </div>
         )}

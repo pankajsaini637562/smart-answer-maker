@@ -69,7 +69,7 @@ export default function CreateSheet() {
       <div className="container py-6">
         <div className="flex items-center gap-3 mb-6 animate-fade-in">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="rounded-xl">
+            <Button variant="ghost" size="icon" className="rounded-xl" aria-label="Go back">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
