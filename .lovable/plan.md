@@ -1,61 +1,37 @@
+# App update based on the uploaded quality guide
 
-## Overview
-Add a full **Courses** section (Physics Wallah–style) as a separate dashboard, accessed from a featured hero card on Home. Uses Lovable's built-in payments (Stripe or Paddle — provider chosen at enable time) instead of the existing UPI+admin flow used by Materials. Adds an **instructor** role so approved teachers can publish courses.
+## 1. Full redesign (new look)
+- Replace the dark purple glow / frosted glass / 3D / pulsing style with a calm, clean "exam desk" look made for students:
+  - Warm off-white paper background with a dark mode option, deep ink-blue text, one clear accent color (exam-sheet orange) for main buttons and correct answers, green and red only for right/wrong.
+  - Simple flat cards with thin borders and soft shadows. No glow, no glass, no floating or pulsing buttons.
+  - Headings keep a distinctive font, body text stays easy to read; same sizes and spacing used everywhere.
+  - Motion only where it helps: small fades when a page opens, clear feedback when you press something.
+- Applies to the home page, dashboard, exam, results, profile, courses, materials, leaderboard, and chat.
 
-## Home entry
-- Add a large featured hero card on `Dashboard.tsx` ("Explore Courses — Learn like PW") linking to `/courses`.
-- Add "Courses" to the top nav (`AppHeader.tsx`) and mobile nav.
+## 2. Home page claims
+- "12,000+ students", "4.8/5 rating" and the testimonials stay as they are (your choice).
 
-## New routes
-- `/courses` — catalog dashboard: category chips (Class 9–12, JEE, NEET, Boards, Skills), search, filters (subject, price, free/paid), course cards (cover, title, instructor, rating, price, "Enrolled" badge).
-- `/courses/:id` — detail page: hero (cover, title, instructor, price, Enroll button), tabs — Overview / Curriculum (chapters → lessons) / Resources (PDFs) / Tests (linked OMR sheets) / Reviews.
-- `/courses/:id/learn` — enrolled-only: sidebar chapter/lesson list, main pane shows lesson content (title, description, attached PDF, linked test button), "Mark complete" toggles progress.
-- `/instructor` — instructor dashboard: create/edit courses, add chapters & lessons, upload PDFs, link OMR sheets as tests, publish/unpublish.
+## 3. Accessibility
+- Readable color contrast everywhere in the new colors.
+- Names for icon-only buttons (close, menu, send, etc.) so screen readers can read them.
+- Every form field has a label; clear keyboard focus outline.
+- Buttons big enough to tap on phones; full-height screens fit mobile properly.
 
-## Database (new tables, RLS + GRANTs per convention)
-- `course_categories` (slug, name, icon) — public read.
-- `courses` (title, slug, description, cover_url, category_id, instructor_id, price_inr, is_free, is_published, rating_avg, rating_count). Public read when `is_published`; instructor/admin write.
-- `course_chapters` (course_id, title, position). Public read for published courses.
-- `course_lessons` (chapter_id, title, description, resource_pdf_path, linked_sheet_id, position, is_preview). Non-preview lessons readable only to enrolled users or instructor/admin.
-- `course_enrollments` (user_id, course_id, enrolled_at, source: 'paid'|'free'|'gift'). User can read own; insert only via server (edge function on payment webhook / free-enroll RPC).
-- `course_lesson_progress` (user_id, lesson_id, completed_at). User manages own rows.
-- `course_reviews` (user_id, course_id, rating 1–5, comment). Enrolled users insert/update own; public read.
-- Extend `user_roles` with new enum value `instructor` (add via `ALTER TYPE app_role ADD VALUE 'instructor'`). Reuse existing `has_role()` helper.
-- Storage bucket `course-content` (private) for lesson PDFs; `course-covers` (public) for cover images.
+## 4. Error and loading messages
+- Loading placeholders instead of blank screens on lists (courses, materials, leaderboard, library, chat).
+- Friendly messages in plain words when something fails, with a "Try again" button.
+- Empty pages explain what to do next (e.g. "No exams yet - start your first test").
 
-## Payments
-- Enable Lovable's built-in payments — run `recommend_payment_provider` first, then enable Stripe (preferred for digital courses) or Paddle based on the recommendation.
-- Product per course synced with `batch_create_product` (price = course price, tax code set).
-- Checkout edge function creates a session; success webhook edge function inserts a `course_enrollments` row via service role.
-- Free courses (`is_free=true`) skip checkout — an `enroll_free_course` RPC inserts the enrollment directly.
-- Enrolled users see a persistent receipt on the course detail page (reuses existing `receipt.ts` PDF utility for a course receipt).
+## 5. Fewer small uppercase labels
+- Remove the tiny all-caps labels above headings except where they really help.
 
-## Instructor role
-- Users become instructor when an admin (existing `admin_emails` check) toggles them on a new "Instructors" tab of `/admin`.
-- `/instructor` route is gated by `has_role(auth.uid(), 'instructor')` OR admin.
-- Course/chapter/lesson RLS: instructor can write only rows where `courses.instructor_id = auth.uid()`; admin can write all.
+## 6. Tests for prices, discounts and coupons
+- Referral discount is 50% off.
+- Coupon works one time per friend.
+- Free materials and courses need no admin approval.
+- Discounted price is calculated correctly (e.g. 10 rupees becomes 5).
 
-## Profile updates
-- Add a "My Courses" quick-link tile on `ProfilePage.tsx` linking to `/courses?tab=enrolled`.
-- If instructor: add "Instructor Dashboard" quick-link.
-
-## Files to create
-- `src/pages/CoursesPage.tsx`, `CourseDetailPage.tsx`, `CourseLearnPage.tsx`, `InstructorPage.tsx`.
-- `src/components/CourseCard.tsx`, `CourseHeroCard.tsx`, `CurriculumList.tsx`, `LessonPlayer.tsx`, `EnrollButton.tsx`.
-- `src/hooks/useIsInstructor.ts`, `src/lib/courses.ts` (fetchers).
-- `supabase/functions/create-course-checkout/index.ts`, `supabase/functions/course-payment-webhook/index.ts`.
-
-## Files to modify
-- `src/App.tsx` — add 4 routes.
-- `src/components/AppHeader.tsx` — add Courses nav item (+ Instructor when applicable).
-- `src/pages/Dashboard.tsx` — add featured Courses hero card.
-- `src/pages/ProfilePage.tsx` — add My Courses / Instructor tiles.
-- `src/pages/AdminPage.tsx` — add Instructors management tab.
-
-## Build order
-1. DB migration (tables, enum extension, RLS, GRANTs, storage buckets).
-2. Run `recommend_payment_provider` → enable chosen provider → wait for confirmation.
-3. Edge functions (checkout + webhook + free-enroll RPC).
-4. Client routes/components in parallel.
-5. Nav + profile updates.
-6. Test enrollment flow end-to-end.
+## Technical details
+- Redefine color, radius and shadow tokens in `src/index.css` and `tailwind.config.ts`; remove glass/glow utility classes and update components that use them.
+- Update the design memory (replaces purple + glassmorphism rule).
+- Add Vitest tests next to the referral/coupon/price logic.
