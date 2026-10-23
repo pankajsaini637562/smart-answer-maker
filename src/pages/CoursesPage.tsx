@@ -1,3 +1,4 @@
+import { ErrorState, ListSkeleton } from '@/components/PageStates';
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Sparkles } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
@@ -19,14 +20,16 @@ export default function CoursesPage() {
   const [tab, setTab] = useState<'all' | 'free' | 'enrolled'>(() =>
     new URLSearchParams(window.location.search).get('tab') === 'enrolled' ? 'enrolled' : 'all');
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => { fetchCategories().then(setCategories).catch(() => {}); }, []);
   useEffect(() => { if (user) fetchMyEnrollments(user.id).then(setEnrolled).catch(() => {}); }, [user]);
   useEffect(() => {
-    setLoading(true);
+    setLoading(true); setFailed(false);
     fetchCourses({ categoryId: activeCat ?? undefined, search: search || undefined, free: tab === 'free' ? true : undefined })
-      .then(setCourses).finally(() => setLoading(false));
-  }, [activeCat, search, tab]);
+      .then(setCourses).catch(() => setFailed(true)).finally(() => setLoading(false));
+  }, [activeCat, search, tab, retry]);
 
   const visible = useMemo(() => tab === 'enrolled' ? courses.filter(c => enrolled.has(c.id)) : courses, [tab, courses, enrolled]);
 
@@ -68,8 +71,9 @@ export default function CoursesPage() {
             </button>
           ))}
         </div>
-        {loading ? <p className="text-muted-foreground">Loading...</p>
-          : visible.length === 0 ? <p className="text-muted-foreground py-12 text-center">No courses found.</p>
+        {loading ? <ListSkeleton />
+          : failed ? <ErrorState message="We couldn't load courses. Check your internet and try again." onRetry={() => setRetry(r => r + 1)} />
+          : visible.length === 0 ? <p className="text-muted-foreground py-12 text-center">No courses match. Try another subject or clear the search.</p>
           : <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {visible.map(c => <CourseCard key={c.id} course={c} enrolled={enrolled.has(c.id)} />)}
             </div>}

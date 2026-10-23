@@ -1,3 +1,4 @@
+import { ErrorState, ListSkeleton } from '@/components/PageStates';
 import { useEffect, useState, useCallback } from 'react';
 import { Crown, Flame, Sparkles, Trophy, Medal, Award, Loader2, RefreshCw } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
@@ -30,11 +31,13 @@ export default function LeaderboardPage() {
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchLeaderboard = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
     const { data, error } = await supabase.rpc('get_leaderboard', { _limit: 100 });
+    setFailed(!!error);
     if (!error && data) {
       setRows(data as LeaderboardRow[]);
       setLastUpdated(new Date());
@@ -98,9 +101,9 @@ export default function LeaderboardPage() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          </div>
+          <ListSkeleton rows={6} />
+        ) : failed && rows.length === 0 ? (
+          <ErrorState message="We couldn't load the leaderboard. Check your internet and try again." onRetry={() => fetchLeaderboard()} />
         ) : rows.length === 0 ? (
           <Card className="modern-card p-10 text-center space-y-3">
             <Sparkles className="w-10 h-10 text-primary mx-auto" />
