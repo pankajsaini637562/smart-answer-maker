@@ -129,7 +129,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-dvh bg-background">
         <SEO title="Profile | Smart AI OMR Analysis" description="Manage your profile, academic details, and account settings." noindex />
         <AppHeader />
         <div className="flex items-center justify-center py-20">
@@ -140,19 +140,15 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-dvh bg-background relative overflow-hidden">
       {/* Ambient premium background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-24 w-[28rem] h-[28rem] rounded-full opacity-30 blur-3xl"
-             style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.55), transparent 60%)' }} />
-        <div className="absolute top-40 -right-24 w-[26rem] h-[26rem] rounded-full opacity-25 blur-3xl"
-             style={{ background: 'radial-gradient(circle, hsl(280 72% 56% / 0.5), transparent 60%)' }} />
       </div>
 
       <AppHeader />
       <main className="container py-6 max-w-2xl space-y-6">
         <div className="flex items-center gap-3 animate-fade-in">
-          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
+          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl" aria-label="Go back"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
             <h2 className="text-2xl font-bold font-display gradient-text">Profile & Settings</h2>
             <p className="text-sm text-muted-foreground">{displayName || 'Student'} • {studentClass || 'N/A'}</p>
@@ -190,21 +186,21 @@ export default function ProfilePage() {
             <div className="p-4 text-center relative">
               <Trophy className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-2xl font-bold font-mono">{stats.totalExams}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Exams</p>
+              <p className="text-xs text-muted-foreground">Exams</p>
             </div>
           </div>
           <div className="stat-3d">
             <div className="p-4 text-center relative">
               <Target className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-2xl font-bold font-mono">{stats.avgAccuracy}%</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Accuracy</p>
+              <p className="text-xs text-muted-foreground">Accuracy</p>
             </div>
           </div>
           <div className="stat-3d">
             <div className="p-4 text-center relative">
               <Clock className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-2xl font-bold font-mono">{formatTime(stats.totalTime)}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Study Time</p>
+              <p className="text-xs text-muted-foreground">Study Time</p>
             </div>
           </div>
         </div>

@@ -50,12 +50,12 @@ export default function CourseDetailPage() {
     setBusy(false);
   };
 
-  if (!course) return <div className="min-h-screen bg-background"><AppHeader /><main className="container py-10 text-muted-foreground">Loading...</main></div>;
+  if (!course) return <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-10 text-muted-foreground">Loading...</main></div>;
 
   const lessonsByChapter = (chId: string) => lessons.filter(l => l.chapter_id === chId).sort((a, b) => a.position - b.position);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title={`${course.title} | Courses`} description={course.description?.slice(0, 150) || course.title} />
       <AppHeader />
       <section className="relative overflow-hidden border-b">
@@ -73,7 +73,7 @@ export default function CourseDetailPage() {
             </div>
           </div>
           <Card className="modern-card">
-            <div className="aspect-video bg-gradient-to-br from-primary/25 to-purple-500/10 flex items-center justify-center">
+            <div className="aspect-video bg-gradient-to-br from-primary/25 to-accent flex items-center justify-center">
               {course.cover_url ? <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" />
                 : <BookOpen className="w-12 h-12 text-primary/70" />}
             </div>
@@ -116,7 +116,7 @@ export default function CourseDetailPage() {
                             {enrolled || l.is_preview ? <PlayCircle className="w-4 h-4 text-primary" /> : <Lock className="w-4 h-4 text-muted-foreground" />}
                             {l.title}
                           </span>
-                          {l.is_preview && !enrolled && <Badge variant="secondary" className="text-[10px]">Preview</Badge>}
+                          {l.is_preview && !enrolled && <Badge variant="secondary" className="text-xs">Preview</Badge>}
                         </li>
                       ))}
                     </ul>

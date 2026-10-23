@@ -1,3 +1,4 @@
+import { ErrorState, ListSkeleton } from '@/components/PageStates';
 import { useEffect, useState, useCallback } from 'react';
 import { Crown, Flame, Sparkles, Trophy, Medal, Award, Loader2, RefreshCw } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
@@ -30,11 +31,13 @@ export default function LeaderboardPage() {
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchLeaderboard = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
     const { data, error } = await supabase.rpc('get_leaderboard', { _limit: 100 });
+    setFailed(!!error);
     if (!error && data) {
       setRows(data as LeaderboardRow[]);
       setLastUpdated(new Date());
@@ -59,7 +62,7 @@ export default function LeaderboardPage() {
   const myRank = user ? rows.findIndex(r => r.user_id === user.id) + 1 : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO
         title="Public Leaderboard | Smart AI OMR Analysis"
         description="See the top students ranked by XP earned from OMR practice exams. Updates automatically."
@@ -80,7 +83,7 @@ export default function LeaderboardPage() {
             </div>
             <div className="flex items-center gap-2">
               {myRank > 0 && (
-                <Badge className="rounded-xl bg-white/20 text-primary-foreground border-white/30 backdrop-blur-sm">
+                <Badge className="rounded-xl bg-white/20 text-primary-foreground border-white/30">
                   Your rank: #{myRank}
                 </Badge>
               )}
@@ -98,9 +101,9 @@ export default function LeaderboardPage() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          </div>
+          <ListSkeleton rows={6} />
+        ) : failed && rows.length === 0 ? (
+          <ErrorState message="We couldn't load the leaderboard. Check your internet and try again." onRetry={() => fetchLeaderboard()} />
         ) : rows.length === 0 ? (
           <Card className="modern-card p-10 text-center space-y-3">
             <Sparkles className="w-10 h-10 text-primary mx-auto" />
@@ -144,13 +147,13 @@ export default function LeaderboardPage() {
                         </div>
                         <div className="space-y-0.5">
                           <p className="font-semibold text-sm truncate">{row.display_name}</p>
-                          <p className="text-[11px] text-muted-foreground truncate">
+                          <p className="text-xs text-muted-foreground truncate">
                             {row.class || 'Student'}{row.country ? ` · ${row.country}` : ''}
                           </p>
                         </div>
                         <div className="pt-2 border-t border-border/50">
                           <p className="text-xl font-bold font-display gradient-text">{row.xp.toLocaleString()}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">XP · Lv {row.level}</p>
+                          <p className="text-xs text-muted-foreground">XP · Lv {row.level}</p>
                         </div>
                       </Card>
                       <div className={cn(
@@ -191,7 +194,7 @@ export default function LeaderboardPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm truncate">{row.display_name}</p>
-                          {isMe && <Badge variant="secondary" className="text-[10px] h-4 px-1.5">You</Badge>}
+                          {isMe && <Badge variant="secondary" className="text-xs h-4 px-1.5">You</Badge>}
                         </div>
                         <p className="text-xs text-muted-foreground truncate">
                           Lv {row.level} · {LEVEL_TITLES[row.level] || 'Student'}
@@ -200,9 +203,9 @@ export default function LeaderboardPage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-sm">{row.xp.toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">XP</span></p>
+                        <p className="font-bold text-sm">{row.xp.toLocaleString()} <span className="text-xs text-muted-foreground font-normal">XP</span></p>
                         {row.streak > 0 && (
-                          <p className="text-[11px] text-orange-500 flex items-center justify-end gap-0.5">
+                          <p className="text-xs text-orange-500 flex items-center justify-end gap-0.5">
                             <Flame className="w-3 h-3" /> {row.streak}
                           </p>
                         )}

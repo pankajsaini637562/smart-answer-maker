@@ -31,7 +31,7 @@ export function ReferralPromoBanner() {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
       <DialogContent className="max-w-md p-0 overflow-hidden border-primary/30">
-        <div className="relative bg-gradient-to-br from-primary/20 via-purple-500/15 to-pink-500/10 p-6 pb-5">
+        <div className="relative bg-gradient-to-br from-primary/20 to-accent p-6 pb-5">
           <button
             onClick={dismiss}
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/60 hover:bg-background flex items-center justify-center transition"
@@ -41,12 +41,12 @@ export function ReferralPromoBanner() {
           </button>
 
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest bg-primary/20 text-primary px-2 py-1 rounded-full flex items-center gap-1">
+            <span className="text-xs font-bold bg-primary/20 text-primary px-2 py-1 rounded-full flex items-center gap-1">
               <Sparkles className="w-3 h-3" /> New
             </span>
           </div>
 
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
+          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
             <Gift className="w-8 h-8 text-white" />
           </div>
 

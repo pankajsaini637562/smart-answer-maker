@@ -285,7 +285,7 @@ export default function ExamPage() {
 
   if (!sheet || !attempt) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
@@ -296,7 +296,7 @@ export default function ExamPage() {
   const unansweredCount = sheet.totalQuestions - answeredCount;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col">
       <SEO title="Take Exam | Smart AI OMR Analysis" description="Attempt your OMR exam with live timer and bubble selection." noindex />
       {/* Header */}
       <header className="border-b bg-card sticky top-0 z-10">
@@ -305,7 +305,7 @@ export default function ExamPage() {
             <div className="flex items-center gap-3">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" aria-label="Close">
                     <X className="w-5 h-5" />
                   </Button>
                 </AlertDialogTrigger>
@@ -349,7 +349,7 @@ export default function ExamPage() {
 
               <Sheet open={isNavOpen} onOpenChange={setIsNavOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="relative">
+                  <Button variant="outline" size="icon" aria-label="Question palette" className="relative">
                     <List className="w-5 h-5" />
                     {unansweredCount > 0 && (
                       <span className="absolute -top-1 -right-1 w-5 h-5 bg-warning text-warning-foreground text-xs rounded-full flex items-center justify-center">

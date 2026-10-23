@@ -52,10 +52,10 @@ export default function CourseLearnPage() {
     catch (e: any) { toast.error(e.message || 'Failed to open PDF'); }
   };
 
-  if (!course) return <div className="min-h-screen bg-background"><AppHeader /><main className="container py-10">Loading...</main></div>;
+  if (!course) return <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-10">Loading...</main></div>;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title={`${course.title} — Learn`} description={course.title} />
       <AppHeader />
       <main className="container py-6 grid lg:grid-cols-[320px_1fr] gap-6">

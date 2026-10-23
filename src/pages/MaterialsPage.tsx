@@ -1,3 +1,4 @@
+import { ErrorState, ListSkeleton } from '@/components/PageStates';
 import { useEffect, useState } from 'react';
 import { Search, BookOpen } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -13,14 +14,18 @@ export default function MaterialsPage() {
   const [items, setItems] = useState<MaterialCardData[]>([]);
   const [ownedIds, setOwnedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
   const [q, setQ] = useState('');
   const [filter, setFilter] = useState<'all' | 'free' | 'paid'>('all');
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from('materials')
+      setLoading(true); setFailed(false);
+      const { data, error } = await supabase.from('materials')
         .select('id,title,description,subject,class,is_free,price_inr,cover_url')
         .eq('is_published', true).order('created_at', { ascending: false });
+      if (error) { setFailed(true); setLoading(false); return; }
       setItems((data as any) || []);
       if (user) {
         const { data: p } = await supabase.from('purchases')
@@ -29,7 +34,7 @@ export default function MaterialsPage() {
       }
       setLoading(false);
     })();
-  }, [user]);
+  }, [user, retry]);
 
   const filtered = items.filter(m => {
     if (filter === 'free' && !m.is_free) return false;
@@ -39,7 +44,7 @@ export default function MaterialsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Study Materials | Smart AI OMR Analysis" description="Buy or download free study notes and exam material." />
       <AppHeader />
       <main className="container py-6 space-y-5 max-w-6xl">
@@ -63,11 +68,13 @@ export default function MaterialsPage() {
         </div>
 
         {loading ? (
-          <div className="py-16 text-center text-muted-foreground">Loading…</div>
+          <ListSkeleton />
+        ) : failed ? (
+          <ErrorState message="We couldn't load study materials. Check your internet and try again." onRetry={() => setRetry(r => r + 1)} />
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-muted-foreground">
             <BookOpen className="w-10 h-10 mx-auto mb-2 opacity-50" />
-            No materials yet.
+            No materials here yet. Check back soon or try another filter.
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

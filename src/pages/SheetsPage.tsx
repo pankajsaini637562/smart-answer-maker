@@ -25,7 +25,7 @@ export default function SheetsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="My OMR Sheets | Smart AI OMR Analysis" description="Browse, manage, and launch your saved OMR practice sheets for exam prep." />
       <AppHeader />
       <main>
@@ -74,7 +74,7 @@ export default function SheetsPage() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity rounded-xl w-8 h-8">
+                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity rounded-xl w-8 h-8" aria-label="More options">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>

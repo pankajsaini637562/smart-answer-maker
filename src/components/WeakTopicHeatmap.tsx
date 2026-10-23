@@ -45,7 +45,7 @@ export function WeakTopicHeatmap({ results }: WeakTopicHeatmapProps) {
             <Tooltip key={t.title}>
               <TooltipTrigger asChild>
                 <div className={`${getColor(t.accuracy)} rounded-lg p-2.5 text-center cursor-default transition-transform hover:scale-105`}>
-                  <p className="text-[10px] font-medium truncate text-foreground">{t.title}</p>
+                  <p className="text-xs font-medium truncate text-foreground">{t.title}</p>
                   <p className="text-sm font-bold font-mono text-foreground">{t.accuracy}%</p>
                 </div>
               </TooltipTrigger>
@@ -55,7 +55,7 @@ export function WeakTopicHeatmap({ results }: WeakTopicHeatmapProps) {
             </Tooltip>
           ))}
         </div>
-        <div className="flex items-center justify-center gap-2 mt-3 text-[10px] text-muted-foreground">
+        <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted-foreground">
           <span className="w-3 h-3 rounded bg-destructive/70" /> Weak
           <span className="w-3 h-3 rounded bg-warning/50" /> Average
           <span className="w-3 h-3 rounded bg-success/70" /> Strong

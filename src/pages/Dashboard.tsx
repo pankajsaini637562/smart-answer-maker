@@ -43,7 +43,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Dashboard | Smart AI OMR Analysis" description="Track scores, streaks, and study progress on your AI-powered OMR practice dashboard." />
       <AppHeader />
 
@@ -118,7 +118,7 @@ export default function Dashboard() {
               <Link key={action.to} to={action.to} className="block group">
                 <Card className="h-full modern-card cursor-pointer">
                   <CardHeader className="pb-3">
-                    <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center mb-3 transition-transform duration-300">
                       <action.icon className="w-6 h-6 text-accent-foreground" />
                     </div>
                     <CardTitle className="text-lg font-display flex items-center justify-between">

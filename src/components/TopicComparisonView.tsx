@@ -87,7 +87,7 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
         {/* Selectors */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Topic A</label>
+            <label className="text-xs text-muted-foreground font-medium">Topic A</label>
             <Select value={topicAId} onValueChange={setTopicAId}>
               <SelectTrigger className="rounded-xl h-9 text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -96,7 +96,7 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Topic B</label>
+            <label className="text-xs text-muted-foreground font-medium">Topic B</label>
             <Select value={topicBId} onValueChange={setTopicBId}>
               <SelectTrigger className="rounded-xl h-9 text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -112,14 +112,14 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                 <p className="text-2xl font-bold font-mono text-primary">{winsA}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Wins</p>
+                <p className="text-xs text-muted-foreground">Wins</p>
               </div>
               <div className="p-3 rounded-xl bg-muted/50 flex items-center justify-center">
                 <p className="text-lg font-bold font-mono text-muted-foreground">VS</p>
               </div>
               <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                 <p className="text-2xl font-bold font-mono text-primary">{winsB}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Wins</p>
+                <p className="text-xs text-muted-foreground">Wins</p>
               </div>
             </div>
 
@@ -161,7 +161,7 @@ export function TopicComparisonView({ topics }: { topics: TopicAnalysis[] }) {
                   </div>
                   <div className="flex items-center gap-1.5 px-2 text-muted-foreground min-w-[100px] justify-center">
                     {row.icon}
-                    <span className="text-[11px] whitespace-nowrap">{row.label}</span>
+                    <span className="text-xs whitespace-nowrap">{row.label}</span>
                   </div>
                   <div className={`text-left font-mono text-sm font-medium ${row.winner === 'b' ? 'text-success' : 'text-foreground'}`}>
                     {row.winner === 'b' && <span className="text-success">✓</span>} {row.valueB}

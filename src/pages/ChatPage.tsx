@@ -441,7 +441,7 @@ export default function ChatPage() {
             {g.description ? (
               <p className="text-xs text-muted-foreground line-clamp-1">{g.description}</p>
             ) : null}
-            <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
               <Users className="w-3 h-3" /> {g.member_count} member{g.member_count === 1 ? '' : 's'}
             </p>
           </div>
@@ -456,7 +456,7 @@ export default function ChatPage() {
             {isJoining ? 'Joining...' : 'Join'}
           </Button>
         ) : (
-          <button onClick={() => setActiveGroup(g)} className="text-[10px] text-muted-foreground shrink-0 px-1">
+          <button onClick={() => setActiveGroup(g)} className="text-xs text-muted-foreground shrink-0 px-1">
             Open
           </button>
         )}
@@ -468,7 +468,7 @@ export default function ChatPage() {
   const showSidebar = !activeGroup; // mobile: hide list when in chat
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Study Chat | Smart AI OMR Analysis" description="Collaborate with study groups and chat with the AI coach for exam doubts." />
       <AppHeader />
       <main className="container mx-auto px-2 sm:px-4 py-4 max-w-6xl">
@@ -496,7 +496,7 @@ export default function ChatPage() {
                   </div>
                   <Dialog open={createOpen} onOpenChange={setCreateOpen}>
                     <DialogTrigger asChild>
-                      <Button size="icon" className="h-9 w-9 shrink-0"><Plus className="w-4 h-4" /></Button>
+                      <Button size="icon" className="h-9 w-9 shrink-0" aria-label="Add"><Plus className="w-4 h-4" /></Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
@@ -598,7 +598,7 @@ export default function ChatPage() {
                   </div>
                 </div>
                 <div className="rounded-lg border p-3 text-sm space-y-1">
-                  <p className="text-muted-foreground text-xs uppercase tracking-wider">Stats</p>
+                  <p className="text-muted-foreground text-xs">Stats</p>
                   <p>Joined groups: <strong>{allGroups.filter((g) => g.is_member).length}</strong></p>
                   <p>Created groups: <strong>{allGroups.filter((g) => g.created_by === user?.id).length}</strong></p>
                 </div>
@@ -618,7 +618,7 @@ export default function ChatPage() {
               <Tabs defaultValue="chat" className="flex-1 flex flex-col">
                 {/* Header */}
                 <div className="flex items-center gap-2 border-b px-2 py-2">
-                  <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setActiveGroup(null)}>
+                  <Button variant="ghost" size="icon" aria-label="Back to chats" className="md:hidden" onClick={() => setActiveGroup(null)}>
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                   <button onClick={() => setMembersOpen(true)} className="flex items-center gap-2 flex-1 min-w-0 hover:opacity-80">
@@ -628,7 +628,7 @@ export default function ChatPage() {
                     </Avatar>
                     <div className="text-left min-w-0">
                       <p className="font-display font-semibold truncate">{activeGroup.name}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {members.length} member{members.length === 1 ? '' : 's'} • tap for info
                       </p>
                     </div>
@@ -678,7 +678,7 @@ export default function ChatPage() {
                               </div>
                               <div className={`max-w-[78%] flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
                                 {showHeader && !mine && (
-                                  <span className="text-[10px] text-muted-foreground px-1 mb-0.5">{name}</span>
+                                  <span className="text-xs text-muted-foreground px-1 mb-0.5">{name}</span>
                                 )}
                                 <div className={`px-3 py-2 rounded-2xl text-sm break-words shadow-sm ${
                                   mine
@@ -687,7 +687,7 @@ export default function ChatPage() {
                                 }`}>
                                   {m.text}
                                 </div>
-                                <span className="text-[10px] text-muted-foreground px-1 mt-0.5">
+                                <span className="text-xs text-muted-foreground px-1 mt-0.5">
                                   {formatDistanceToNow(new Date(m.created_at), { addSuffix: true })}
                                 </span>
                               </div>
@@ -697,7 +697,7 @@ export default function ChatPage() {
                       </div>
                       <div className="border-t p-2 flex gap-2 items-end">
                         <input ref={fileInputRef} type="file" hidden onChange={handleFileUpload} />
-                        <Button size="icon" variant="ghost" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="shrink-0">
+                        <Button size="icon" aria-label="Attach file" variant="ghost" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="shrink-0">
                           <Paperclip className="w-4 h-4" />
                         </Button>
                         <Input
@@ -706,7 +706,7 @@ export default function ChatPage() {
                           onChange={(e) => setText(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
                         />
-                        <Button onClick={sendMessage} disabled={!text.trim()} size="icon" className="shrink-0">
+                        <Button onClick={sendMessage} disabled={!text.trim()} size="icon" className="shrink-0" aria-label="Send">
                           <Send className="w-4 h-4" />
                         </Button>
                       </div>
@@ -789,9 +789,9 @@ export default function ChatPage() {
                     <p className="text-sm font-medium truncate">
                       {name} {m.user_id === user?.id && <span className="text-xs text-muted-foreground">(You)</span>}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">Joined {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</p>
+                    <p className="text-xs text-muted-foreground">Joined {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</p>
                   </div>
-                  {m.user_id === activeGroup?.created_by && <Badge variant="secondary" className="text-[10px]">Admin</Badge>}
+                  {m.user_id === activeGroup?.created_by && <Badge variant="secondary" className="text-xs">Admin</Badge>}
                 </div>
               );
             })}

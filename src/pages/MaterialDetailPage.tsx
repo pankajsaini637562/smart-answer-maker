@@ -61,10 +61,10 @@ export default function MaterialDetailPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>
+    <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>
   );
   if (!m) return (
-    <div className="min-h-screen bg-background"><AppHeader /><div className="container py-20 text-center text-muted-foreground">Not found.</div></div>
+    <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center text-muted-foreground">Not found.</div></div>
   );
 
   const owned = purchase && (purchase.status === 'approved' || purchase.status === 'free');
@@ -72,14 +72,14 @@ export default function MaterialDetailPage() {
   const rejected = purchase && purchase.status === 'rejected';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title={`${m.title} | Study Materials`} description={m.description?.slice(0, 155) || m.title} />
       <AppHeader />
       <main className="container py-6 space-y-5 max-w-3xl">
         <Link to="/materials"><Button variant="ghost" size="sm" className="gap-1"><ArrowLeft className="w-4 h-4" /> Back</Button></Link>
 
         <Card className="modern-card overflow-hidden">
-          <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-500/10 flex items-center justify-center">
+          <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
             {m.cover_url ? <img src={m.cover_url} alt={m.title} className="w-full h-full object-cover" /> : <BookOpen className="w-16 h-16 text-primary/60" />}
           </div>
           <CardContent className="p-5 space-y-4">

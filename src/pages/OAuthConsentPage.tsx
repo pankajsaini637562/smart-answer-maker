@@ -79,7 +79,7 @@ export default function OAuthConsentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
       <SEO title="Connect an app | Smart AI OMR Analysis" description="Approve or deny a third-party app requesting access to your Smart AI OMR account." />
       <Card className="modern-card w-full max-w-md">
         <CardHeader className="text-center">

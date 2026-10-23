@@ -20,7 +20,7 @@ export function GamificationBar() {
               <Star className="w-4 h-4 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] text-muted-foreground leading-none">Lv.{level}</p>
+              <p className="text-xs text-muted-foreground leading-none">Lv.{level}</p>
               <p className="text-xs font-semibold truncate">{title}</p>
             </div>
           </div>
@@ -30,7 +30,7 @@ export function GamificationBar() {
 
       {/* XP Progress */}
       <div className="flex-1 min-w-0 hidden sm:block">
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-0.5">
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-0.5">
           <span className="flex items-center gap-1"><Zap className="w-3 h-3" />{progress.current} XP</span>
           <span>{progress.needed} XP</span>
         </div>

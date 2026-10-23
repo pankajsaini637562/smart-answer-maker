@@ -53,17 +53,17 @@ const Star5 = ({ count = 5 }: { count?: number }) => (
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO
         title="Smart AI OMR Analysis — Free OMR Sheet Checker & Answer Maker"
         description="Free AI-powered OMR sheet checker. Scan answer sheets, auto-score MCQ tests, and track exam analytics for NEET, JEE, and school exams."
       />
 
       {/* Nav */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/70 border-b border-border/50">
+      <header className="sticky top-0 z-40 bg-background border-b border-border/50">
         <div className="container flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
               <ScanLine className="w-4 h-4" />
             </div>
             <span>Smart AI OMR</span>
@@ -84,8 +84,6 @@ export default function LandingPage() {
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 -z-10" style={{ background: 'var(--gradient-hero)' }} />
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl -z-10" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-purple-500/10 blur-3xl -z-10" />
 
           <div className="container py-20 md:py-32 text-center max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/60 border border-border text-xs font-medium mb-6">
@@ -121,8 +119,8 @@ export default function LandingPage() {
         <section className="container -mt-8 mb-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((s) => (
-              <Card key={s.label} className="p-6 text-center bg-card/80 backdrop-blur">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-primary to-purple-500 bg-clip-text text-transparent">{s.value}</div>
+              <Card key={s.label} className="p-6 text-center bg-card">
+                <div className="text-3xl md:text-4xl font-bold bg-primary bg-clip-text text-transparent">{s.value}</div>
                 <div className="text-xs md:text-sm text-muted-foreground mt-1">{s.label}</div>
               </Card>
             ))}
@@ -138,7 +136,7 @@ export default function LandingPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f) => (
               <Card key={f.title} className="p-6 hover:shadow-lg transition-all hover:-translate-y-1 group">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center mb-4 transition-transform">
                   <f.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{f.title}</h3>
@@ -185,7 +183,7 @@ export default function LandingPage() {
                 <Star5 count={r.rating} />
                 <p className="text-sm leading-relaxed flex-1">"{r.text}"</p>
                 <div className="flex items-center gap-3 pt-2 border-t">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-semibold">
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
                     {r.name.charAt(0)}
                   </div>
                   <div>
@@ -237,7 +235,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 font-bold mb-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
                   <ScanLine className="w-4 h-4" />
                 </div>
                 Smart AI OMR

@@ -128,7 +128,7 @@ export default function AnalyticsPage() {
 
   if (!analysis) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-dvh bg-background">
         <AppHeader />
         <main className="container py-16 text-center">
           <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-6 animate-float">
@@ -155,13 +155,13 @@ export default function AnalyticsPage() {
 
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="AI Analytics | Smart AI OMR Analysis" description="Smart performance insights, topic mastery, and predictive score analytics." />
       <AppHeader />
       <main className="container py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3 animate-fade-in">
-          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl"><ArrowLeft className="w-5 h-5" /></Button></Link>
+          <Link to="/"><Button variant="ghost" size="icon" className="rounded-xl" aria-label="Go back"><ArrowLeft className="w-5 h-5" /></Button></Link>
           <div>
             <h2 className="text-2xl font-bold font-display flex items-center gap-2">
               <Brain className="w-6 h-6 text-primary" /> AI Analytics Engine
@@ -178,7 +178,7 @@ export default function AnalyticsPage() {
           <Card className="modern-card">
             <CardContent className="p-4 text-center space-y-1">
               <Shield className="w-5 h-5 mx-auto text-muted-foreground" />
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Readiness</p>
+              <p className="text-xs text-muted-foreground">Readiness</p>
               <p className={`text-2xl font-bold font-mono ${readinessColor}`}>{analysis.readiness}%</p>
               <Progress value={analysis.readiness} className="h-1.5" />
             </CardContent>
@@ -186,21 +186,21 @@ export default function AnalyticsPage() {
           <Card className="modern-card">
             <CardContent className="p-4 text-center space-y-1">
               <Target className="w-5 h-5 mx-auto text-muted-foreground" />
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Accuracy</p>
+              <p className="text-xs text-muted-foreground">Avg Accuracy</p>
               <p className="text-2xl font-bold font-mono text-primary">{analysis.avgAccuracy}%</p>
             </CardContent>
           </Card>
           <Card className="modern-card">
             <CardContent className="p-4 text-center space-y-1">
               <TrendingUp className="w-5 h-5 mx-auto text-muted-foreground" />
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Trend</p>
+              <p className="text-xs text-muted-foreground">Trend</p>
               <p className={`text-2xl font-bold font-mono ${trendColor}`}>{trendIcon} {Math.abs(analysis.trend)}%</p>
             </CardContent>
           </Card>
           <Card className="modern-card">
             <CardContent className="p-4 text-center space-y-1">
               <Clock className="w-5 h-5 mx-auto text-muted-foreground" />
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Study Time</p>
+              <p className="text-xs text-muted-foreground">Study Time</p>
               <p className="text-2xl font-bold font-mono">{formatStudyTime(analysis.totalStudyTime)}</p>
             </CardContent>
           </Card>
@@ -226,7 +226,7 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Progress value={p.confidence} className="h-1 flex-1" />
-                      <span className="text-[10px] text-muted-foreground">{p.confidence}% confidence</span>
+                      <span className="text-xs text-muted-foreground">{p.confidence}% confidence</span>
                     </div>
                   </div>
                 ))}
@@ -324,26 +324,26 @@ export default function AnalyticsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-sm">{s.subject}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.attempts} exam{s.attempts !== 1 ? 's' : ''}</p>
+                          <p className="text-xs text-muted-foreground">{s.attempts} exam{s.attempts !== 1 ? 's' : ''}</p>
                         </div>
-                        <Badge className={`text-[10px] ${masteryCol} border-0`}>{s.mastery}</Badge>
+                        <Badge className={`text-xs ${masteryCol} border-0`}>{s.mastery}</Badge>
                       </div>
                       <div className="flex items-end justify-between gap-2">
                         <div>
-                          <p className="text-[10px] text-muted-foreground uppercase">Accuracy</p>
+                          <p className="text-xs text-muted-foreground uppercase">Accuracy</p>
                           <p className="text-2xl font-bold font-mono text-primary">{s.avgAccuracy}%</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] text-muted-foreground uppercase">Trend</p>
+                          <p className="text-xs text-muted-foreground uppercase">Trend</p>
                           <p className={`text-sm font-mono ${trendCol}`}>{trendIco} {Math.abs(s.trend)}%</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] text-muted-foreground uppercase">Best</p>
+                          <p className="text-xs text-muted-foreground uppercase">Best</p>
                           <p className="text-sm font-mono text-success">{s.bestAccuracy}%</p>
                         </div>
                       </div>
                       <Progress value={s.avgAccuracy} className="h-1.5" />
-                      <div className="flex justify-between text-[10px] text-muted-foreground gap-2 flex-wrap">
+                      <div className="flex justify-between text-xs text-muted-foreground gap-2 flex-wrap">
                         <span><span className="text-success font-mono">{s.correct}</span> correct</span>
                         <span><span className="text-destructive font-mono">{s.wrong}</span> wrong</span>
                         <span><span className="font-mono">{s.unattempted}</span> skipped</span>
@@ -367,7 +367,7 @@ export default function AnalyticsPage() {
                     <Award className="w-5 h-5 text-success" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Strongest</p>
+                    <p className="text-xs text-muted-foreground">Strongest</p>
                     <p className="font-medium text-sm truncate">{analysis.strongestTopic}</p>
                   </div>
                 </CardContent>
@@ -380,7 +380,7 @@ export default function AnalyticsPage() {
                     <BookOpen className="w-5 h-5 text-destructive" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Needs Work</p>
+                    <p className="text-xs text-muted-foreground">Needs Work</p>
                     <p className="font-medium text-sm truncate">{analysis.weakestTopic}</p>
                   </div>
                 </CardContent>
@@ -408,7 +408,7 @@ export default function AnalyticsPage() {
                     <p className="font-medium text-sm">{tip.title}</p>
                     <p className="text-xs text-muted-foreground">{tip.description}</p>
                   </div>
-                  <Badge variant={tip.priority === 'high' ? 'destructive' : 'secondary'} className="shrink-0 ml-auto text-[10px]">
+                  <Badge variant={tip.priority === 'high' ? 'destructive' : 'secondary'} className="shrink-0 ml-auto text-xs">
                     {tip.priority}
                   </Badge>
                 </div>

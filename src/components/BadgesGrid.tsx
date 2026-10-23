@@ -20,13 +20,13 @@ export function BadgesGrid() {
           {unlocked.map(b => (
             <div key={b.id} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-warning/5 border border-warning/20">
               <span className="text-2xl">{b.icon}</span>
-              <p className="text-[10px] text-center font-medium leading-tight">{b.name}</p>
+              <p className="text-xs text-center font-medium leading-tight">{b.name}</p>
             </div>
           ))}
           {locked.map(b => (
             <div key={b.id} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-muted/30 opacity-40">
               <span className="text-2xl grayscale">🔒</span>
-              <p className="text-[10px] text-center text-muted-foreground leading-tight">{b.name}</p>
+              <p className="text-xs text-center text-muted-foreground leading-tight">{b.name}</p>
             </div>
           ))}
         </div>
