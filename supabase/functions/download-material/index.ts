@@ -49,10 +49,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check admin
-    const { data: adminRow } = await admin
-      .from('admin_emails').select('email').ilike('email', user.email ?? '').maybeSingle();
-    const isAdmin = !!adminRow;
+    // Check admin via role table (not by email address)
+    const { data: roleRow } = await admin
+      .from('user_roles').select('id').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+    const isAdmin = !!roleRow;
 
     let allowed = material.is_free || isAdmin;
 
