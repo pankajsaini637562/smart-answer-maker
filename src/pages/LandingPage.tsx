@@ -62,11 +62,8 @@ export default function LandingPage() {
       {/* Nav */}
       <header className="sticky top-0 z-40 bg-background border-b border-border/50">
         <div className="container flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-              <ScanLine className="w-4 h-4" />
-            </div>
-            <span>Smart AI OMR</span>
+          <Link to="/" className="flex items-center" aria-label="Smart AI OMR home">
+            <img src={logoAsset.url} alt="Smart AI OMR – Test & Result" className="h-14 w-14 object-contain rounded-md bg-card" />
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground">Features</a>
