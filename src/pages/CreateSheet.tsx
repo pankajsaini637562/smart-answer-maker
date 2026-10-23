@@ -61,7 +61,7 @@ export default function CreateSheet() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Create OMR Sheet | Smart AI OMR Analysis" description="Design a new OMR practice sheet with custom subjects, timing, and negative marking." />
       <AppHeader />
       <main>

@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
   const myRank = user ? rows.findIndex(r => r.user_id === user.id) + 1 : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO
         title="Public Leaderboard | Smart AI OMR Analysis"
         description="See the top students ranked by XP earned from OMR practice exams. Updates automatically."

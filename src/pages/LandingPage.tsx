@@ -53,7 +53,7 @@ const Star5 = ({ count = 5 }: { count?: number }) => (
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO
         title="Smart AI OMR Analysis — Free OMR Sheet Checker & Answer Maker"
         description="Free AI-powered OMR sheet checker. Scan answer sheets, auto-score MCQ tests, and track exam analytics for NEET, JEE, and school exams."

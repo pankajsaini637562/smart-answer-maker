@@ -39,14 +39,14 @@ const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  if (loading) return <div className="min-h-dvh flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
   if (!user) return <Navigate to="/auth" replace />;
   return <>{children}</>;
 }
 
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  if (loading) return <div className="min-h-dvh flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
   if (user) {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get('next');
@@ -58,7 +58,7 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 
 function HomeRoute() {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  if (loading) return <div className="min-h-dvh flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
   return user ? <Dashboard /> : <LandingPage />;
 }
 

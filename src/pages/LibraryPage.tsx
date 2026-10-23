@@ -40,7 +40,7 @@ export default function LibraryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="My Library | Smart AI OMR Analysis" description="Your purchased and free study materials." noindex />
       <AppHeader />
       <main className="container py-6 space-y-4 max-w-3xl">

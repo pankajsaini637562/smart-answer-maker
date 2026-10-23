@@ -50,12 +50,12 @@ export default function CourseDetailPage() {
     setBusy(false);
   };
 
-  if (!course) return <div className="min-h-screen bg-background"><AppHeader /><main className="container py-10 text-muted-foreground">Loading...</main></div>;
+  if (!course) return <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-10 text-muted-foreground">Loading...</main></div>;
 
   const lessonsByChapter = (chId: string) => lessons.filter(l => l.chapter_id === chId).sort((a, b) => a.position - b.position);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title={`${course.title} | Courses`} description={course.description?.slice(0, 150) || course.title} />
       <AppHeader />
       <section className="relative overflow-hidden border-b">

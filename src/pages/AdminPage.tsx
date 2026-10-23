@@ -53,10 +53,10 @@ export default function AdminPage() {
 
   useEffect(() => { if (isAdmin) { loadPurchases(); loadMaterials(); } }, [isAdmin]);
 
-  if (loading) return <div className="min-h-screen bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>;
+  if (loading) return <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>;
   if (!user) return <Navigate to="/auth?next=/admin" replace />;
   if (!isAdmin) return (
-    <div className="min-h-screen bg-background"><AppHeader />
+    <div className="min-h-dvh bg-background"><AppHeader />
       <main className="container py-16 max-w-md text-center space-y-3">
         <h1 className="text-2xl font-bold font-display">Admin only</h1>
         <p className="text-sm text-muted-foreground">Your email is not registered as an admin. Ask a project owner to add <span className="font-mono">{user.email}</span> to the admin list.</p>
@@ -120,7 +120,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Admin | Smart AI OMR Analysis" description="Admin panel" noindex />
       <AppHeader />
       <main className="container py-6 space-y-5 max-w-4xl">

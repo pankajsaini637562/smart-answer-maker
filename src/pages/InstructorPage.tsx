@@ -112,10 +112,10 @@ export default function InstructorPage() {
   };
   const toggleOpen = (id: string) => { const n = new Set(openCh); n.has(id) ? n.delete(id) : n.add(id); setOpenCh(n); };
 
-  if (loading) return <div className="min-h-screen bg-background"><AppHeader /><main className="container py-10">Loading...</main></div>;
+  if (loading) return <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-10">Loading...</main></div>;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Instructor Dashboard" description="Create and manage your courses." />
       <AppHeader />
       <main className="container py-6 grid lg:grid-cols-[300px_1fr] gap-6">

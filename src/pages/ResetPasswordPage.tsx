@@ -44,7 +44,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
       <SEO title="Reset Password | Smart AI OMR Analysis" description="Set a new password for your Smart AI OMR account." noindex />
       <main className="w-full max-w-md">
         <Card className="modern-card">

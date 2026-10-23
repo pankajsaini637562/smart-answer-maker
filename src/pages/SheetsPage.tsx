@@ -25,7 +25,7 @@ export default function SheetsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="My OMR Sheets | Smart AI OMR Analysis" description="Browse, manage, and launch your saved OMR practice sheets for exam prep." />
       <AppHeader />
       <main>

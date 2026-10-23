@@ -31,7 +31,7 @@ export default function CoursesPage() {
   const visible = useMemo(() => tab === 'enrolled' ? courses.filter(c => enrolled.has(c.id)) : courses, [tab, courses, enrolled]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Courses | Smart AI OMR Analysis" description="Explore structured video and PDF courses for Class 9–12, JEE, and NEET with mock tests." />
       <AppHeader />
       <section className="relative overflow-hidden border-b">

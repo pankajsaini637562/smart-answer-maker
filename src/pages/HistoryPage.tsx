@@ -45,7 +45,7 @@ export default function HistoryPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Exam History | Smart AI OMR Analysis" description="Review past OMR attempts, scoreboard rankings, and detailed exam results." />
       <AppHeader />
       <main>
@@ -142,7 +142,7 @@ export default function HistoryPage() {
                         </Link>
                         <Button 
                           variant="ghost" 
-                          size="icon" 
+                          size="icon" aria-label="Delete exam" 
                           onClick={() => setDeleteId(result.attemptId)}
                           className="rounded-xl"
                         >

@@ -61,10 +61,10 @@ export default function MaterialDetailPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>
+    <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>
   );
   if (!m) return (
-    <div className="min-h-screen bg-background"><AppHeader /><div className="container py-20 text-center text-muted-foreground">Not found.</div></div>
+    <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center text-muted-foreground">Not found.</div></div>
   );
 
   const owned = purchase && (purchase.status === 'approved' || purchase.status === 'free');
@@ -72,7 +72,7 @@ export default function MaterialDetailPage() {
   const rejected = purchase && purchase.status === 'rejected';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title={`${m.title} | Study Materials`} description={m.description?.slice(0, 155) || m.title} />
       <AppHeader />
       <main className="container py-6 space-y-5 max-w-3xl">

@@ -43,7 +43,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Dashboard | Smart AI OMR Analysis" description="Track scores, streaks, and study progress on your AI-powered OMR practice dashboard." />
       <AppHeader />
 

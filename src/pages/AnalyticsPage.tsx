@@ -128,7 +128,7 @@ export default function AnalyticsPage() {
 
   if (!analysis) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-dvh bg-background">
         <AppHeader />
         <main className="container py-16 text-center">
           <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-6 animate-float">
@@ -155,7 +155,7 @@ export default function AnalyticsPage() {
 
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="AI Analytics | Smart AI OMR Analysis" description="Smart performance insights, topic mastery, and predictive score analytics." />
       <AppHeader />
       <main className="container py-8 space-y-6">

@@ -468,7 +468,7 @@ export default function ChatPage() {
   const showSidebar = !activeGroup; // mobile: hide list when in chat
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Study Chat | Smart AI OMR Analysis" description="Collaborate with study groups and chat with the AI coach for exam doubts." />
       <AppHeader />
       <main className="container mx-auto px-2 sm:px-4 py-4 max-w-6xl">
@@ -618,7 +618,7 @@ export default function ChatPage() {
               <Tabs defaultValue="chat" className="flex-1 flex flex-col">
                 {/* Header */}
                 <div className="flex items-center gap-2 border-b px-2 py-2">
-                  <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setActiveGroup(null)}>
+                  <Button variant="ghost" size="icon" aria-label="Back to chats" className="md:hidden" onClick={() => setActiveGroup(null)}>
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                   <button onClick={() => setMembersOpen(true)} className="flex items-center gap-2 flex-1 min-w-0 hover:opacity-80">
@@ -697,7 +697,7 @@ export default function ChatPage() {
                       </div>
                       <div className="border-t p-2 flex gap-2 items-end">
                         <input ref={fileInputRef} type="file" hidden onChange={handleFileUpload} />
-                        <Button size="icon" variant="ghost" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="shrink-0">
+                        <Button size="icon" aria-label="Attach file" variant="ghost" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="shrink-0">
                           <Paperclip className="w-4 h-4" />
                         </Button>
                         <Input

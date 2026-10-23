@@ -162,7 +162,7 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
             <p className="text-xs text-muted-foreground">Scan with any UPI app</p>
             <div className="flex items-center gap-2 w-full">
               <Input readOnly value={UPI_ID} className="rounded-xl h-10 text-sm" />
-              <Button variant="outline" size="icon" onClick={copyUpi} className="rounded-xl h-10 w-10 shrink-0">
+              <Button variant="outline" size="icon" aria-label="Copy UPI ID" onClick={copyUpi} className="rounded-xl h-10 w-10 shrink-0">
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </Button>
             </div>

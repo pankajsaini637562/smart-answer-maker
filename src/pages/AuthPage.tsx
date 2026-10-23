@@ -150,7 +150,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
       <SEO title="Sign In | Smart AI OMR Analysis" description="Sign in or create your free Smart AI OMR account to start AI-powered exam practice." />
       <main className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2 animate-fade-in">

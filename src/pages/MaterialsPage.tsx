@@ -39,7 +39,7 @@ export default function MaterialsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SEO title="Study Materials | Smart AI OMR Analysis" description="Buy or download free study notes and exam material." />
       <AppHeader />
       <main className="container py-6 space-y-5 max-w-6xl">

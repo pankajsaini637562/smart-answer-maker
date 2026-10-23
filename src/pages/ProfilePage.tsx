@@ -129,7 +129,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-dvh bg-background">
         <SEO title="Profile | Smart AI OMR Analysis" description="Manage your profile, academic details, and account settings." noindex />
         <AppHeader />
         <div className="flex items-center justify-center py-20">
@@ -140,7 +140,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-dvh bg-background relative overflow-hidden">
       {/* Ambient premium background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
       </div>
