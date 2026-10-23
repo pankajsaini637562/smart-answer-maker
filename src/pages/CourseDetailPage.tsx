@@ -73,7 +73,7 @@ export default function CourseDetailPage() {
             </div>
           </div>
           <Card className="modern-card">
-            <div className="aspect-video bg-gradient-to-br from-primary/25 to-purple-500/10 flex items-center justify-center">
+            <div className="aspect-video bg-gradient-to-br from-primary/25 to-accent flex items-center justify-center">
               {course.cover_url ? <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" />
                 : <BookOpen className="w-12 h-12 text-primary/70" />}
             </div>
@@ -116,7 +116,7 @@ export default function CourseDetailPage() {
                             {enrolled || l.is_preview ? <PlayCircle className="w-4 h-4 text-primary" /> : <Lock className="w-4 h-4 text-muted-foreground" />}
                             {l.title}
                           </span>
-                          {l.is_preview && !enrolled && <Badge variant="secondary" className="text-[10px]">Preview</Badge>}
+                          {l.is_preview && !enrolled && <Badge variant="secondary" className="text-xs">Preview</Badge>}
                         </li>
                       ))}
                     </ul>

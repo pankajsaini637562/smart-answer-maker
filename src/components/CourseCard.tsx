@@ -8,7 +8,7 @@ export function CourseCard({ course, enrolled }: { course: Course; enrolled?: bo
   return (
     <Link to={`/courses/${course.id}`} className="block group">
       <Card className="modern-card overflow-hidden h-full transition-transform group-hover:-translate-y-0.5">
-        <div className="aspect-video relative bg-gradient-to-br from-primary/25 to-purple-500/10 flex items-center justify-center">
+        <div className="aspect-video relative bg-gradient-to-br from-primary/25 to-accent flex items-center justify-center">
           {course.cover_url ? (
             <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" loading="lazy" />
           ) : (
@@ -24,7 +24,7 @@ export function CourseCard({ course, enrolled }: { course: Course; enrolled?: bo
         <CardContent className="p-3 space-y-2">
           <h3 className="font-semibold font-display leading-tight line-clamp-2">{course.title}</h3>
           {course.instructor_name && <p className="text-xs text-muted-foreground truncate">by {course.instructor_name}</p>}
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
             {course.rating_count > 0 && (
               <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-amber-400 text-amber-400" />{course.rating_avg.toFixed(1)}</span>
             )}

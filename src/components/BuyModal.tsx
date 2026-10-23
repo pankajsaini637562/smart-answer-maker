@@ -144,14 +144,14 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
             {appliedCoupon && (
               <div className="rounded-lg border border-dashed border-emerald-500/50 bg-emerald-500/5 px-3 py-2 flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold">Coupon applied</p>
+                  <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold">Coupon applied</p>
                   <p className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">{appliedCoupon}</p>
                 </div>
                 <Check className="w-4 h-4 text-emerald-500 shrink-0" />
               </div>
             )}
             {creditsCount > 0 && (
-              <p className="text-[11px] text-muted-foreground">Using {creditsCount} referral credit{creditsCount > 1 ? 's' : ''} — one-time use per friend referred.</p>
+              <p className="text-xs text-muted-foreground">Using {creditsCount} referral credit{creditsCount > 1 ? 's' : ''} — one-time use per friend referred.</p>
             )}
           </div>
 
@@ -181,7 +181,7 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
           <Button onClick={submit} disabled={submitting} className="w-full rounded-xl h-11">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit for Approval'}
           </Button>
-          <p className="text-[11px] text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center">
             You will get access & receipt once admin verifies your payment (usually within a few hours).
           </p>
         </div>

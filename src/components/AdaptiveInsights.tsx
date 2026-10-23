@@ -72,7 +72,7 @@ export function AdaptiveInsights({ results }: AdaptiveInsightsProps) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-sm">{rec.message}</p>
-                    <Badge variant={priorityColors[rec.priority] as any} className="text-[10px] shrink-0">
+                    <Badge variant={priorityColors[rec.priority] as any} className="text-xs shrink-0">
                       {rec.priority}
                     </Badge>
                   </div>

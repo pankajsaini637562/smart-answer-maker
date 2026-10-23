@@ -23,7 +23,7 @@ export function XPNotification({
       <DialogContent className="max-w-sm">
         <DialogHeader className="text-center">
           <DialogTitle className="text-xl font-display flex items-center justify-center gap-2">
-            <Zap className="w-6 h-6 text-primary animate-pulse" />
+            <Zap className="w-6 h-6 text-primary" />
             +{xpEarned} XP Earned!
           </DialogTitle>
           {leveledUp && newLevel && (

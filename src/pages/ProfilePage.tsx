@@ -143,10 +143,6 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient premium background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-24 w-[28rem] h-[28rem] rounded-full opacity-30 blur-3xl"
-             style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.55), transparent 60%)' }} />
-        <div className="absolute top-40 -right-24 w-[26rem] h-[26rem] rounded-full opacity-25 blur-3xl"
-             style={{ background: 'radial-gradient(circle, hsl(280 72% 56% / 0.5), transparent 60%)' }} />
       </div>
 
       <AppHeader />
@@ -190,21 +186,21 @@ export default function ProfilePage() {
             <div className="p-4 text-center relative">
               <Trophy className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-2xl font-bold font-mono">{stats.totalExams}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Exams</p>
+              <p className="text-xs text-muted-foreground">Exams</p>
             </div>
           </div>
           <div className="stat-3d">
             <div className="p-4 text-center relative">
               <Target className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-2xl font-bold font-mono">{stats.avgAccuracy}%</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Accuracy</p>
+              <p className="text-xs text-muted-foreground">Accuracy</p>
             </div>
           </div>
           <div className="stat-3d">
             <div className="p-4 text-center relative">
               <Clock className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-2xl font-bold font-mono">{formatTime(stats.totalTime)}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Study Time</p>
+              <p className="text-xs text-muted-foreground">Study Time</p>
             </div>
           </div>
         </div>

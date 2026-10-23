@@ -441,7 +441,7 @@ export default function ChatPage() {
             {g.description ? (
               <p className="text-xs text-muted-foreground line-clamp-1">{g.description}</p>
             ) : null}
-            <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
               <Users className="w-3 h-3" /> {g.member_count} member{g.member_count === 1 ? '' : 's'}
             </p>
           </div>
@@ -456,7 +456,7 @@ export default function ChatPage() {
             {isJoining ? 'Joining...' : 'Join'}
           </Button>
         ) : (
-          <button onClick={() => setActiveGroup(g)} className="text-[10px] text-muted-foreground shrink-0 px-1">
+          <button onClick={() => setActiveGroup(g)} className="text-xs text-muted-foreground shrink-0 px-1">
             Open
           </button>
         )}
@@ -598,7 +598,7 @@ export default function ChatPage() {
                   </div>
                 </div>
                 <div className="rounded-lg border p-3 text-sm space-y-1">
-                  <p className="text-muted-foreground text-xs uppercase tracking-wider">Stats</p>
+                  <p className="text-muted-foreground text-xs">Stats</p>
                   <p>Joined groups: <strong>{allGroups.filter((g) => g.is_member).length}</strong></p>
                   <p>Created groups: <strong>{allGroups.filter((g) => g.created_by === user?.id).length}</strong></p>
                 </div>
@@ -628,7 +628,7 @@ export default function ChatPage() {
                     </Avatar>
                     <div className="text-left min-w-0">
                       <p className="font-display font-semibold truncate">{activeGroup.name}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {members.length} member{members.length === 1 ? '' : 's'} • tap for info
                       </p>
                     </div>
@@ -678,7 +678,7 @@ export default function ChatPage() {
                               </div>
                               <div className={`max-w-[78%] flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
                                 {showHeader && !mine && (
-                                  <span className="text-[10px] text-muted-foreground px-1 mb-0.5">{name}</span>
+                                  <span className="text-xs text-muted-foreground px-1 mb-0.5">{name}</span>
                                 )}
                                 <div className={`px-3 py-2 rounded-2xl text-sm break-words shadow-sm ${
                                   mine
@@ -687,7 +687,7 @@ export default function ChatPage() {
                                 }`}>
                                   {m.text}
                                 </div>
-                                <span className="text-[10px] text-muted-foreground px-1 mt-0.5">
+                                <span className="text-xs text-muted-foreground px-1 mt-0.5">
                                   {formatDistanceToNow(new Date(m.created_at), { addSuffix: true })}
                                 </span>
                               </div>
@@ -789,9 +789,9 @@ export default function ChatPage() {
                     <p className="text-sm font-medium truncate">
                       {name} {m.user_id === user?.id && <span className="text-xs text-muted-foreground">(You)</span>}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">Joined {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</p>
+                    <p className="text-xs text-muted-foreground">Joined {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</p>
                   </div>
-                  {m.user_id === activeGroup?.created_by && <Badge variant="secondary" className="text-[10px]">Admin</Badge>}
+                  {m.user_id === activeGroup?.created_by && <Badge variant="secondary" className="text-xs">Admin</Badge>}
                 </div>
               );
             })}

@@ -44,19 +44,19 @@ export function TopicAnalyticsCard({ topic }: { topic: TopicAnalysis }) {
         {/* Key metrics row */}
         <div className="grid grid-cols-4 gap-3">
           <div className="text-center p-2 rounded-xl bg-accent/50">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Accuracy</p>
+            <p className="text-xs text-muted-foreground">Accuracy</p>
             <p className="text-lg font-bold font-mono text-primary">{topic.avgAccuracy}%</p>
           </div>
           <div className="text-center p-2 rounded-xl bg-accent/50">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Best</p>
+            <p className="text-xs text-muted-foreground">Best</p>
             <p className="text-lg font-bold font-mono text-success">{topic.bestAccuracy}%</p>
           </div>
           <div className="text-center p-2 rounded-xl bg-accent/50">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Trend</p>
+            <p className="text-xs text-muted-foreground">Trend</p>
             <p className={`text-lg font-bold font-mono ${trendColor}`}>{trendIcon}{Math.abs(topic.trend)}%</p>
           </div>
           <div className="text-center p-2 rounded-xl bg-accent/50">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Predict</p>
+            <p className="text-xs text-muted-foreground">Predict</p>
             <p className="text-lg font-bold font-mono text-primary">{topic.predictedNext}%</p>
           </div>
         </div>

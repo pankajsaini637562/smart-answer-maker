@@ -26,7 +26,7 @@ export function AppHeader() {
   if (isAdmin) items = [...items, { to: '/admin', label: 'Admin', icon: Shield }];
 
   return (
-    <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b bg-card sticky top-0 z-50">
       <div className="container py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">

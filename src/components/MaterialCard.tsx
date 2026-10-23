@@ -18,7 +18,7 @@ export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolea
   return (
     <Link to={`/materials/${m.id}`} className="block group">
       <Card className="modern-card overflow-hidden h-full transition-transform group-hover:-translate-y-0.5">
-        <div className="aspect-video relative bg-gradient-to-br from-primary/20 to-purple-500/10 flex items-center justify-center">
+        <div className="aspect-video relative bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
           {m.cover_url ? (
             <img src={m.cover_url} alt={m.title} className="w-full h-full object-cover" loading="lazy" />
           ) : (
@@ -38,7 +38,7 @@ export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolea
         </div>
         <CardContent className="p-3 space-y-1.5">
           <h3 className="font-semibold font-display leading-tight line-clamp-2">{m.title}</h3>
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             {m.subject && <span className="truncate">{m.subject}</span>}
             {m.subject && m.class && <span>•</span>}
             {m.class && <span>{m.class}</span>}

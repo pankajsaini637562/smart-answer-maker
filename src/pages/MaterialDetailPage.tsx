@@ -79,7 +79,7 @@ export default function MaterialDetailPage() {
         <Link to="/materials"><Button variant="ghost" size="sm" className="gap-1"><ArrowLeft className="w-4 h-4" /> Back</Button></Link>
 
         <Card className="modern-card overflow-hidden">
-          <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-500/10 flex items-center justify-center">
+          <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
             {m.cover_url ? <img src={m.cover_url} alt={m.title} className="w-full h-full object-cover" /> : <BookOpen className="w-16 h-16 text-primary/60" />}
           </div>
           <CardContent className="p-5 space-y-4">

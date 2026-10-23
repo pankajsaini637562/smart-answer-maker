@@ -175,7 +175,7 @@ export default function AdminPage() {
                   </div>
                   <div className="text-right">
                     <div className="flex items-center font-bold text-primary"><IndianRupee className="w-3.5 h-3.5" />{p.final_amount_inr}</div>
-                    {p.discount_percent > 0 && <p className="text-[10px] text-muted-foreground">-{p.discount_percent}% off</p>}
+                    {p.discount_percent > 0 && <p className="text-xs text-muted-foreground">-{p.discount_percent}% off</p>}
                     {p.status === 'pending' && <Badge className="bg-amber-500 text-white border-0 mt-1">Pending</Badge>}
                     {p.status === 'approved' && <Badge className="bg-emerald-500 text-white border-0 mt-1">Approved</Badge>}
                     {p.status === 'rejected' && <Badge variant="destructive" className="mt-1">Rejected</Badge>}

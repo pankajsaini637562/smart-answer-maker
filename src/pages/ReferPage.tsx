@@ -72,7 +72,7 @@ export default function ReferPage() {
         </div>
 
         <Card className="modern-card overflow-hidden">
-          <div className="p-6 text-center space-y-3 bg-gradient-to-br from-primary/10 to-purple-500/10">
+          <div className="p-6 text-center space-y-3 bg-gradient-to-br from-primary/10 to-accent">
             <Gift className="w-10 h-10 mx-auto text-primary" />
             <h2 className="text-xl font-bold font-display">Your invite link</h2>
             <div className="flex items-center gap-2 max-w-md mx-auto">
@@ -90,7 +90,7 @@ export default function ReferPage() {
           <Card className="modern-card"><CardContent className="p-4 text-center">
             <Users className="w-5 h-5 mx-auto text-primary mb-1" />
             <p className="text-2xl font-bold font-mono">{referrals}</p>
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Friends joined</p>
+            <p className="text-xs text-muted-foreground">Friends joined</p>
           </CardContent></Card>
           <button
             type="button"
@@ -102,9 +102,9 @@ export default function ReferPage() {
               <CardContent className="p-4 text-center">
                 <Sparkles className="w-5 h-5 mx-auto text-primary mb-1" />
                 <p className="text-2xl font-bold font-mono">{creditsPct}%</p>
-                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Discount available</p>
+                <p className="text-xs text-muted-foreground">Discount available</p>
                 {coupons.length > 0 && (
-                  <p className="text-[10px] text-primary mt-1 font-semibold">Tap to view coupon{coupons.length > 1 ? 's' : ''}</p>
+                  <p className="text-xs text-primary mt-1 font-semibold">Tap to view coupon{coupons.length > 1 ? 's' : ''}</p>
                 )}
               </CardContent>
             </Card>
@@ -143,7 +143,7 @@ export default function ReferPage() {
                 </Button>
               </div>
             ))}
-            <p className="text-[11px] text-muted-foreground text-center">
+            <p className="text-xs text-muted-foreground text-center">
               You don't need to paste the code — the discount is applied automatically for your account.
             </p>
           </div>

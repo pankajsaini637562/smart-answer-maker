@@ -80,7 +80,7 @@ export default function LeaderboardPage() {
             </div>
             <div className="flex items-center gap-2">
               {myRank > 0 && (
-                <Badge className="rounded-xl bg-white/20 text-primary-foreground border-white/30 backdrop-blur-sm">
+                <Badge className="rounded-xl bg-white/20 text-primary-foreground border-white/30">
                   Your rank: #{myRank}
                 </Badge>
               )}
@@ -144,13 +144,13 @@ export default function LeaderboardPage() {
                         </div>
                         <div className="space-y-0.5">
                           <p className="font-semibold text-sm truncate">{row.display_name}</p>
-                          <p className="text-[11px] text-muted-foreground truncate">
+                          <p className="text-xs text-muted-foreground truncate">
                             {row.class || 'Student'}{row.country ? ` · ${row.country}` : ''}
                           </p>
                         </div>
                         <div className="pt-2 border-t border-border/50">
                           <p className="text-xl font-bold font-display gradient-text">{row.xp.toLocaleString()}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">XP · Lv {row.level}</p>
+                          <p className="text-xs text-muted-foreground">XP · Lv {row.level}</p>
                         </div>
                       </Card>
                       <div className={cn(
@@ -191,7 +191,7 @@ export default function LeaderboardPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-sm truncate">{row.display_name}</p>
-                          {isMe && <Badge variant="secondary" className="text-[10px] h-4 px-1.5">You</Badge>}
+                          {isMe && <Badge variant="secondary" className="text-xs h-4 px-1.5">You</Badge>}
                         </div>
                         <p className="text-xs text-muted-foreground truncate">
                           Lv {row.level} · {LEVEL_TITLES[row.level] || 'Student'}
@@ -200,9 +200,9 @@ export default function LeaderboardPage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-sm">{row.xp.toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">XP</span></p>
+                        <p className="font-bold text-sm">{row.xp.toLocaleString()} <span className="text-xs text-muted-foreground font-normal">XP</span></p>
                         {row.streak > 0 && (
-                          <p className="text-[11px] text-orange-500 flex items-center justify-end gap-0.5">
+                          <p className="text-xs text-orange-500 flex items-center justify-end gap-0.5">
                             <Flame className="w-3 h-3" /> {row.streak}
                           </p>
                         )}

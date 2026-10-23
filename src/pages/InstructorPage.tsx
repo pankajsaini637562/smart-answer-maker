@@ -129,7 +129,7 @@ export default function InstructorPage() {
             {courses.map(c => (
               <button key={c.id} onClick={() => setSelectedId(c.id)}
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate ${selectedId === c.id ? 'bg-accent' : 'hover:bg-accent/50'}`}>
-                {c.title} {!c.is_published && <span className="text-[10px] text-muted-foreground">(draft)</span>}
+                {c.title} {!c.is_published && <span className="text-xs text-muted-foreground">(draft)</span>}
               </button>
             ))}
             {courses.length === 0 && <p className="text-xs text-muted-foreground px-2">No courses yet.</p>}
