@@ -131,7 +131,7 @@ export default function AnalyticsPage() {
       <div className="min-h-dvh bg-background">
         <AppHeader />
         <main className="container py-16 text-center">
-          <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-6 animate-float">
+          <div className="w-20 h-20 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-6 animate-float">
             <Brain className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-2xl font-bold font-display mb-2">No Data Yet</h2>

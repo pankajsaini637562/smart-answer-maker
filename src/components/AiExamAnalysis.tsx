@@ -175,7 +175,7 @@ export function AiExamAnalysis({ result, sheet }: { result: ExamResult; sheet: O
                 <div className="grid sm:grid-cols-2 gap-4 pt-2">
                   {!!analysis.strengths?.length && (
                     <div>
-                      <p className="text-xs font-semibold uppercase text-emerald-600 mb-1 flex items-center gap-1">
+                      <p className="text-xs font-semibold uppercase text-success mb-1 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Strengths
                       </p>
                       <ul className="text-sm space-y-1 list-disc pl-5">
@@ -185,7 +185,7 @@ export function AiExamAnalysis({ result, sheet }: { result: ExamResult; sheet: O
                   )}
                   {!!analysis.weaknesses?.length && (
                     <div>
-                      <p className="text-xs font-semibold uppercase text-amber-600 mb-1 flex items-center gap-1">
+                      <p className="text-xs font-semibold uppercase text-warning mb-1 flex items-center gap-1">
                         <AlertTriangle className="w-3.5 h-3.5" /> Focus Areas
                       </p>
                       <ul className="text-sm space-y-1 list-disc pl-5">
@@ -262,8 +262,8 @@ export function AiExamAnalysis({ result, sheet }: { result: ExamResult; sheet: O
                             ? 'Correct'
                             : qr.userAnswer === null ? 'Skipped' : 'Wrong';
                         const color =
-                          status === 'Correct' ? 'bg-emerald-500/15 text-emerald-600'
-                            : status === 'Wrong' ? 'bg-rose-500/15 text-rose-600'
+                          status === 'Correct' ? 'bg-success/15 text-success'
+                            : status === 'Wrong' ? 'bg-destructive/15 text-destructive'
                             : 'bg-muted text-muted-foreground';
                         return (
                           <tr key={q.n} className="border-t">

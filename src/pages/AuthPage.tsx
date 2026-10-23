@@ -154,7 +154,7 @@ export default function AuthPage() {
       <SEO title="Sign In | Smart AI OMR Analysis" description="Sign in or create your free Smart AI OMR account to start AI-powered exam practice." />
       <main className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2 animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-primary-foreground font-bold text-xl mx-auto" style={{ background: 'var(--gradient-primary)' }}>
+          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl mx-auto" style={{ background: 'var(--gradient-primary)' }}>
             EM
           </div>
           <h1 className="text-3xl font-bold font-display">
@@ -281,23 +281,23 @@ export default function AuthPage() {
                           value={referralInput}
                           onChange={e => setReferralInput(e.target.value.toUpperCase())}
                           className={`rounded-xl h-11 pr-10 font-mono uppercase tracking-wider ${
-                            referralStatus === 'valid' ? 'border-emerald-500 focus-visible:ring-emerald-500' :
+                            referralStatus === 'valid' ? 'border-success focus-visible:ring-success' :
                             referralStatus === 'invalid' ? 'border-destructive/60' : ''
                           }`}
                           maxLength={16}
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
                           {referralStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
-                          {referralStatus === 'valid' && <Check className="w-4 h-4 text-emerald-500" />}
+                          {referralStatus === 'valid' && <Check className="w-4 h-4 text-success" />}
                           {referralStatus === 'invalid' && <X className="w-4 h-4 text-destructive" />}
                         </div>
                       </div>
                       {referralStatus === 'valid' && (
-                        <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-2.5 text-xs space-y-1">
-                          <p className="flex items-center gap-1.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                        <div className="rounded-lg bg-success/10 border border-success/30 p-2.5 text-xs space-y-1">
+                          <p className="flex items-center gap-1.5 font-semibold text-success ">
                             <Check className="w-3.5 h-3.5" /> Friend joined via {referrerName}!
                           </p>
-                          <p className="text-emerald-700/80 dark:text-emerald-300/80">
+                          <p className="text-success/80 ">
                             Your <span className="font-mono font-bold">{buildCouponCode('welcome', referralInput, REFERRAL_DISCOUNT_PERCENT)}</span> coupon will apply <b>{REFERRAL_DISCOUNT_PERCENT}% off</b> automatically on your first paid course.
                           </p>
                         </div>

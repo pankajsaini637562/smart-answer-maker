@@ -39,9 +39,9 @@ export default function HistoryPage() {
   };
 
   const medalColors = [
-    'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20',
+    'bg-warning/10 text-warning  border-warning/20',
     'bg-muted text-muted-foreground border-border',
-    'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20',
+    'bg-warning/10 text-warning  border-warning/20',
   ];
 
   return (
@@ -101,7 +101,7 @@ export default function HistoryPage() {
           <h3 className="section-title mb-4">All Results</h3>
           {results.length === 0 ? (
             <div className="text-center py-20 animate-fade-in">
-              <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+              <div className="w-20 h-20 rounded-xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
                 <Trophy className="w-10 h-10 text-accent-foreground" />
               </div>
               <h3 className="text-xl font-bold font-display mb-2">No Results Yet</h3>
@@ -159,7 +159,7 @@ export default function HistoryPage() {
       </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display">Delete Result?</AlertDialogTitle>
             <AlertDialogDescription>This will permanently delete this exam result.</AlertDialogDescription>
@@ -177,7 +177,7 @@ export default function HistoryPage() {
       </AlertDialog>
 
       <AlertDialog open={clearAll} onOpenChange={setClearAll}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display">Clear Scoreboard?</AlertDialogTitle>
             <AlertDialogDescription>This will clear all entries from the scoreboard.</AlertDialogDescription>

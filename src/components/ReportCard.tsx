@@ -36,7 +36,7 @@ export function ReportCard({ result, sheet }: ReportCardProps) {
   return (
     <div className="space-y-6 print:space-y-4" id="report-card">
       {/* Header */}
-      <div className="text-center p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl">
+      <div className="text-center p-6 bg-primary/10 rounded-xl">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Award className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold">Exam Report Card</h1>

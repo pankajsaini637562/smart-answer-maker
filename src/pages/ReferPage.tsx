@@ -72,7 +72,7 @@ export default function ReferPage() {
         </div>
 
         <Card className="modern-card overflow-hidden">
-          <div className="p-6 text-center space-y-3 bg-gradient-to-br from-primary/10 to-accent">
+          <div className="p-6 text-center space-y-3 bg-primary/10">
             <Gift className="w-10 h-10 mx-auto text-primary" />
             <h2 className="text-xl font-bold font-display">Your invite link</h2>
             <div className="flex items-center gap-2 max-w-md mx-auto">

@@ -18,7 +18,7 @@ export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolea
   return (
     <Link to={`/materials/${m.id}`} className="block group">
       <Card className="modern-card overflow-hidden h-full transition-transform group-hover:-translate-y-0.5">
-        <div className="aspect-video relative bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
+        <div className="aspect-video relative bg-primary/10 flex items-center justify-center">
           {m.cover_url ? (
             <img src={m.cover_url} alt={m.title} className="w-full h-full object-cover" loading="lazy" />
           ) : (
@@ -26,13 +26,13 @@ export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolea
           )}
           <div className="absolute top-2 right-2 flex gap-1">
             {m.is_free ? (
-              <Badge className="bg-emerald-500/90 text-white border-0">Free</Badge>
+              <Badge className="bg-success/90 text-primary-foreground border-0">Free</Badge>
             ) : (
               <Badge className="bg-primary text-primary-foreground border-0 flex items-center gap-0.5">
                 <IndianRupee className="w-3 h-3" />{m.price_inr}
               </Badge>
             )}
-            {owned && <Badge className="bg-white/90 text-primary border-0"><Download className="w-3 h-3" /></Badge>}
+            {owned && <Badge className="bg-primary-foreground/15 text-primary border-0"><Download className="w-3 h-3" /></Badge>}
             {!m.is_free && !owned && <Badge variant="secondary" className="border-0"><Lock className="w-3 h-3" /></Badge>}
           </div>
         </div>

@@ -70,7 +70,7 @@ export default function LeaderboardPage() {
       <AppHeader />
       <main className="container py-6 space-y-6 animate-fade-in">
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8" style={{ background: 'var(--gradient-primary)' }}>
+        <div className="relative overflow-hidden rounded-xl p-6 md:p-8" style={{ background: 'var(--gradient-primary)' }}>
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" />
           <div className="relative flex items-center justify-between gap-4 flex-wrap">
             <div className="space-y-1 text-primary-foreground">
@@ -83,7 +83,7 @@ export default function LeaderboardPage() {
             </div>
             <div className="flex items-center gap-2">
               {myRank > 0 && (
-                <Badge className="rounded-xl bg-white/20 text-primary-foreground border-white/30">
+                <Badge className="rounded-xl bg-primary-foreground/15 text-primary-foreground border-primary-foreground/30">
                   Your rank: #{myRank}
                 </Badge>
               )}
@@ -120,7 +120,7 @@ export default function LeaderboardPage() {
                   if (!row) return <div key={idx} />;
                   const rank = idx + 1;
                   const heightClass = rank === 1 ? 'md:pt-6' : rank === 2 ? 'md:pt-10' : 'md:pt-14';
-                  const iconColor = rank === 1 ? 'text-yellow-400' : rank === 2 ? 'text-slate-300' : 'text-amber-600';
+                  const iconColor = rank === 1 ? 'text-warning' : rank === 2 ? 'text-slate-300' : 'text-warning';
                   const IconEl = rank === 1 ? Crown : rank === 2 ? Trophy : Medal;
                   const isMe = user?.id === row.user_id;
 
@@ -128,7 +128,7 @@ export default function LeaderboardPage() {
                     <div key={row.user_id} className={cn('flex flex-col items-center', heightClass)}>
                       <Card className={cn(
                         'modern-card w-full p-4 text-center space-y-3 relative overflow-hidden',
-                        rank === 1 && 'ring-2 ring-yellow-400/50',
+                        rank === 1 && 'ring-2 ring-warning/50',
                         isMe && 'ring-2 ring-primary'
                       )}>
                         <div className={cn('absolute top-2 right-2', iconColor)}>
@@ -137,7 +137,7 @@ export default function LeaderboardPage() {
                         <div className="flex justify-center">
                           <Avatar className={cn(
                             'border-2',
-                            rank === 1 ? 'w-16 h-16 border-yellow-400' : 'w-14 h-14 border-border'
+                            rank === 1 ? 'w-16 h-16 border-warning' : 'w-14 h-14 border-border'
                           )}>
                             <AvatarImage src={row.avatar_url ?? undefined} />
                             <AvatarFallback className="text-lg font-bold">
@@ -158,9 +158,9 @@ export default function LeaderboardPage() {
                       </Card>
                       <div className={cn(
                         'mt-2 w-full text-center py-1.5 rounded-b-xl text-xs font-bold text-primary-foreground',
-                        rank === 1 && 'bg-yellow-500',
+                        rank === 1 && 'bg-warning',
                         rank === 2 && 'bg-slate-400',
-                        rank === 3 && 'bg-amber-600'
+                        rank === 3 && 'bg-warning'
                       )}>
                         #{rank}
                       </div>
@@ -205,7 +205,7 @@ export default function LeaderboardPage() {
                       <div className="text-right">
                         <p className="font-bold text-sm">{row.xp.toLocaleString()} <span className="text-xs text-muted-foreground font-normal">XP</span></p>
                         {row.streak > 0 && (
-                          <p className="text-xs text-orange-500 flex items-center justify-end gap-0.5">
+                          <p className="text-xs text-warning flex items-center justify-end gap-0.5">
                             <Flame className="w-3 h-3" /> {row.streak}
                           </p>
                         )}

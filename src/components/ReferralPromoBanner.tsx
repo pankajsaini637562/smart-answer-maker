@@ -31,7 +31,7 @@ export function ReferralPromoBanner() {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
       <DialogContent className="max-w-md p-0 overflow-hidden border-primary/30">
-        <div className="relative bg-gradient-to-br from-primary/20 to-accent p-6 pb-5">
+        <div className="relative bg-primary/10 p-6 pb-5">
           <button
             onClick={dismiss}
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/60 hover:bg-background flex items-center justify-center transition"
@@ -46,8 +46,8 @@ export function ReferralPromoBanner() {
             </span>
           </div>
 
-          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
-            <Gift className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center mb-4 shadow-sm">
+            <Gift className="w-8 h-8 text-primary-foreground" />
           </div>
 
           <h2 className="text-2xl font-bold font-display leading-tight mb-2">

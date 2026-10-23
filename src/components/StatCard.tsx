@@ -34,7 +34,7 @@ export function StatCard({
 
   return (
     <div className={cn('stat-card group', className)}>
-      <div className={cn('absolute inset-0 bg-gradient-to-br rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300', decorBg[variant])} />
+      <div className={cn('absolute inset-0 bg-gradient-to-br rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300', decorBg[variant])} />
       <div className="relative flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>

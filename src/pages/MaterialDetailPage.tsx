@@ -79,7 +79,7 @@ export default function MaterialDetailPage() {
         <Link to="/materials"><Button variant="ghost" size="sm" className="gap-1"><ArrowLeft className="w-4 h-4" /> Back</Button></Link>
 
         <Card className="modern-card overflow-hidden">
-          <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
+          <div className="aspect-video bg-primary/10 flex items-center justify-center">
             {m.cover_url ? <img src={m.cover_url} alt={m.title} className="w-full h-full object-cover" /> : <BookOpen className="w-16 h-16 text-primary/60" />}
           </div>
           <CardContent className="p-5 space-y-4">
@@ -92,8 +92,8 @@ export default function MaterialDetailPage() {
                 </div>
               </div>
               {m.is_free
-                ? <Badge className="bg-emerald-500 text-white border-0 text-base py-1 px-3">Free</Badge>
-                : <Badge className="bg-primary text-white border-0 text-base py-1 px-3 flex items-center gap-0.5"><IndianRupee className="w-3.5 h-3.5" />{m.price_inr}</Badge>}
+                ? <Badge className="bg-success text-primary-foreground border-0 text-base py-1 px-3">Free</Badge>
+                : <Badge className="bg-primary text-primary-foreground border-0 text-base py-1 px-3 flex items-center gap-0.5"><IndianRupee className="w-3.5 h-3.5" />{m.price_inr}</Badge>}
             </div>
             {m.description && <p className="text-sm text-muted-foreground whitespace-pre-line">{m.description}</p>}
 
@@ -111,7 +111,7 @@ export default function MaterialDetailPage() {
                 )}
               </div>
             ) : pending ? (
-              <div className="rounded-xl border p-3 bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center gap-2 text-sm">
+              <div className="rounded-xl border p-3 bg-warning/10 text-warning  flex items-center gap-2 text-sm">
                 <Clock className="w-4 h-4" /> Payment submitted. Waiting for admin approval.
               </div>
             ) : rejected ? (

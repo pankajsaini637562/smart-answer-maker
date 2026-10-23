@@ -46,7 +46,7 @@ const faqs = [
 const Star5 = ({ count = 5 }: { count?: number }) => (
   <div className="flex gap-0.5">
     {Array.from({ length: 5 }).map((_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < count ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30'}`} />
+      <Star key={i} className={`w-4 h-4 ${i < count ? 'fill-yellow-400 text-warning' : 'text-muted-foreground/30'}`} />
     ))}
   </div>
 );
@@ -63,7 +63,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-40 bg-background border-b border-border/50">
         <div className="container flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
               <ScanLine className="w-4 h-4" />
             </div>
             <span>Smart AI OMR</span>
@@ -90,7 +90,7 @@ export default function LandingPage() {
               <Sparkles className="w-3.5 h-3.5 text-primary" />
               Trusted by 12,000+ students preparing for NEET & JEE
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-br from-foreground via-foreground to-foreground/60 bg-clip-text">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-foreground bg-clip-text">
               Scan, score & master every OMR test — for free.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -135,8 +135,8 @@ export default function LandingPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f) => (
-              <Card key={f.title} className="p-6 hover:shadow-lg transition-all hover:-translate-y-1 group">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center mb-4 transition-transform">
+              <Card key={f.title} className="p-6 hover:shadow-sm transition-all hover:-translate-y-1 group">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-transform">
                   <f.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{f.title}</h3>
@@ -157,7 +157,7 @@ export default function LandingPage() {
               { icon: ScanLine, step: '02', title: 'Scan or fill bubbles', desc: 'Photograph a filled OMR or fill bubbles digitally on your phone.' },
               { icon: Clock, step: '03', title: 'Get instant analytics', desc: 'Score, accuracy, weak topics, and AI study suggestions in seconds.' },
             ].map((s) => (
-              <div key={s.step} className="relative p-6 rounded-2xl border bg-card">
+              <div key={s.step} className="relative p-6 rounded-xl border bg-card">
                 <div className="absolute -top-3 left-6 px-2 py-0.5 text-xs font-bold bg-primary text-primary-foreground rounded">{s.step}</div>
                 <s.icon className="w-8 h-8 text-primary mb-3" />
                 <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
@@ -183,7 +183,7 @@ export default function LandingPage() {
                 <Star5 count={r.rating} />
                 <p className="text-sm leading-relaxed flex-1">"{r.text}"</p>
                 <div className="flex items-center gap-3 pt-2 border-t">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
                     {r.name.charAt(0)}
                   </div>
                   <div>
@@ -216,8 +216,8 @@ export default function LandingPage() {
         <section className="container py-20">
           <Card className="relative overflow-hidden p-12 md:p-16 text-center border-0" style={{ background: 'var(--gradient-primary)' }}>
             <div className="absolute inset-0 bg-grid-white/5" />
-            <h2 className="relative text-3xl md:text-5xl font-bold text-white mb-4">Ready to score higher?</h2>
-            <p className="relative text-white/90 text-lg mb-8 max-w-xl mx-auto">
+            <h2 className="relative text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Ready to score higher?</h2>
+            <p className="relative text-primary-foreground/90 text-lg mb-8 max-w-xl mx-auto">
               Join thousands of students already using Smart AI OMR to crack NEET, JEE, and school exams.
             </p>
             <Link to="/auth" className="relative inline-block">
@@ -235,7 +235,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 font-bold mb-3">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
                   <ScanLine className="w-4 h-4" />
                 </div>
                 Smart AI OMR

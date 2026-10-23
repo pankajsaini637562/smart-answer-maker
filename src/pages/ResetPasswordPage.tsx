@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
       <main className="w-full max-w-md">
         <Card className="modern-card">
           <CardHeader className="text-center">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-primary-foreground mx-auto mb-2" style={{ background: 'var(--gradient-primary)' }}>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-primary-foreground mx-auto mb-2" style={{ background: 'var(--gradient-primary)' }}>
               <Lock className="w-5 h-5" />
             </div>
             <CardTitle className="font-display">Set a new password</CardTitle>

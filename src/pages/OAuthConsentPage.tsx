@@ -83,7 +83,7 @@ export default function OAuthConsentPage() {
       <SEO title="Connect an app | Smart AI OMR Analysis" description="Approve or deny a third-party app requesting access to your Smart AI OMR account." />
       <Card className="modern-card w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <CardTitle className="font-display mt-2">Authorize app access</CardTitle>
