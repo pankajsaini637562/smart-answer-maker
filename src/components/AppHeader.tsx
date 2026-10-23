@@ -5,6 +5,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useIsInstructor } from '@/hooks/useIsInstructor';
+import logoAsset from '@/assets/logo.webp.asset.json';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
@@ -29,13 +30,8 @@ export function AppHeader() {
     <header className="border-b bg-card sticky top-0 z-50">
       <div className="container py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-sm" style={{ background: 'var(--gradient-primary)' }}>
-              EM
-            </div>
-            <span className="text-xl font-bold font-display">
-              <span className="gradient-text">Smart AI OMR Analysis</span>
-            </span>
+          <Link to="/" className="flex items-center" aria-label="Smart AI OMR home">
+            <img src={logoAsset.url} alt="Smart AI OMR – Test & Result" className="h-12 w-12 object-contain rounded-md bg-card" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
