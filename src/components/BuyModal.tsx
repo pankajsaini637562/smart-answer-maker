@@ -58,13 +58,15 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
 
       // Unused referral credits earned by this user
       const { data: credits } = await supabase.from('referral_credits')
-        .select('id, percent').eq('user_id', user.id).is('used_purchase_id', null);
-      const creditPct = (credits || []).reduce((s: number, c: any) => s + c.percent, 0);
+        .select('id, percent, created_at').eq('user_id', user.id).is('used_purchase_id', null)
+        .order('created_at', { ascending: true });
       setCreditsCount(credits?.length || 0);
-      if (!coupon && credits && credits.length > 0) {
-        coupon = buildCouponCode('thanks', (credits[0] as any).id, (credits[0] as any).percent);
+      const picked = pickDiscount(pct > 0, (credits || []) as any);
+      if (!coupon && picked.couponId) {
+        const c = (credits || []).find((x: any) => x.id === picked.couponId) as any;
+        coupon = buildCouponCode('thanks', c.id, c.percent);
       }
-      pct = Math.min(pct + creditPct, MAX_STACKED_DISCOUNT);
+      pct = picked.percent;
 
       setDiscountPercent(pct);
       setReferrerId(ref);
