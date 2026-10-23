@@ -6,7 +6,7 @@ export function CoursesHeroCard() {
   return (
     <Link to="/courses" className="block group">
       <Card className="relative overflow-hidden border-0 shadow-sm">
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(270 80% 55%) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'hsl(var(--primary))' }} />
         <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-primary-foreground/15 blur-2xl" />
         <div className="absolute -left-6 -bottom-6 w-32 h-32 rounded-full bg-primary-foreground/15 blur-2xl" />
         <div className="relative p-6 md:p-8 text-primary-foreground grid md:grid-cols-[1fr_auto] items-center gap-6">

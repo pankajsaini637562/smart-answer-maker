@@ -71,7 +71,6 @@ export default function LeaderboardPage() {
       <main className="container py-6 space-y-6 animate-fade-in">
         {/* Hero */}
         <div className="relative overflow-hidden rounded-xl p-6 md:p-8" style={{ background: 'var(--gradient-primary)' }}>
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" />
           <div className="relative flex items-center justify-between gap-4 flex-wrap">
             <div className="space-y-1 text-primary-foreground">
               <h1 className="text-3xl md:text-4xl font-bold font-display flex items-center gap-2">
