@@ -16,6 +16,17 @@ export function buildUpiLink(amount: number, note: string) {
 export const REFERRAL_DISCOUNT_PERCENT = 50;
 export const MAX_STACKED_DISCOUNT = 50;
 
+/** Combine discounts, never above MAX_STACKED_DISCOUNT. */
+export function stackDiscount(...pcts: number[]) {
+  return Math.min(pcts.reduce((a, b) => a + Math.max(0, b), 0), MAX_STACKED_DISCOUNT);
+}
+
+/** Final price in rupees after discount; paid items never drop below ₹1. */
+export function finalPrice(priceInr: number, discountPercent: number) {
+  if (priceInr <= 0) return 0;
+  return Math.max(1, Math.round(priceInr * (100 - discountPercent) / 100));
+}
+
 // Build a human-readable one-time coupon code for display purposes.
 // The actual discount is enforced server-side via the referral_credits table
 // and the on_purchase_approved trigger — this code is only shown to the user

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT, buildCouponCode } from '@/lib/paymentsConfig';
+import { UPI_ID, buildUpiLink, REFERRAL_DISCOUNT_PERCENT, MAX_STACKED_DISCOUNT, buildCouponCode, finalPrice } from '@/lib/paymentsConfig';
 import { toast } from 'sonner';
 
 interface Material {
@@ -72,7 +72,7 @@ export function BuyModal({ material, open, onOpenChange, onSubmitted }: {
     })();
   }, [open, user]);
 
-  const finalAmount = Math.max(1, Math.round(material.price_inr * (100 - discountPercent) / 100));
+  const finalAmount = finalPrice(material.price_inr, discountPercent);
   const upiLink = buildUpiLink(finalAmount, `${material.title.slice(0, 20)} #${material.id.slice(0, 6)}`);
 
   const copyUpi = () => {
