@@ -66,7 +66,7 @@ export function AppHeader() {
                   <Link key={item.to} to={item.to} aria-label={item.label}>
                     <Button
                       variant={isActive ? 'default' : 'ghost'}
-                      size="icon" aria-label="Menu"
+                      size="icon"
                       className="w-9 h-9"
                       aria-label={item.label}
                     >
@@ -79,7 +79,7 @@ export function AppHeader() {
             <div className="w-px h-6 bg-border mx-1 hidden md:block" />
             <Button
               variant="ghost"
-              size="icon" aria-label="Toggle theme"
+              size="icon"
               onClick={toggleTheme}
               aria-label="Toggle theme"
               className="w-9 h-9 rounded-xl"
@@ -89,7 +89,7 @@ export function AppHeader() {
             <Link to="/profile">
               <Button
                 variant={location.pathname === '/profile' ? 'default' : 'ghost'}
-                size="icon" aria-label="Sign out"
+                size="icon"
                 className="w-9 h-9 rounded-xl"
                 aria-label="Profile"
               >
