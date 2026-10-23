@@ -7,7 +7,7 @@ import type { Course } from '@/lib/courses';
 export function CourseCard({ course, enrolled }: { course: Course; enrolled?: boolean }) {
   return (
     <Link to={`/courses/${course.id}`} className="block group">
-      <Card className="modern-card overflow-hidden h-full transition-transform group-hover:-translate-y-0.5">
+      <Card className="modern-card overflow-hidden h-full transition-transform">
         <div className="aspect-video relative bg-primary/10 flex items-center justify-center">
           {course.cover_url ? (
             <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" loading="lazy" />

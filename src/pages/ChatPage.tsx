@@ -572,7 +572,7 @@ export default function ChatPage() {
                     </Avatar>
                     <button
                       onClick={() => avatarInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-sm hover:scale-105 transition"
+                      className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-sm transition"
                       aria-label="Change photo"
                     >
                       <Camera className="w-4 h-4" />

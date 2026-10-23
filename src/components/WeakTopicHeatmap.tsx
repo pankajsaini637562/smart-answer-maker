@@ -44,7 +44,7 @@ export function WeakTopicHeatmap({ results }: WeakTopicHeatmapProps) {
           {topicData.map(t => (
             <Tooltip key={t.title}>
               <TooltipTrigger asChild>
-                <div className={`${getColor(t.accuracy)} rounded-lg p-2.5 text-center cursor-default transition-transform hover:scale-105`}>
+                <div className={`${getColor(t.accuracy)} rounded-lg p-2.5 text-center cursor-default transition-transform`}>
                   <p className="text-xs font-medium truncate text-foreground">{t.title}</p>
                   <p className="text-sm font-bold font-mono text-foreground">{t.accuracy}%</p>
                 </div>

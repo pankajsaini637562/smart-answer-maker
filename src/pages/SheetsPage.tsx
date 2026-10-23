@@ -46,7 +46,7 @@ export default function SheetsPage() {
 
         {sheets.length === 0 ? (
           <div className="text-center py-20 animate-fade-in">
-            <div className="w-20 h-20 rounded-xl bg-accent flex items-center justify-center mx-auto mb-6 animate-float">
+            <div className="w-20 h-20 rounded-xl bg-accent flex items-center justify-center mx-auto mb-6">
               <FileText className="w-10 h-10 text-accent-foreground" />
             </div>
             <h3 className="text-2xl font-bold font-display mb-2">No Sheets Yet</h3>

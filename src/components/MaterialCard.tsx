@@ -17,7 +17,7 @@ export interface MaterialCardData {
 export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolean }) {
   return (
     <Link to={`/materials/${m.id}`} className="block group">
-      <Card className="modern-card overflow-hidden h-full transition-transform group-hover:-translate-y-0.5">
+      <Card className="modern-card overflow-hidden h-full transition-transform">
         <div className="aspect-video relative bg-primary/10 flex items-center justify-center">
           {m.cover_url ? (
             <img src={m.cover_url} alt={m.title} className="w-full h-full object-cover" loading="lazy" />

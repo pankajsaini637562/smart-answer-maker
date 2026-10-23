@@ -63,7 +63,7 @@ export function AnswerKeyInput({ sheet, open, onOpenChange, onSave }: AnswerKeyI
                         'w-10 h-10 rounded-full border-2 font-medium text-sm transition-all',
                         answers[qIndex] === optIndex
                           ? 'bg-success text-success-foreground border-success'
-                          : 'bg-muted border-border hover:border-primary hover:scale-105'
+                          : 'bg-muted border-border hover:border-primary'
                       )}
                     >
                       {option}

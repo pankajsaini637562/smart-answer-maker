@@ -90,7 +90,7 @@ export default function LandingPage() {
               <Sparkles className="w-3.5 h-3.5 text-primary" />
               Trusted by 12,000+ students preparing for NEET & JEE
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-foreground bg-clip-text">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               Scan, score & master every OMR test — for free.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -135,7 +135,7 @@ export default function LandingPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f) => (
-              <Card key={f.title} className="p-6 hover:shadow-sm transition-all hover:-translate-y-1 group">
+              <Card key={f.title} className="p-6 hover:shadow-sm transition-all group">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-transform">
                   <f.icon className="w-6 h-6 text-primary" />
                 </div>
