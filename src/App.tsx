@@ -1,3 +1,4 @@
+import { PageLoader } from "@/components/PageStates";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -39,14 +40,14 @@ const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-dvh flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  if (loading) return <PageLoader />;
   if (!user) return <Navigate to="/auth" replace />;
   return <>{children}</>;
 }
 
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-dvh flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  if (loading) return <PageLoader />;
   if (user) {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get('next');
@@ -58,7 +59,7 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 
 function HomeRoute() {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-dvh flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div>;
+  if (loading) return <PageLoader />;
   return user ? <Dashboard /> : <LandingPage />;
 }
 
