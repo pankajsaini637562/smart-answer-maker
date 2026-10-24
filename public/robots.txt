@@ -1,42 +1,8 @@
 # robots.txt for Smart AI OMR Analysis
-# Authenticated app routes are intentionally disallowed — they require login
-# and contain per-user data that should not appear in search results.
-
-User-agent: Googlebot
-Allow: /
-Allow: /auth
-Disallow: /app
-Disallow: /create
-Disallow: /sheets
-Disallow: /history
-Disallow: /analytics
-Disallow: /chat
-Disallow: /profile
-Disallow: /exam/
-Disallow: /result/
-
-User-agent: Bingbot
-Allow: /
-Allow: /auth
-Disallow: /app
-Disallow: /create
-Disallow: /sheets
-Disallow: /history
-Disallow: /analytics
-Disallow: /chat
-Disallow: /profile
-Disallow: /exam/
-Disallow: /result/
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
+# Signed-in app screens are excluded; they hold per-user data and are also protected by login.
 
 User-agent: *
 Allow: /
-Allow: /auth
 Disallow: /app
 Disallow: /create
 Disallow: /sheets
@@ -46,7 +12,10 @@ Disallow: /chat
 Disallow: /profile
 Disallow: /exam/
 Disallow: /result/
+Disallow: /library
+Disallow: /refer
+Disallow: /admin
+Disallow: /instructor
+Disallow: /reset-password
 
 Sitemap: https://smartaiomranalyis.lovable.app/sitemap.xml
-Sitemap: https://smartaiomranalyis.lovable.app/sitemap-pages.xml
-Sitemap: https://smartaiomranalyis.lovable.app/sitemap-marketing.xml
