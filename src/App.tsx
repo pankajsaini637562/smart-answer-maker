@@ -35,6 +35,9 @@ import { ReferralPromoBanner } from "./components/ReferralPromoBanner";
 import { initializeAds, showAppOpenAd } from "./lib/ads";
 
 import NotFound from "./pages/NotFound";
+import FreeOmrSheetPage from "./pages/seo/FreeOmrSheetPage";
+import HowToCheckPage from "./pages/seo/HowToCheckPage";
+import OmrMistakesPage from "./pages/seo/OmrMistakesPage";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +91,9 @@ const AppRoutes = () => (
     <Route path="/courses/:id/learn" element={<ProtectedRoute><CourseLearnPage /></ProtectedRoute>} />
     <Route path="/instructor" element={<ProtectedRoute><InstructorPage /></ProtectedRoute>} />
     <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
+    <Route path="/free-neet-omr-sheet-pdf" element={<FreeOmrSheetPage />} />
+    <Route path="/how-to-check-neet-omr-sheet" element={<HowToCheckPage />} />
+    <Route path="/neet-omr-mistakes" element={<OmrMistakesPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
