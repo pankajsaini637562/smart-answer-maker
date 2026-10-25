@@ -91,6 +91,399 @@ export type Database = {
           },
         ]
       }
+      cbt_answer_keys: {
+        Row: {
+          correct: number[]
+          exam_id: string
+          explanation: string | null
+          question_id: string
+        }
+        Insert: {
+          correct?: number[]
+          exam_id: string
+          explanation?: string | null
+          question_id: string
+        }
+        Update: {
+          correct?: number[]
+          exam_id?: string
+          explanation?: string | null
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_answer_keys_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cbt_answer_keys_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: true
+            referencedRelation: "cbt_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cbt_attempts: {
+        Row: {
+          attempt_no: number
+          deadline: string
+          exam_id: string
+          id: string
+          started_at: string
+          status: string
+          submitted_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt_no: number
+          deadline: string
+          exam_id: string
+          id?: string
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt_no?: number
+          deadline?: string
+          exam_id?: string
+          id?: string
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_attempts_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cbt_audit_events: {
+        Row: {
+          attempt_id: string | null
+          created_at: string
+          details: Json | null
+          event: string
+          exam_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          attempt_id?: string | null
+          created_at?: string
+          details?: Json | null
+          event: string
+          exam_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          attempt_id?: string | null
+          created_at?: string
+          details?: Json | null
+          event?: string
+          exam_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_audit_events_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cbt_exams: {
+        Row: {
+          allow_revisit: boolean
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_minutes: number
+          eligible_classes: string[]
+          ends_at: string | null
+          id: string
+          instructions: string | null
+          marks_correct: number
+          marks_unanswered: number
+          marks_wrong: number
+          max_attempts: number
+          published_at: string | null
+          result_policy: string
+          result_release_at: string | null
+          results_released: boolean
+          show_answers: boolean
+          show_explanations: boolean
+          starts_at: string | null
+          status: string
+          subject: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          allow_revisit?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          eligible_classes?: string[]
+          ends_at?: string | null
+          id?: string
+          instructions?: string | null
+          marks_correct?: number
+          marks_unanswered?: number
+          marks_wrong?: number
+          max_attempts?: number
+          published_at?: string | null
+          result_policy?: string
+          result_release_at?: string | null
+          results_released?: boolean
+          show_answers?: boolean
+          show_explanations?: boolean
+          starts_at?: string | null
+          status?: string
+          subject?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          allow_revisit?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          eligible_classes?: string[]
+          ends_at?: string | null
+          id?: string
+          instructions?: string | null
+          marks_correct?: number
+          marks_unanswered?: number
+          marks_wrong?: number
+          max_attempts?: number
+          published_at?: string | null
+          result_policy?: string
+          result_release_at?: string | null
+          results_released?: boolean
+          show_answers?: boolean
+          show_explanations?: boolean
+          starts_at?: string | null
+          status?: string
+          subject?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cbt_questions: {
+        Row: {
+          created_at: string
+          exam_id: string
+          id: string
+          image_url: string | null
+          marks: number | null
+          multi: boolean
+          negative: number | null
+          options: Json
+          position: number
+          section_id: string | null
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          id?: string
+          image_url?: string | null
+          marks?: number | null
+          multi?: boolean
+          negative?: number | null
+          options?: Json
+          position?: number
+          section_id?: string | null
+          text?: string
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          id?: string
+          image_url?: string | null
+          marks?: number | null
+          multi?: boolean
+          negative?: number | null
+          options?: Json
+          position?: number
+          section_id?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cbt_questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cbt_responses: {
+        Row: {
+          attempt_id: string
+          marked: boolean
+          question_id: string
+          selected: number[]
+          updated_at: string
+        }
+        Insert: {
+          attempt_id: string
+          marked?: boolean
+          question_id: string
+          selected?: number[]
+          updated_at?: string
+        }
+        Update: {
+          attempt_id?: string
+          marked?: boolean
+          question_id?: string
+          selected?: number[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_responses_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cbt_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cbt_results: {
+        Row: {
+          accuracy: number
+          attempt_id: string
+          attempted: number
+          computed_at: string
+          correct: number
+          exam_id: string
+          max_marks: number
+          negative_marks: number
+          percentage: number
+          positive_marks: number
+          question_results: Json
+          score: number
+          total_questions: number
+          unanswered: number
+          user_id: string
+          wrong: number
+        }
+        Insert: {
+          accuracy: number
+          attempt_id: string
+          attempted: number
+          computed_at?: string
+          correct: number
+          exam_id: string
+          max_marks: number
+          negative_marks: number
+          percentage: number
+          positive_marks: number
+          question_results?: Json
+          score: number
+          total_questions: number
+          unanswered: number
+          user_id: string
+          wrong: number
+        }
+        Update: {
+          accuracy?: number
+          attempt_id?: string
+          attempted?: number
+          computed_at?: string
+          correct?: number
+          exam_id?: string
+          max_marks?: number
+          negative_marks?: number
+          percentage?: number
+          positive_marks?: number
+          question_results?: Json
+          score?: number
+          total_questions?: number
+          unanswered?: number
+          user_id?: string
+          wrong?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_results_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: true
+            referencedRelation: "cbt_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cbt_results_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cbt_sections: {
+        Row: {
+          exam_id: string
+          id: string
+          name: string
+          position: number
+        }
+        Insert: {
+          exam_id: string
+          id?: string
+          name: string
+          position?: number
+        }
+        Update: {
+          exam_id?: string
+          id?: string
+          name?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cbt_sections_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "cbt_exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_categories: {
         Row: {
           created_at: string
@@ -978,6 +1371,42 @@ export type Database = {
       }
     }
     Functions: {
+      cbt_admin_report: { Args: { _exam: string }; Returns: Json }
+      cbt_admin_stats: { Args: never; Returns: Json }
+      cbt_finalize: {
+        Args: { _attempt: string; _auto: boolean }
+        Returns: undefined
+      }
+      cbt_finalize_expired: { Args: { _uid: string }; Returns: undefined }
+      cbt_get_paper: { Args: { _attempt: string }; Returns: Json }
+      cbt_get_result: { Args: { _attempt: string }; Returns: Json }
+      cbt_is_eligible: {
+        Args: {
+          _e: Database["public"]["Tables"]["cbt_exams"]["Row"]
+          _uid: string
+        }
+        Returns: boolean
+      }
+      cbt_is_released: {
+        Args: { _e: Database["public"]["Tables"]["cbt_exams"]["Row"] }
+        Returns: boolean
+      }
+      cbt_list_exams: { Args: never; Returns: Json }
+      cbt_publish: { Args: { _exam: string }; Returns: undefined }
+      cbt_require_user: { Args: never; Returns: string }
+      cbt_save_response: {
+        Args: {
+          _attempt: string
+          _marked: boolean
+          _question: string
+          _selected: number[]
+        }
+        Returns: string
+      }
+      cbt_server_time: { Args: never; Returns: string }
+      cbt_sorted: { Args: { _a: number[] }; Returns: number[] }
+      cbt_start_attempt: { Args: { _exam: string }; Returns: string }
+      cbt_submit: { Args: { _attempt: string }; Returns: string }
       enroll_free_course: { Args: { _course_id: string }; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       get_group_by_invite: {
