@@ -36,6 +36,13 @@
       "when": 1792946044127,
       "tag": "0004_cbt_exams",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792946068761,
+      "tag": "0005_cbt_images_policies",
+      "breakpoints": true
     }
   ]
 }
