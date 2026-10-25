@@ -83,7 +83,7 @@ export default function CbtListPage() {
               </TabsList>
             </Tabs>
             {list.length === 0 ? (
-              <EmptyState title="No exams here" description={data.exams.length === 0 ? 'No CBT exams have been published for you yet.' : 'Check the other tabs.'} />
+              <EmptyState title="No exams here" hint={data.exams.length === 0 ? 'No CBT exams have been published for you yet.' : 'Check the other tabs.'} />
             ) : (
               <div className="grid gap-3">
                 {list.map(e => (
