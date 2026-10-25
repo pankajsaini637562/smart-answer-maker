@@ -111,6 +111,19 @@ export default function InstructorPage() {
     toast.success('PDF uploaded');
   };
   const toggleOpen = (id: string) => { const n = new Set(openCh); n.has(id) ? n.delete(id) : n.add(id); setOpenCh(n); };
+  const uploadCover = async (file: File) => {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!['jpg','jpeg','png','webp','gif'].includes(ext)) return toast.error('Use a JPG, PNG, WEBP or GIF image');
+    const path = `${user!.id}/course-covers/${editing.id}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from('avatars').upload(path, file, { contentType: file.type, upsert: true });
+    if (error) return toast.error(error.message);
+    const url = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    const { error: uErr } = await supabase.from('courses').update({ cover_url: url }).eq('id', editing.id);
+    if (uErr) return toast.error(uErr.message);
+    setEditing({ ...editing, cover_url: url });
+    toast.success('Cover image saved');
+    reloadCourses();
+  };
 
   if (loading) return <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-10">Loading...</main></div>;
 
@@ -151,7 +164,11 @@ export default function InstructorPage() {
                 <CardContent className="grid md:grid-cols-2 gap-4">
                   <div className="md:col-span-2"><Label>Title</Label><Input value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })} /></div>
                   <div className="md:col-span-2"><Label>Description</Label><Textarea rows={4} value={editing.description || ''} onChange={e => setEditing({ ...editing, description: e.target.value })} /></div>
-                  <div><Label>Cover image URL</Label><Input value={editing.cover_url || ''} onChange={e => setEditing({ ...editing, cover_url: e.target.value })} placeholder="https://..." /></div>
+                  <div className="space-y-2"><Label>Cover image</Label>
+                    {editing.cover_url && <img src={editing.cover_url} alt="Cover preview" className="w-full aspect-video object-cover rounded-md border" onError={e => (e.currentTarget.style.display = 'none')} />}
+                    <Input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={e => { const f = e.target.files?.[0]; if (f) uploadCover(f); }} />
+                    <Input value={editing.cover_url || ''} onChange={e => setEditing({ ...editing, cover_url: e.target.value })} placeholder="or paste a direct image link (.jpg/.png)" />
+                  </div>
                   <div><Label>Category</Label>
                     <Select value={editing.category_id || ''} onValueChange={v => setEditing({ ...editing, category_id: v })}>
                       <SelectTrigger><SelectValue placeholder="Choose" /></SelectTrigger>

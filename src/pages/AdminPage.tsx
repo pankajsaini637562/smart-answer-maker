@@ -74,9 +74,11 @@ export default function AdminPage() {
 
     let cover_url: string | null = null;
     if (cover) {
-      const cpath = `covers/${Date.now()}-${cover.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const ext = (cover.name.split('.').pop() || '').toLowerCase();
+      const cpath = `${user.id}/material-covers/${Date.now()}.${ext}`;
       const { error: cErr } = await supabase.storage.from('avatars').upload(cpath, cover, { contentType: cover.type });
-      if (!cErr) cover_url = supabase.storage.from('avatars').getPublicUrl(cpath).data.publicUrl;
+      if (cErr) toast.error('Cover image failed: ' + cErr.message);
+      else cover_url = supabase.storage.from('avatars').getPublicUrl(cpath).data.publicUrl;
     }
 
     const { error } = await supabase.from('materials').insert({
