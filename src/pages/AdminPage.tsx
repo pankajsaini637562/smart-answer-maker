@@ -129,6 +129,7 @@ export default function AdminPage() {
         <div>
           <h1 className="text-2xl font-bold font-display gradient-text">Admin Panel</h1>
           <p className="text-sm text-muted-foreground">Upload materials and approve payments.</p>
+          <Link to="/admin/cbt" className="text-sm text-primary underline">Manage CBT Exams →</Link>
         </div>
 
         <Tabs value={tab} onValueChange={setTab}>
