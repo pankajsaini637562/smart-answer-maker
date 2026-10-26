@@ -38,6 +38,11 @@ import NotFound from "./pages/NotFound";
 import FreeOmrSheetPage from "./pages/seo/FreeOmrSheetPage";
 import HowToCheckPage from "./pages/seo/HowToCheckPage";
 import OmrMistakesPage from "./pages/seo/OmrMistakesPage";
+import CbtListPage from "./pages/cbt/CbtListPage";
+import CbtAttemptPage from "./pages/cbt/CbtAttemptPage";
+import CbtResultPage from "./pages/cbt/CbtResultPage";
+import CbtAdminPage from "./pages/cbt/CbtAdminPage";
+import CbtAdminExamPage from "./pages/cbt/CbtAdminExamPage";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +99,11 @@ const AppRoutes = () => (
     <Route path="/free-neet-omr-sheet-pdf" element={<FreeOmrSheetPage />} />
     <Route path="/how-to-check-neet-omr-sheet" element={<HowToCheckPage />} />
     <Route path="/neet-omr-mistakes" element={<OmrMistakesPage />} />
+    <Route path="/cbt" element={<ProtectedRoute><CbtListPage /></ProtectedRoute>} />
+    <Route path="/cbt/attempt/:attemptId" element={<ProtectedRoute><CbtAttemptPage /></ProtectedRoute>} />
+    <Route path="/cbt/result/:attemptId" element={<ProtectedRoute><CbtResultPage /></ProtectedRoute>} />
+    <Route path="/admin/cbt" element={<ProtectedRoute><CbtAdminPage /></ProtectedRoute>} />
+    <Route path="/admin/cbt/:id" element={<ProtectedRoute><CbtAdminExamPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
