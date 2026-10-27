@@ -43,6 +43,13 @@
       "when": 1792946068761,
       "tag": "0005_cbt_images_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793066300687,
+      "tag": "0006_cbt_student_portal",
+      "breakpoints": true
     }
   ]
 }
