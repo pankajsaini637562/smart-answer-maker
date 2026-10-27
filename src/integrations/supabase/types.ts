@@ -1710,6 +1710,10 @@ export type Database = {
     Functions: {
       cbt_admin_report: { Args: { _exam: string }; Returns: Json }
       cbt_admin_stats: { Args: never; Returns: Json }
+      cbt_card_access: {
+        Args: { _exam: string; _user: string }
+        Returns: boolean
+      }
       cbt_finalize: {
         Args: { _attempt: string; _auto: boolean }
         Returns: undefined
@@ -1721,6 +1725,10 @@ export type Database = {
       }
       cbt_get_paper: { Args: { _attempt: string }; Returns: Json }
       cbt_get_result: { Args: { _attempt: string }; Returns: Json }
+      cbt_import_questions: {
+        Args: { _exam: string; _questions: Json }
+        Returns: number
+      }
       cbt_is_eligible: {
         Args: {
           _e: Database["public"]["Tables"]["cbt_exams"]["Row"]
