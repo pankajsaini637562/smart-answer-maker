@@ -70,6 +70,7 @@ export default function CbtListPage() {
             <h1 className="text-2xl font-bold font-display">CBT Exams</h1>
             <p className="text-sm text-muted-foreground">Scheduled online exams set by your teachers.</p>
           </div>
+          <Button variant="outline" size="sm" className="ml-auto" onClick={() => nav('/cbt/register')}>Registration & admit cards</Button>
         </div>
         {error ? <ErrorState message={error} onRetry={load} /> : !data ? <PageLoader /> : (
           <>
