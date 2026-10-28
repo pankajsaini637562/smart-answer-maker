@@ -163,6 +163,7 @@ export default function AuthPage() {
           <p className="text-muted-foreground text-sm flex items-center justify-center gap-1">
             <Sparkles className="w-3.5 h-3.5" /> AI-Powered Smart Learning
           </p>
+          <a href="/cbt/login" className="text-sm text-primary underline">CBT student? Sign in with roll number</a>
         </div>
 
         <Card className="modern-card animate-slide-up">

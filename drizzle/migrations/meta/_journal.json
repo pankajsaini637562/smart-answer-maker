@@ -57,6 +57,13 @@
       "when": 1793066334318,
       "tag": "0007_cbt_portal_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793204788374,
+      "tag": "0008_cbt_batch_roll_autoapprove",
+      "breakpoints": true
     }
   ]
 }

@@ -44,8 +44,9 @@ Deno.serve(async req => {
       await admin.from('cbt_audit_events').insert({ user_id: identity.user.id, event: 'student_recovery_requested', details: { student_id: student.user_id } });
       return respond({ sent: true });
     }
-    if (action !== 'login' || !/^STL-\d{4}-\d{6,}$/.test(roll) || typeof body.password !== 'string' || body.password.length > 200) return respond({ error: 'Invalid roll number or password' }, 401);
-    const { data: student } = await admin.from('cbt_students').select('user_id').eq('roll_number',roll).maybeSingle();
+    if (action !== 'login' || !/^(STL-\d{4}-\d{6,}|[A-Z0-9]{1,10}-\d{4,})$/.test(roll) || typeof body.password !== 'string' || body.password.length > 200) return respond({ error: 'Invalid roll number or password' }, 401);
+    const { data: student } = await admin.from('cbt_students').select('user_id,status').eq('roll_number',roll).maybeSingle();
+    if (student && student.status !== 'approved') return respond({ error: 'This account is not active. Contact your institute.' }, 403);
     const target = student ? await admin.auth.admin.getUserById(student.user_id) : null;
     if (!target?.data.user?.email) return respond({ error: 'Invalid roll number or password' }, 401);
     const { data, error } = await client.auth.signInWithPassword({ email: target.data.user.email, password: body.password });

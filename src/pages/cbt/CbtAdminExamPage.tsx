@@ -177,6 +177,7 @@ export default function CbtAdminExamPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {exam.status === 'draft' && <Button onClick={publish} disabled={busy}>Publish</Button>}
+            {exam.status === 'published' && <Button variant="outline" disabled={busy} onClick={() => action(async () => { const { data, error } = await (supabase.rpc as any)('cbt_generate_cards', { _exam: id }); if (error) throw error; toast.success(`${data} admit cards issued`); }, 'Admit cards ready')}>Generate admit cards</Button>}
             {exam.status === 'published' && <Button variant="outline" disabled={busy} onClick={() => action(() => supabase.from('cbt_exams').update({ status: 'draft' }).eq('id', id) as any, 'Moved back to draft')}>Unpublish</Button>}
             {exam.status === 'published' && !exam.results_released && exam.result_policy !== 'immediate' && <Button variant="secondary" disabled={busy} onClick={() => action(() => supabase.from('cbt_exams').update({ results_released: true }).eq('id', id) as any, 'Results released')}>Release results</Button>}
             {exam.status !== 'cancelled' && <Button variant="destructive" disabled={busy} onClick={() => confirm('Cancel this exam? Students will no longer be able to start it.') && action(() => supabase.from('cbt_exams').update({ status: 'cancelled' }).eq('id', id) as any, 'Exam cancelled')}>Cancel exam</Button>}
