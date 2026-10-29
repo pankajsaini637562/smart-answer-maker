@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PageLoader, ErrorState, EmptyState } from '@/components/PageStates';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
-import { cbtApi, cbtImageUrl, toCsv } from '@/lib/cbt';
+import { cbtApi, cbtImageUrl, toCsv, scoreAttempt, type ScoreQuestion, type ScoreRules } from '@/lib/cbt';
 import { examPhase } from './CbtAdminPage';
 import { toast } from 'sonner';
 
@@ -53,6 +53,7 @@ export default function CbtAdminExamPage() {
   const [newSection, setNewSection] = useState('');
   const [report, setReport] = useState<any>(null);
   const [preview, setPreview] = useState(false);
+  const [simPct, setSimPct] = useState(75);
 
   const load = useCallback(async () => {
     setErr(null);
@@ -80,6 +81,31 @@ export default function CbtAdminExamPage() {
   const locked = exam && exam.status !== 'draft';
   const problems = useMemo(() => qs.map((q, i) => ({ i, p: problemsOf(q) })).filter(x => x.p.length), [qs]);
   const maxMarks = useMemo(() => qs.reduce((s, q) => s + Number(q.marks ?? exam?.marks_correct ?? 0), 0), [qs, exam]);
+
+  // Live scoring preview — uses the same pure scoring rules as the server (cbt_finalize).
+  const rules: ScoreRules = useMemo(() => ({
+    marksCorrect: Number(exam?.marks_correct ?? 0),
+    marksWrong: Number(exam?.marks_wrong ?? 0),
+    marksUnanswered: Number(exam?.marks_unanswered ?? 0),
+  }), [exam]);
+  const wrongPick = (q: Q) => {
+    const idx = q.options.findIndex((_, j) => !q.correct.includes(j));
+    return idx === -1 ? q.correct : [idx];
+  };
+  const previewScores = useMemo(() => {
+    if (!qs.length) return null;
+    const asScoreQ = (pick: (q: Q, i: number) => number[]): ScoreQuestion[] =>
+      qs.map((q, i) => ({ correct: q.correct, selected: pick(q, i), multi: q.multi, marks: q.marks, negative: q.negative }));
+    const nCorrect = Math.round((simPct / 100) * qs.length);
+    return {
+      allCorrect: scoreAttempt(asScoreQ(q => q.correct), rules),
+      allBlank: scoreAttempt(asScoreQ(() => []), rules),
+      allWrong: scoreAttempt(asScoreQ(wrongPick), rules),
+      sim: scoreAttempt(asScoreQ((q, i) => (i < nCorrect ? q.correct : wrongPick(q))), rules),
+      nCorrect,
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qs, rules, simPct]);
 
   if (loading) return <PageLoader />;
   if (!isAdmin) return <Navigate to="/app" replace />;
@@ -176,7 +202,7 @@ export default function CbtAdminExamPage() {
             <div className="flex gap-2 mt-1"><Badge className="capitalize">{phase}</Badge><Badge variant="outline">{qs.length} questions · {maxMarks} marks</Badge></div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {exam.status === 'draft' && <Button onClick={publish} disabled={busy}>Publish</Button>}
+            {exam.status === 'draft' && <Button onClick={publish} disabled={busy || problems.length > 0} title={problems.length > 0 ? 'Fix the answer key problems listed in the Questions tab first' : undefined}>Publish</Button>}
             {exam.status === 'published' && <Button variant="outline" disabled={busy} onClick={() => action(async () => { const { data, error } = await (supabase.rpc as any)('cbt_generate_cards', { _exam: id }); if (error) throw error; toast.success(`${data} admit cards issued`); }, 'Admit cards ready')}>Generate admit cards</Button>}
             {exam.status === 'published' && <Button variant="outline" disabled={busy} onClick={() => action(() => supabase.from('cbt_exams').update({ status: 'draft' }).eq('id', id) as any, 'Moved back to draft')}>Unpublish</Button>}
             {exam.status === 'published' && !exam.results_released && exam.result_policy !== 'immediate' && <Button variant="secondary" disabled={busy} onClick={() => action(() => supabase.from('cbt_exams').update({ results_released: true }).eq('id', id) as any, 'Results released')}>Release results</Button>}
@@ -219,6 +245,25 @@ export default function CbtAdminExamPage() {
           </TabsContent>
 
           <TabsContent value="questions" className="space-y-3">
+            {qs.length > 0 && previewScores && (
+              <Card>
+                <CardHeader className="p-4 pb-2"><CardTitle className="text-base">Live scoring preview</CardTitle></CardHeader>
+                <CardContent className="p-4 pt-0 space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                    <div><p className="font-mono text-lg font-bold">{previewScores.allCorrect.score}/{previewScores.allCorrect.max}</p><p className="text-xs text-muted-foreground">Perfect score (all correct)</p></div>
+                    <div><p className="font-mono text-lg font-bold">{previewScores.allBlank.score}</p><p className="text-xs text-muted-foreground">All blank</p></div>
+                    <div><p className="font-mono text-lg font-bold">{previewScores.allWrong.score}</p><p className="text-xs text-muted-foreground">All wrong</p></div>
+                    <div><p className="font-mono text-lg font-bold">+{rules.marksCorrect} / -{rules.marksWrong}</p><p className="text-xs text-muted-foreground">Default marking</p></div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Simulate a student: {simPct}% of questions correct ({previewScores.nCorrect} of {qs.length})</Label>
+                    <input type="range" min={0} max={100} step={5} value={simPct} onChange={e => setSimPct(Number(e.target.value))} className="w-full accent-primary" aria-label="Simulated percent correct" />
+                    <p className="text-sm">Score <b className="font-mono">{previewScores.sim.score}/{previewScores.sim.max}</b> · {previewScores.sim.percentage}% · accuracy {previewScores.sim.accuracy}% ({previewScores.sim.correct} correct, {previewScores.sim.wrong} wrong, {previewScores.sim.unanswered} blank)</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Uses the same scoring rules as the server and updates instantly as you edit answer keys, marks and negative marking.</p>
+                </CardContent>
+              </Card>
+            )}
             {problems.length > 0 && <div className="rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm"><b>Answer key check:</b> {problems.map(x => `Q${x.i + 1}: ${x.p.join(', ')}`).join(' · ')}</div>}
             {qs.length > 0 && problems.length === 0 && <p className="text-sm text-success">Answer key check passed for all {qs.length} questions.</p>}
             <div className="flex flex-wrap gap-2 items-center">
