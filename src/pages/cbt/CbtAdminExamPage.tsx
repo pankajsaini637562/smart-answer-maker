@@ -50,6 +50,10 @@ export default function CbtAdminExamPage() {
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState('settings');
   const [classesText, setClassesText] = useState('');
+  const [streamsText, setStreamsText] = useState('');
+  const [institutesText, setInstitutesText] = useState('');
+  const [batchesText, setBatchesText] = useState('');
+  const [matchCount, setMatchCount] = useState<number | null>(null);
   const [newSection, setNewSection] = useState('');
   const [report, setReport] = useState<any>(null);
   const [preview, setPreview] = useState(false);
@@ -67,6 +71,9 @@ export default function CbtAdminExamPage() {
     if (firstErr) return setErr(firstErr.message);
     if (!e.data) return setErr('Exam not found');
     setExam(e.data); setClassesText((e.data.eligible_classes || []).join(', '));
+    setStreamsText((e.data.eligible_streams || []).join(', '));
+    setInstitutesText((e.data.eligible_institutes || []).join(', '));
+    setBatchesText((e.data.eligible_batches || []).join(', '));
     const keys = new Map((k.data || []).map((x: any) => [x.question_id, x]));
     setQs((q.data || []).map((x: any) => ({ ...x, options: x.options as string[], correct: keys.get(x.id)?.correct ?? [], explanation: keys.get(x.id)?.explanation ?? '' })));
     setSections(s.data || []);
