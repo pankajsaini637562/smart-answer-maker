@@ -50,6 +50,10 @@ export default function CbtAdminExamPage() {
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState('settings');
   const [classesText, setClassesText] = useState('');
+  const [streamsText, setStreamsText] = useState('');
+  const [institutesText, setInstitutesText] = useState('');
+  const [batchesText, setBatchesText] = useState('');
+  const [matchCount, setMatchCount] = useState<number | null>(null);
   const [newSection, setNewSection] = useState('');
   const [report, setReport] = useState<any>(null);
   const [preview, setPreview] = useState(false);
@@ -67,11 +71,28 @@ export default function CbtAdminExamPage() {
     if (firstErr) return setErr(firstErr.message);
     if (!e.data) return setErr('Exam not found');
     setExam(e.data); setClassesText((e.data.eligible_classes || []).join(', '));
+    setStreamsText((e.data.eligible_streams || []).join(', '));
+    setInstitutesText((e.data.eligible_institutes || []).join(', '));
+    setBatchesText((e.data.eligible_batches || []).join(', '));
     const keys = new Map((k.data || []).map((x: any) => [x.question_id, x]));
     setQs((q.data || []).map((x: any) => ({ ...x, options: x.options as string[], correct: keys.get(x.id)?.correct ?? [], explanation: keys.get(x.id)?.explanation ?? '' })));
     setSections(s.data || []);
   }, [id]);
   useEffect(() => { if (isAdmin) load(); }, [isAdmin, load]);
+
+  // Live count of approved students matching the current eligibility filters.
+  useEffect(() => {
+    if (!isAdmin || !exam) return;
+    const csv = (s: string) => s.split(',').map(x => x.trim()).filter(Boolean);
+    const cls = csv(classesText), str = csv(streamsText), inst = csv(institutesText), bat = csv(batchesText);
+    supabase.from('cbt_students').select('class,stream,institute,batch').eq('status', 'approved').then(({ data }) => {
+      if (!data) return setMatchCount(null);
+      setMatchCount(data.filter(s =>
+        (!cls.length || cls.includes(s.class)) && (!str.length || str.includes(s.stream)) &&
+        (!inst.length || inst.includes(s.institute)) && (!bat.length || bat.includes(s.batch))
+      ).length);
+    });
+  }, [isAdmin, exam, classesText, streamsText, institutesText, batchesText]);
 
   const loadReport = useCallback(async () => {
     try { setReport(await cbtApi.adminReport(id)); } catch (e: any) { toast.error(e.message); }
@@ -116,8 +137,8 @@ export default function CbtAdminExamPage() {
   const saveSettings = async () => {
     setBusy(true);
     const { id: _id, created_at, updated_at, published_at, created_by, status, results_released, ...rest } = exam;
-    const eligible_classes = classesText.split(',').map(s => s.trim()).filter(Boolean);
-    const { error } = await supabase.from('cbt_exams').update({ ...rest, eligible_classes }).eq('id', id);
+    const csv = (s: string) => s.split(',').map(x => x.trim()).filter(Boolean);
+    const { error } = await supabase.from('cbt_exams').update({ ...rest, eligible_classes: csv(classesText), eligible_streams: csv(streamsText), eligible_institutes: csv(institutesText), eligible_batches: csv(batchesText) }).eq('id', id);
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success('Settings saved'); load();
@@ -237,6 +258,17 @@ export default function CbtAdminExamPage() {
               </div>
               {exam.result_policy === 'scheduled' && <div className="space-y-1"><Label htmlFor="rr">Release at</Label><Input id="rr" type="datetime-local" value={toLocal(exam.result_release_at)} onChange={e => set({ result_release_at: fromLocal(e.target.value) })} /></div>}
               <div className="sm:col-span-2 space-y-1"><Label htmlFor="cl">Eligible classes (comma separated, empty = everyone)</Label><Input id="cl" disabled={locked} placeholder="e.g. 11, 12, Dropper" value={classesText} onChange={e => setClassesText(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="es">Eligible streams (empty = all)</Label><Input id="es" disabled={locked} placeholder="e.g. Science, Commerce" value={streamsText} onChange={e => setStreamsText(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="ei">Eligible institutes (empty = all)</Label><Input id="ei" disabled={locked} value={institutesText} onChange={e => setInstitutesText(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="eb">Eligible batches (empty = all)</Label><Input id="eb" disabled={locked} placeholder="e.g. NEET26" value={batchesText} onChange={e => setBatchesText(e.target.value)} /></div>
+              <label className="flex items-center justify-between gap-3 rounded-md border p-3"><span className="text-sm">Assignment-only (only students you assign can see it)</span><Switch checked={exam.assignment_only} disabled={locked} onCheckedChange={v => set({ assignment_only: v })} /></label>
+              {matchCount !== null && (
+                <p className={`sm:col-span-2 text-sm rounded-md border p-3 ${matchCount === 0 ? 'border-destructive/50 bg-destructive/5' : 'bg-muted/50'}`}>
+                  {matchCount === 0
+                    ? 'No approved student matches these filters — nobody will see this exam or get an admit card. Widen the filters or check student registrations.'
+                    : `${matchCount} approved student(s) currently match these filters and will see this exam.`}
+                </p>
+              )}
               {[['allow_revisit', 'Students can go back to previous questions', locked], ['show_answers', 'Show correct answers in results', false], ['show_explanations', 'Show explanations in results', false]].map(([k, label, dis]) => (
                 <label key={k as string} className="flex items-center justify-between gap-3 rounded-md border p-3 sm:col-span-2"><span className="text-sm">{label as string}</span><Switch checked={exam[k as string]} disabled={!!dis} onCheckedChange={v => set({ [k as string]: v })} /></label>
               ))}
