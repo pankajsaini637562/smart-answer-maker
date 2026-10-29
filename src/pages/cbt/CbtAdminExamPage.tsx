@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PageLoader, ErrorState, EmptyState } from '@/components/PageStates';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
-import { cbtApi, cbtImageUrl, toCsv } from '@/lib/cbt';
+import { cbtApi, cbtImageUrl, toCsv, scoreAttempt, type ScoreQuestion, type ScoreRules } from '@/lib/cbt';
 import { examPhase } from './CbtAdminPage';
 import { toast } from 'sonner';
 
@@ -53,6 +53,7 @@ export default function CbtAdminExamPage() {
   const [newSection, setNewSection] = useState('');
   const [report, setReport] = useState<any>(null);
   const [preview, setPreview] = useState(false);
+  const [simPct, setSimPct] = useState(75);
 
   const load = useCallback(async () => {
     setErr(null);
