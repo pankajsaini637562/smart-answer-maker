@@ -80,6 +80,20 @@ export default function CbtAdminExamPage() {
   }, [id]);
   useEffect(() => { if (isAdmin) load(); }, [isAdmin, load]);
 
+  // Live count of approved students matching the current eligibility filters.
+  useEffect(() => {
+    if (!isAdmin || !exam) return;
+    const csv = (s: string) => s.split(',').map(x => x.trim()).filter(Boolean);
+    const cls = csv(classesText), str = csv(streamsText), inst = csv(institutesText), bat = csv(batchesText);
+    supabase.from('cbt_students').select('class,stream,institute,batch').eq('status', 'approved').then(({ data }) => {
+      if (!data) return setMatchCount(null);
+      setMatchCount(data.filter(s =>
+        (!cls.length || cls.includes(s.class)) && (!str.length || str.includes(s.stream)) &&
+        (!inst.length || inst.includes(s.institute)) && (!bat.length || bat.includes(s.batch))
+      ).length);
+    });
+  }, [isAdmin, exam, classesText, streamsText, institutesText, batchesText]);
+
   const loadReport = useCallback(async () => {
     try { setReport(await cbtApi.adminReport(id)); } catch (e: any) { toast.error(e.message); }
   }, [id]);
@@ -123,8 +137,8 @@ export default function CbtAdminExamPage() {
   const saveSettings = async () => {
     setBusy(true);
     const { id: _id, created_at, updated_at, published_at, created_by, status, results_released, ...rest } = exam;
-    const eligible_classes = classesText.split(',').map(s => s.trim()).filter(Boolean);
-    const { error } = await supabase.from('cbt_exams').update({ ...rest, eligible_classes }).eq('id', id);
+    const csv = (s: string) => s.split(',').map(x => x.trim()).filter(Boolean);
+    const { error } = await supabase.from('cbt_exams').update({ ...rest, eligible_classes: csv(classesText), eligible_streams: csv(streamsText), eligible_institutes: csv(institutesText), eligible_batches: csv(batchesText) }).eq('id', id);
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success('Settings saved'); load();
