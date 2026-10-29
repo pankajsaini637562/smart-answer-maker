@@ -82,6 +82,31 @@ export default function CbtAdminExamPage() {
   const problems = useMemo(() => qs.map((q, i) => ({ i, p: problemsOf(q) })).filter(x => x.p.length), [qs]);
   const maxMarks = useMemo(() => qs.reduce((s, q) => s + Number(q.marks ?? exam?.marks_correct ?? 0), 0), [qs, exam]);
 
+  // Live scoring preview — uses the same pure scoring rules as the server (cbt_finalize).
+  const rules: ScoreRules = useMemo(() => ({
+    marksCorrect: Number(exam?.marks_correct ?? 0),
+    marksWrong: Number(exam?.marks_wrong ?? 0),
+    marksUnanswered: Number(exam?.marks_unanswered ?? 0),
+  }), [exam]);
+  const wrongPick = (q: Q) => {
+    const idx = q.options.findIndex((_, j) => !q.correct.includes(j));
+    return idx === -1 ? q.correct : [idx];
+  };
+  const previewScores = useMemo(() => {
+    if (!qs.length) return null;
+    const asScoreQ = (pick: (q: Q, i: number) => number[]): ScoreQuestion[] =>
+      qs.map((q, i) => ({ correct: q.correct, selected: pick(q, i), multi: q.multi, marks: q.marks, negative: q.negative }));
+    const nCorrect = Math.round((simPct / 100) * qs.length);
+    return {
+      allCorrect: scoreAttempt(asScoreQ(q => q.correct), rules),
+      allBlank: scoreAttempt(asScoreQ(() => []), rules),
+      allWrong: scoreAttempt(asScoreQ(wrongPick), rules),
+      sim: scoreAttempt(asScoreQ((q, i) => (i < nCorrect ? q.correct : wrongPick(q))), rules),
+      nCorrect,
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qs, rules, simPct]);
+
   if (loading) return <PageLoader />;
   if (!isAdmin) return <Navigate to="/app" replace />;
   if (err) return <div className="p-6"><ErrorState message={err} onRetry={load} /></div>;
