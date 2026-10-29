@@ -258,6 +258,17 @@ export default function CbtAdminExamPage() {
               </div>
               {exam.result_policy === 'scheduled' && <div className="space-y-1"><Label htmlFor="rr">Release at</Label><Input id="rr" type="datetime-local" value={toLocal(exam.result_release_at)} onChange={e => set({ result_release_at: fromLocal(e.target.value) })} /></div>}
               <div className="sm:col-span-2 space-y-1"><Label htmlFor="cl">Eligible classes (comma separated, empty = everyone)</Label><Input id="cl" disabled={locked} placeholder="e.g. 11, 12, Dropper" value={classesText} onChange={e => setClassesText(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="es">Eligible streams (empty = all)</Label><Input id="es" disabled={locked} placeholder="e.g. Science, Commerce" value={streamsText} onChange={e => setStreamsText(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="ei">Eligible institutes (empty = all)</Label><Input id="ei" disabled={locked} value={institutesText} onChange={e => setInstitutesText(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="eb">Eligible batches (empty = all)</Label><Input id="eb" disabled={locked} placeholder="e.g. NEET26" value={batchesText} onChange={e => setBatchesText(e.target.value)} /></div>
+              <label className="flex items-center justify-between gap-3 rounded-md border p-3"><span className="text-sm">Assignment-only (only students you assign can see it)</span><Switch checked={exam.assignment_only} disabled={locked} onCheckedChange={v => set({ assignment_only: v })} /></label>
+              {matchCount !== null && (
+                <p className={`sm:col-span-2 text-sm rounded-md border p-3 ${matchCount === 0 ? 'border-destructive/50 bg-destructive/5' : 'bg-muted/50'}`}>
+                  {matchCount === 0
+                    ? 'No approved student matches these filters — nobody will see this exam or get an admit card. Widen the filters or check student registrations.'
+                    : `${matchCount} approved student(s) currently match these filters and will see this exam.`}
+                </p>
+              )}
               {[['allow_revisit', 'Students can go back to previous questions', locked], ['show_answers', 'Show correct answers in results', false], ['show_explanations', 'Show explanations in results', false]].map(([k, label, dis]) => (
                 <label key={k as string} className="flex items-center justify-between gap-3 rounded-md border p-3 sm:col-span-2"><span className="text-sm">{label as string}</span><Switch checked={exam[k as string]} disabled={!!dis} onCheckedChange={v => set({ [k as string]: v })} /></label>
               ))}
