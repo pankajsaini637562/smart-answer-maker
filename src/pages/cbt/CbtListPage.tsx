@@ -13,6 +13,7 @@ import { PageLoader, ErrorState, EmptyState } from '@/components/PageStates';
 import { cbtApi, categorize, type CardCategory, type CbtExamCard } from '@/lib/cbt';
 import { CbtFooter } from './CbtFooter';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const TABS: { id: CardCategory; label: string }[] = [
   { id: 'available', label: 'Available Now' },
@@ -31,10 +32,21 @@ export default function CbtListPage() {
   const [open, setOpen] = useState<CbtExamCard | null>(null);
   const [starting, setStarting] = useState(false);
 
+  // null = not registered, string = registration status (approved/pending/rejected)
+  const [regStatus, setRegStatus] = useState<string | null | undefined>(undefined);
+
   const load = useCallback(async () => {
     setError(null);
     try {
-      const r = await cbtApi.list();
+      const [r, reg] = await Promise.all([
+        cbtApi.list(),
+        supabase.auth.getUser().then(async ({ data: { user } }) => {
+          if (!user) return null;
+          const { data } = await supabase.from('cbt_students').select('status').eq('user_id', user.id).maybeSingle();
+          return data?.status ?? null;
+        }),
+      ]);
+      setRegStatus(reg);
       setData({ exams: r.exams, offset: new Date(r.server_now).getTime() - Date.now() });
     } catch (e: any) { setError(e.message); }
   }, []);
@@ -74,6 +86,19 @@ export default function CbtListPage() {
         </div>
         {error ? <ErrorState message={error} onRetry={load} /> : !data ? <PageLoader /> : (
           <>
+            {regStatus !== 'approved' && (
+              <Card className="border-primary">
+                <CardContent className="p-4 flex flex-wrap items-center gap-3">
+                  <div className="flex-1 min-w-[200px]">
+                    <p className="font-semibold">{regStatus === null ? 'Register to see CBT exams' : regStatus === 'pending' ? 'Your CBT registration is waiting for approval' : 'Your CBT registration was not approved'}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {regStatus === null ? 'Exams and admit cards appear only after you register with your class, batch and institute.' : 'Exams and admit cards will appear once an admin approves your registration.'}
+                    </p>
+                  </div>
+                  <Button onClick={() => nav('/cbt/register')}>{regStatus === null ? 'Register now' : 'View registration'}</Button>
+                </CardContent>
+              </Card>
+            )}
             <Tabs value={tab} onValueChange={v => setTab(v as CardCategory)}>
               <TabsList className="h-auto flex-wrap justify-start">
                 {TABS.map(t => (
@@ -84,7 +109,7 @@ export default function CbtListPage() {
               </TabsList>
             </Tabs>
             {list.length === 0 ? (
-              <EmptyState title="No exams here" hint={data.exams.length === 0 ? 'No CBT exams have been published for you yet.' : 'Check the other tabs.'} />
+              <EmptyState title="No exams here" hint={data.exams.length > 0 ? 'Check the other tabs.' : regStatus === 'approved' ? 'No CBT exams match your class, batch or institute yet.' : 'Register for CBT to see the exams set for you.'} />
             ) : (
               <div className="grid gap-3">
                 {list.map(e => (
