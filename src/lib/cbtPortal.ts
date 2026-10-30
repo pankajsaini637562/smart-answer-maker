@@ -60,13 +60,4 @@ export function createReportPdf(title:string,lines:string[]) {
   }
   return doc;
 }
-export function cardPdf(card:any) {
-  const s=card.snapshot.student;const e=card.snapshot.exam;
-  return createReportPdf('Examination Admit Card',[
-    card.snapshot.organization?.name??'SAINI TECHLABS', `Reference: ${card.reference} | Version: ${card.version}`,
-    ...['full_name','roll_number','class','stream','institute','academic_session','batch'].map(k=>`${k.replace(/_/g,' ')}: ${s[k]??''}`),
-    `Exam: ${e.title} | Code: ${e.code??'Not set'}`,`Reporting: ${e.reporting_at?new Date(e.reporting_at).toLocaleString():'Not specified'}`,
-    `Starts: ${new Date(e.starts_at).toLocaleString()} | Duration: ${e.duration_minutes} minutes`, `Instructions: ${e.instructions??''}`,
-    `Verification: ${window.location.origin}/cbt/verify/${card.reference}`,
-  ]);
-}
+export { cardPdf } from './admitCard';
