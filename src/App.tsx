@@ -46,6 +46,7 @@ import CbtAdminExamPage from "./pages/cbt/CbtAdminExamPage";
 import CbtRegisterPage from "./pages/cbt/CbtRegisterPage";
 import CbtLoginPage from "./pages/cbt/CbtLoginPage";
 import CbtStudentsAdminPage from "./pages/cbt/CbtStudentsAdminPage";
+import CbtVerifyPage from "./pages/cbt/CbtVerifyPage";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ const AppRoutes = () => (
     <Route path="/admin/cbt" element={<ProtectedRoute><CbtAdminPage /></ProtectedRoute>} />
     <Route path="/cbt/register" element={<ProtectedRoute><CbtRegisterPage /></ProtectedRoute>} />
     <Route path="/cbt/login" element={<CbtLoginPage />} />
+    <Route path="/cbt/verify/:reference" element={<CbtVerifyPage />} />
     <Route path="/admin/cbt/students" element={<ProtectedRoute><CbtStudentsAdminPage /></ProtectedRoute>} />
     <Route path="/admin/cbt/:id" element={<ProtectedRoute><CbtAdminExamPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
