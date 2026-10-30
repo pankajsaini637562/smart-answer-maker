@@ -94,7 +94,7 @@ export default function CbtRegisterPage() {
                   cards.map(c => (
                     <div key={c.id} className="flex items-center justify-between border rounded-md p-3 gap-2">
                       <div className="min-w-0"><p className="font-medium truncate">{c.snapshot?.exam?.title}</p><p className="text-xs font-mono text-muted-foreground">{c.reference}</p></div>
-                      <Button size="sm" variant="outline" onClick={() => cardPdf(c).save(`admit-card-${reg.roll_number}.pdf`)}><Download className="w-4 h-4" />Download</Button>
+                      <Button size="sm" variant="outline" onClick={async () => (await cardPdf(c)).save(`admit-card-${reg.roll_number}.pdf`)}><Download className="w-4 h-4" />Download</Button>
                     </div>
                   ))}
               </CardContent>
