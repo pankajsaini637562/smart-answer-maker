@@ -22,7 +22,7 @@ export function AdmitCardsPanel({ examId, published }: { examId: string; publish
   }, [examId]);
   useEffect(() => { load(); }, [load]);
 
-  const run = async (key: string, fn: () => Promise<void>) => {
+  const run = async (key: string, fn: () => Promise<unknown>) => {
     setBusy(key);
     try { await fn(); } catch (e: any) { toast.error(e.message ?? 'Something went wrong'); } finally { setBusy(null); }
   };
