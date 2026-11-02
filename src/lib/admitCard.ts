@@ -69,7 +69,7 @@ async function drawCard(doc: jsPDF, card: any) {
   const W = 297, H = 210;
   const verifyUrl = `${window.location.origin}/cbt/verify/${card.reference}`;
   const [logo, qr, photo] = await Promise.all([
-    toPng((logoAsset as any).url),
+    toPng((logoAsset as any).url).then(l => l ?? toPng('/icon-192.png')),
     QRCode.toDataURL(verifyUrl, { margin: 1, width: 300 }),
     photoUrl ? toPng(photoUrl) : Promise.resolve(null),
   ]);
@@ -136,6 +136,16 @@ async function drawCard(doc: jsPDF, card: any) {
   row(70, 147, 'Version', String(card.version ?? 1), 26, 55);
   doc.setFillColor(30, 150, 70); doc.roundedRect(130, 143, 22, 6, 3, 3, 'F');
   doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.text('VALID', 141, 147.2, { align: 'center' });
+
+  // signatures
+  panel(165, 119, 122, 36, 'SIGNATURES');
+  doc.setDrawColor(150, 150, 160); doc.setLineWidth(0.3);
+  doc.line(171, 145, 221, 145); doc.line(231, 145, 281, 145);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(60, 60, 70);
+  doc.text("Candidate's Signature", 196, 150, { align: 'center' });
+  doc.text('Authorised Signatory', 256, 150, { align: 'center' });
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(...t.dark);
+  doc.text(org, 256, 141, { align: 'center' });
 
   // instructions
   panel(10, 159, 277, 36, 'IMPORTANT INSTRUCTIONS');
