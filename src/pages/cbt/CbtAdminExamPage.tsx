@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cbtApi, cbtImageUrl, toCsv, scoreAttempt, type ScoreQuestion, type ScoreRules } from '@/lib/cbt';
 import { examPhase } from './CbtAdminPage';
 import { toast } from 'sonner';
+import { AdmitCardsPanel } from './AdmitCardsPanel';
 
 const L = 'ABCDE';
 const toLocal = (iso: string | null) => { if (!iso) return ''; const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
@@ -234,7 +235,7 @@ export default function CbtAdminExamPage() {
         {locked && <p className="text-sm rounded-md border bg-muted/50 p-3">This exam is {exam.status}. Questions, timing and marking are locked. Unpublish it (only possible before any student starts) to edit them.</p>}
 
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList><TabsTrigger value="settings">Settings</TabsTrigger><TabsTrigger value="questions">Questions ({qs.length})</TabsTrigger><TabsTrigger value="report">Results & Report</TabsTrigger></TabsList>
+          <TabsList><TabsTrigger value="settings">Settings</TabsTrigger><TabsTrigger value="questions">Questions ({qs.length})</TabsTrigger><TabsTrigger value="report">Results & Report</TabsTrigger><TabsTrigger value="cards">Admit cards</TabsTrigger></TabsList>
 
           <TabsContent value="settings">
             <Card><CardContent className="p-4 grid sm:grid-cols-2 gap-4">
@@ -359,6 +360,8 @@ export default function CbtAdminExamPage() {
             ))}
             {!locked && !preview && <Button onClick={addQuestion} variant="outline" className="w-full"><Plus className="w-4 h-4" />Add question</Button>}
           </TabsContent>
+
+          <TabsContent value="cards"><AdmitCardsPanel examId={id} published={exam.status === 'published'} /></TabsContent>
 
           <TabsContent value="report" className="space-y-4">
             {!report ? <PageLoader /> : (<>
