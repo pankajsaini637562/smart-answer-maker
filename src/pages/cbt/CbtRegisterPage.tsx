@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2, Download, IdCard } from 'lucide-react';
+import { Loader2, Download, IdCard, Eye, Share2 } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageLoader } from '@/components/PageStates';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { cardPdf, portalRpc, type StudentRegistration } from '@/lib/cbtPortal';
+import { cardPdf, openPdf, sharePdf, portalRpc, type StudentRegistration } from '@/lib/cbtPortal';
 import { CbtFooter } from './CbtFooter';
 import { toast } from 'sonner';
 
@@ -92,9 +92,13 @@ export default function CbtRegisterPage() {
               <CardContent className="space-y-2">
                 {cards.length === 0 ? <p className="text-sm text-muted-foreground">No admit cards yet. They appear here once your institute issues them.</p> :
                   cards.map(c => (
-                    <div key={c.id} className="flex items-center justify-between border rounded-md p-3 gap-2">
+                    <div key={c.id} className="flex flex-wrap items-center justify-between border rounded-md p-3 gap-2">
                       <div className="min-w-0"><p className="font-medium truncate">{c.snapshot?.exam?.title}</p><p className="text-xs font-mono text-muted-foreground">{c.reference}</p></div>
-                      <Button size="sm" variant="outline" onClick={async () => (await cardPdf(c)).save(`admit-card-${reg.roll_number}.pdf`)}><Download className="w-4 h-4" />Download</Button>
+                      <div className="flex gap-1.5">
+                        <Button size="sm" variant="ghost" aria-label="View or print" onClick={async () => openPdf(await cardPdf(c))}><Eye className="w-4 h-4" />View</Button>
+                        <Button size="sm" variant="outline" onClick={async () => (await cardPdf(c)).save(`admit-card-${reg.roll_number}.pdf`)}><Download className="w-4 h-4" />Download</Button>
+                        <Button size="sm" variant="ghost" aria-label="Share" onClick={async () => { try { await sharePdf(await cardPdf(c), `admit-card-${reg.roll_number}.pdf`); } catch { /* share cancelled */ } }}><Share2 className="w-4 h-4" /></Button>
+                      </div>
                     </div>
                   ))}
               </CardContent>

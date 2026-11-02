@@ -38,16 +38,40 @@ const fmtDate = (d?: string | null) => d ? new Date(d).toLocaleDateString('en-IN
 const fmtTime = (d?: string | null) => d ? new Date(d).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'Not specified';
 
 export async function cardPdf(card: any): Promise<jsPDF> {
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  await drawCard(doc, card);
+  return doc;
+}
+
+/** One PDF with one page per card, for bulk printing. */
+export async function allCardsPdf(cards: any[]): Promise<jsPDF> {
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  for (let i = 0; i < cards.length; i++) { if (i) doc.addPage(); await drawCard(doc, cards[i]); }
+  return doc;
+}
+
+export function openPdf(doc: jsPDF) {
+  const url = URL.createObjectURL(doc.output('blob'));
+  window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+export async function sharePdf(doc: jsPDF, name: string) {
+  const file = new File([doc.output('blob')], name, { type: 'application/pdf' });
+  if (navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: 'Admit card' }); return true; }
+  doc.save(name); return false;
+}
+
+async function drawCard(doc: jsPDF, card: any) {
   const s = card.snapshot?.student ?? {}; const e = card.snapshot?.exam ?? {};
+  const photoUrl = card.snapshot?.photo_url ?? s.photo_url ?? null;
   const org = card.snapshot?.organization?.name ?? 'SAINI TECHLABS';
   const t = admitCardTheme(s.roll_number ?? card.reference ?? '');
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
   const W = 297, H = 210;
   const verifyUrl = `${window.location.origin}/cbt/verify/${card.reference}`;
   const [logo, qr, photo] = await Promise.all([
-    toPng((logoAsset as any).url),
+    toPng((logoAsset as any).url).then(l => l ?? toPng('/icon-192.png')),
     QRCode.toDataURL(verifyUrl, { margin: 1, width: 300 }),
-    s.photo_url ? toPng(s.photo_url) : Promise.resolve(null),
+    photoUrl ? toPng(photoUrl) : Promise.resolve(null),
   ]);
 
   // header
@@ -113,6 +137,16 @@ export async function cardPdf(card: any): Promise<jsPDF> {
   doc.setFillColor(30, 150, 70); doc.roundedRect(130, 143, 22, 6, 3, 3, 'F');
   doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.text('VALID', 141, 147.2, { align: 'center' });
 
+  // signatures
+  panel(165, 119, 122, 36, 'SIGNATURES');
+  doc.setDrawColor(150, 150, 160); doc.setLineWidth(0.3);
+  doc.line(171, 145, 221, 145); doc.line(231, 145, 281, 145);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(60, 60, 70);
+  doc.text("Candidate's Signature", 196, 150, { align: 'center' });
+  doc.text('Authorised Signatory', 256, 150, { align: 'center' });
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(...t.dark);
+  doc.text(org, 256, 141, { align: 'center' });
+
   // instructions
   panel(10, 159, 277, 36, 'IMPORTANT INSTRUCTIONS');
   const custom = String(e.instructions ?? '').split(/\n+/).map(x => x.trim()).filter(Boolean);
@@ -132,5 +166,4 @@ export async function cardPdf(card: any): Promise<jsPDF> {
   doc.text('SMART AI OMR – CBT EXAMINATION SYSTEM', 10, 204);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text(`Powered by ${org}`, 10, 208);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text('Analyze. Evaluate. Improve.', W - 10, 206, { align: 'right' });
-  return doc;
 }

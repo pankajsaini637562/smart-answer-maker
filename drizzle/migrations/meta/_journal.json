@@ -64,6 +64,13 @@
       "when": 1793204788374,
       "tag": "0008_cbt_batch_roll_autoapprove",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793617167893,
+      "tag": "0009_admit_card_snapshot_subject",
+      "breakpoints": true
     }
   ]
 }
