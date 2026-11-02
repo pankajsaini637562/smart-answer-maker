@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown, BookOpen, Shield, GraduationCap, PenSquare } from 'lucide-react';
+import { Moon, Sun, BarChart3, FileText, Trophy, Home, User, Crown, BookOpen, Shield, GraduationCap, PenSquare, Menu } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
@@ -20,6 +22,8 @@ const navItems = [
 export function AppHeader() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const [open, setOpen] = useState(false);
+  useEffect(() => setOpen(false), [location.pathname]);
   const { isAdmin } = useIsAdmin();
   const { isInstructor } = useIsInstructor();
   let items = navItems;
@@ -34,45 +38,40 @@ export function AppHeader() {
             <img src={logoAsset.url} alt="Smart AI OMR – Test & Result" className="h-12 w-12 object-contain rounded-md bg-card" />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
-            {items.map((item) => {
-              const isActive = location.pathname === item.to;
-              return (
-                <Link key={item.to} to={item.to}>
-                  <button className={cn(
-                    'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                    isActive
-                      ? 'bg-card text-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}>
-                    <item.icon className="w-4 h-4" />
-                    {item.label}
-                  </button>
-                </Link>
-              );
-            })}
-          </nav>
-
           <div className="flex items-center gap-1.5">
-            {/* Mobile nav */}
-            <nav className="flex md:hidden items-center gap-0.5">
-              {items.map((item) => {
-                const isActive = location.pathname === item.to;
-                return (
-                  <Link key={item.to} to={item.to} aria-label={item.label}>
-                    <Button
-                      variant={isActive ? 'default' : 'ghost'}
-                      size="icon"
-                      className="w-9 h-9"
-                      aria-label={item.label}
-                    >
-                      <item.icon className="w-4 h-4" />
-                    </Button>
-                  </Link>
-                );
-              })}
-            </nav>
-            <div className="w-px h-6 bg-border mx-1 hidden md:block" />
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="w-9 h-9 rounded-xl" aria-label="Open menu">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 p-0">
+                <SheetHeader className="p-4 border-b">
+                  <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <nav className="flex flex-col p-2 gap-1">
+                  {items.map((item) => {
+                    const isActive = location.pathname === item.to;
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium border transition-colors',
+                          isActive
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'border-transparent text-foreground hover:bg-muted'
+                        )}
+                      >
+                        <item.icon className="w-5 h-5" />
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </SheetContent>
+            </Sheet>
             <Button
               variant="ghost"
               size="icon"
