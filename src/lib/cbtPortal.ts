@@ -60,4 +60,4 @@ export function createReportPdf(title:string,lines:string[]) {
   }
   return doc;
 }
-export { cardPdf } from './admitCard';
+export { cardPdf, allCardsPdf, openPdf, sharePdf } from './admitCard';
