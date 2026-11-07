@@ -27,7 +27,7 @@ const norm = (a: number[]) => [...new Set(a)].sort((x, y) => x - y);
 
 export function scoreQuestion(q: ScoreQuestion, r: ScoreRules): { status: QStatus; marks: number } {
   const sel = norm(q.selected); const key = norm(q.correct);
-  const mc = q.marks ?? r.marksCorrect; const mw = q.negative ?? r.marksWrong;
+  const mc = q.marks ?? r.marksCorrect; const mw = Math.abs(q.negative ?? r.marksWrong);
   if (sel.length === 0) return { status: 'unanswered', marks: r.marksUnanswered };
   if (sel.length === key.length && sel.every((v, i) => v === key[i])) return { status: 'correct', marks: mc };
   if (q.multi && sel.every(v => key.includes(v))) return { status: 'partial', marks: 0 };

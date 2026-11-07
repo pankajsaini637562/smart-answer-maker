@@ -19,6 +19,14 @@ describe('CBT scoring', () => {
     ], rules);
     expect(s).toMatchObject({ correct: 1, wrong: 1, unanswered: 1, score: 3, max: 12, percentage: 25, accuracy: 50 });
   });
+  it('subtracts a legacy penalty stored as -1 instead of adding it', () => {
+    const s = scoreAttempt([
+      { correct: [0], selected: [0], multi: false },
+      { correct: [1], selected: [2], multi: false },
+      { correct: [1], selected: [], multi: false },
+    ], { ...rules, marksWrong: -1 });
+    expect(s).toMatchObject({ correct: 1, wrong: 1, unanswered: 1, score: 3, max: 12, positive: 4, negative: 1 });
+  });
 });
 
 describe('CBT timer', () => {
