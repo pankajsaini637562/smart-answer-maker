@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Signed in branding" ON public.cbt_organization;
