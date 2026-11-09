@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSyncVersion } from '@/lib/cloudSync';
 import { Link } from 'react-router-dom';
 import { Trophy, Trash2, Eye, Clock, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,8 @@ export default function HistoryPage() {
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>(getScoreboard());
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [clearAll, setClearAll] = useState(false);
+  const syncV = useSyncVersion();
+  useEffect(() => { if (syncV) setResults(getResults()); }, [syncV]);
 
   const handleDelete = (attemptId: string) => {
     deleteResult(attemptId);

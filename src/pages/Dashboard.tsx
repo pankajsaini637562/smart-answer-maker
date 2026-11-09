@@ -1,3 +1,4 @@
+import { useSyncVersion } from '@/lib/cloudSync';
 import { Link } from 'react-router-dom';
 import { Plus, FileText, Trophy, Clock, Target, TrendingUp, ArrowRight, Sparkles, Brain, Flame, MessageCircle, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 export default function Dashboard() {
+  useSyncVersion();
   const { user } = useAuth();
   const [profile, setProfile] = useState<{ display_name: string; class: string } | null>(null);
   const sheets = getSheets();

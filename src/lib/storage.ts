@@ -1,3 +1,4 @@
+import { pushSheet, pushAttempt, pushResult, removeRemote } from './cloudSync';
 import { OMRSheet, ExamAttempt, ExamResult, ScoreboardEntry } from '@/types/exam';
 
 const SHEETS_KEY = 'exam_master_sheets';
@@ -15,6 +16,7 @@ export function saveSheet(sheet: OMRSheet): void {
     sheets.push(sheet);
   }
   localStorage.setItem(SHEETS_KEY, JSON.stringify(sheets));
+  void pushSheet(sheet).catch(() => {});
 }
 
 export function getSheets(): OMRSheet[] {
@@ -34,6 +36,7 @@ export function getSheet(id: string): OMRSheet | null {
 export function deleteSheet(id: string): void {
   const sheets = getSheets().filter(s => s.id !== id);
   localStorage.setItem(SHEETS_KEY, JSON.stringify(sheets));
+  void removeRemote('sheets', id).catch(() => {});
 }
 
 // Exam Attempts
@@ -46,6 +49,7 @@ export function saveAttempt(attempt: ExamAttempt): void {
     attempts.push(attempt);
   }
   localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts));
+  void pushAttempt(attempt).catch(() => {});
 }
 
 export function getAttempts(): ExamAttempt[] {
@@ -78,6 +82,7 @@ export function saveResult(result: ExamResult): void {
   const results = getResults();
   results.unshift(result); // Add to beginning
   localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
+  void pushResult(result).catch(() => {});
   
   // Also add to scoreboard
   addToScoreboard({
@@ -108,6 +113,7 @@ export function getResult(attemptId: string): ExamResult | null {
 export function deleteResult(attemptId: string): void {
   const results = getResults().filter(r => r.attemptId !== attemptId);
   localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
+  void removeRemote('results', attemptId).catch(() => {});
 }
 
 // Scoreboard
@@ -134,5 +140,5 @@ export function clearScoreboard(): void {
 
 // Generate unique ID
 export function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  return crypto.randomUUID();
 }
