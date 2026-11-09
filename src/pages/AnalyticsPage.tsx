@@ -1,3 +1,4 @@
+import { useSyncVersion } from '@/lib/cloudSync';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Brain, TrendingUp, Target, Lightbulb, Shield, Clock, Award, BookOpen, Crosshair } from 'lucide-react';
@@ -32,6 +33,7 @@ function formatStudyTime(seconds: number) {
 }
 
 export default function AnalyticsPage() {
+  useSyncVersion();
   const results = getResults();
   const sheets = getSheets();
   const analysis = useMemo(() => analyzeByTopic(results), [results]);
