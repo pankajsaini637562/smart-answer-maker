@@ -135,3 +135,15 @@ async function doSync() {
     window.dispatchEvent(new Event(SYNC_EVENT));
   }
 }
+
+import { useEffect, useState } from 'react';
+/** Re-render when account data finishes merging into this device. */
+export function useSyncVersion() {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    const h = () => setV((x) => x + 1);
+    window.addEventListener(SYNC_EVENT, h);
+    return () => window.removeEventListener(SYNC_EVENT, h);
+  }, []);
+  return v;
+}

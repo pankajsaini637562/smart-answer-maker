@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { syncAll } from '@/lib/cloudSync';
 import { getPendingReferral, clearPendingReferral } from '@/lib/referral';
 
 async function attachReferralByCode(userId: string, explicitCode?: string): Promise<{ referrerId: string | null }> {
@@ -41,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session?.user) setTimeout(() => { void syncAll(); }, 0);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {

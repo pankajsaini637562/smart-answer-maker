@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSyncVersion } from '@/lib/cloudSync';
 import { Link } from 'react-router-dom';
 import { Plus, Play, Trash2, MoreVertical, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,8 @@ import { toast } from 'sonner';
 export default function SheetsPage() {
   const [sheets, setSheets] = useState<OMRSheet[]>(getSheets());
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const syncV = useSyncVersion();
+  useEffect(() => { if (syncV) setSheets(getSheets()); }, [syncV]);
 
   const handleDelete = (id: string) => {
     deleteSheet(id);
