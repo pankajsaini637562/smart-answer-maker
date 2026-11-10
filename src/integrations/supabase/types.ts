@@ -1833,6 +1833,7 @@ export type Database = {
           id: string
         }[]
       }
+      refresh_gamification: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "instructor" | "user"

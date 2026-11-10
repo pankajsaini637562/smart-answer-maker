@@ -54,6 +54,13 @@ Deno.serve(async (req) => {
       .from('user_roles').select('id').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
     const isAdmin = !!roleRow;
 
+    // Draft materials are visible only to administrators, including downloads.
+    if (!material.is_published && !isAdmin) {
+      return new Response(JSON.stringify({ error: 'Material not found' }), {
+        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     let allowed = material.is_free || isAdmin;
 
     if (!allowed) {

@@ -46,11 +46,12 @@ Deno.serve(async req => {
     }
     if (action !== 'login' || !/^(STL-\d{4}-\d{6,}|[A-Z0-9]{1,10}-\d{4,})$/.test(roll) || typeof body.password !== 'string' || body.password.length > 200) return respond({ error: 'Invalid roll number or password' }, 401);
     const { data: student } = await admin.from('cbt_students').select('user_id,status').eq('roll_number',roll).maybeSingle();
-    if (student && student.status !== 'approved') return respond({ error: 'This account is not active. Contact your institute.' }, 403);
     const target = student ? await admin.auth.admin.getUserById(student.user_id) : null;
     if (!target?.data.user?.email) return respond({ error: 'Invalid roll number or password' }, 401);
     const { data, error } = await client.auth.signInWithPassword({ email: target.data.user.email, password: body.password });
     if (error || !data.session) return respond({ error: 'Invalid roll number or password' }, 401);
+    // Reveal enrollment status only after the caller proves account ownership.
+    if (student.status !== 'approved') return respond({ error: 'This account is not active. Contact your institute.' }, 403);
     return respond({ access_token: data.session.access_token, refresh_token: data.session.refresh_token });
   } catch { return respond({ error: 'Unable to process request' }, 400); }
 });

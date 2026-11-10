@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { scoreQuestion, scoreAttempt, remainingSeconds, categorize } from './cbt';
+import { scoreQuestion, scoreAttempt, remainingSeconds, categorize, toCsv } from './cbt';
 
 const rules = { marksCorrect: 4, marksWrong: 1, marksUnanswered: 0 };
 
@@ -26,6 +26,23 @@ describe('CBT scoring', () => {
       { correct: [1], selected: [], multi: false },
     ], { ...rules, marksWrong: -1 });
     expect(s).toMatchObject({ correct: 1, wrong: 1, unanswered: 1, score: 3, max: 12, positive: 4, negative: 1 });
+  });
+});
+
+describe('CSV exports', () => {
+  it.each(['=HYPERLINK("https://example.com")', '+SUM(1,2)', '-2+3', '@SUM(1,2)', '  =1+1', '\t=1+1'])(
+    'neutralizes formula-leading text: %j',
+    (value) => {
+      const safe = `'${value}`;
+      const cell = /[",\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
+      expect(toCsv([{ name: value }])).toBe(`name\n${cell}`);
+    },
+  );
+  it('keeps numeric scores and negative numbers numeric', () => {
+    expect(toCsv([{ name: 'Asha', score: -1 }])).toBe('name,score\nAsha,-1');
+  });
+  it('still quotes commas, quotes and newlines', () => {
+    expect(toCsv([{ name: 'Asha, "A"\nClass 12' }])).toBe('name\n"Asha, ""A""\nClass 12"');
   });
 });
 
