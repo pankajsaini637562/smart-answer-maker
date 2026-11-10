@@ -208,8 +208,6 @@ export function recordExamCompletion(accuracy: number, correct: number, timeSpen
   const leveledUp = state.level > oldLevel;
 
   saveState(state);
-  // Fire-and-forget cloud sync for the public leaderboard
-  syncGamificationToCloud(state);
   return { state, xpEarned, xpBreakdown: breakdown, newBadges, leveledUp };
 }
 
@@ -228,9 +226,6 @@ export function refreshStreak(): GamificationState {
       saveState(state);
     }
   }
-
-  // Ensure existing users appear on the leaderboard on app open
-  if (state.xp > 0) syncGamificationToCloud(state);
 
   return state;
 }

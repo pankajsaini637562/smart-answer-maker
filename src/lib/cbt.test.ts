@@ -29,6 +29,19 @@ describe('CBT scoring', () => {
   });
 });
 
+describe('CSV exports', () => {
+  it.each(['=HYPERLINK("https://example.com")', '+SUM(1,2)', '-2+3', '@SUM(1,2)', '  =1+1', '\t=1+1'])(
+    'neutralizes formula-leading text: %j',
+    (value) => expect(toCsv([{ name: value }])).toBe(`name\n'${value}`),
+  );
+  it('keeps numeric scores and negative numbers numeric', () => {
+    expect(toCsv([{ name: 'Asha', score: -1 }])).toBe('name,score\nAsha,-1');
+  });
+  it('still quotes commas, quotes and newlines', () => {
+    expect(toCsv([{ name: 'Asha, "A"\nClass 12' }])).toBe('name\n"Asha, ""A""\nClass 12"');
+  });
+});
+
 describe('CBT timer', () => {
   it('uses server offset, not device clock', () => {
     const deadline = '2026-01-01T10:10:00Z';

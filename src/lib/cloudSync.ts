@@ -111,6 +111,7 @@ async function doSync() {
   const attIds = new Set([...remoteA, ...newA.map((a) => a.id)]);
   const newR = lr.filter((r) => !remoteR.has(r.attemptId) && attIds.has(r.attemptId) && sheetIds.has(r.sheetId)).map((r) => resultRow(r, u));
   if (newR.length) await supabase.from('results').upsert(newR);
+  await supabase.rpc('refresh_gamification');
 
   // Merge account data into this device
   const localS = new Set(ls.map((s) => s.id)), localA = new Set(la.map((a) => a.id)), localR = new Set(lr.map((r) => r.attemptId));
