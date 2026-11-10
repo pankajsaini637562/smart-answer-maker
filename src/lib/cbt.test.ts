@@ -32,7 +32,11 @@ describe('CBT scoring', () => {
 describe('CSV exports', () => {
   it.each(['=HYPERLINK("https://example.com")', '+SUM(1,2)', '-2+3', '@SUM(1,2)', '  =1+1', '\t=1+1'])(
     'neutralizes formula-leading text: %j',
-    (value) => expect(toCsv([{ name: value }])).toBe(`name\n'${value}`),
+    (value) => {
+      const safe = `'${value}`;
+      const cell = /[",\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
+      expect(toCsv([{ name: value }])).toBe(`name\n${cell}`);
+    },
   );
   it('keeps numeric scores and negative numbers numeric', () => {
     expect(toCsv([{ name: 'Asha', score: -1 }])).toBe('name,score\nAsha,-1');
