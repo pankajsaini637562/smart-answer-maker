@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { scoreQuestion, scoreAttempt, remainingSeconds, categorize } from './cbt';
+import { scoreQuestion, scoreAttempt, remainingSeconds, categorize, toCsv } from './cbt';
 
 const rules = { marksCorrect: 4, marksWrong: 1, marksUnanswered: 0 };
 

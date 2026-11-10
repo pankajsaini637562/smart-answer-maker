@@ -106,6 +106,11 @@ export async function cbtImageUrl(path: string | null): Promise<string | null> {
 export function toCsv(rows: Record<string, unknown>[]): string {
   if (!rows.length) return '';
   const cols = Object.keys(rows[0]);
-  const esc = (v: unknown) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const esc = (v: unknown) => {
+    const s = v == null ? '' : String(v);
+    // Keep user-entered text from becoming a formula in spreadsheet apps.
+    const safe = typeof v === 'string' && (/^\s*[=+\-@]/.test(s) || /^[\t\r]/.test(s)) ? `'${s}` : s;
+    return /[",\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
+  };
   return [cols.join(','), ...rows.map(r => cols.map(c => esc(r[c])).join(','))].join('\n');
 }

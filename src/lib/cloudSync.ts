@@ -53,7 +53,9 @@ export async function pushResult(r: ExamResult) {
   const u = await uid(); if (!u || !UUID.test(r.attemptId)) return;
   const att = read(KEYS.attempts).find((a) => a.id === r.attemptId);
   if (att) await pushAttempt(att);
-  await supabase.from('results').upsert(resultRow(r, u));
+  const { error } = await supabase.from('results').upsert(resultRow(r, u));
+  // The server derives leaderboard XP from the saved result, never browser-supplied XP.
+  if (!error) await supabase.rpc('refresh_gamification');
 }
 export async function removeRemote(table: 'sheets' | 'results', id: string) {
   const u = await uid(); if (!u || !UUID.test(id)) return;
