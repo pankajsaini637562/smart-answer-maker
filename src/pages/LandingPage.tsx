@@ -61,11 +61,11 @@ export default function LandingPage() {
         <h2 className="text-3xl font-bold text-center mb-10">How the OMR checker works</h2>
         <div className="grid md:grid-cols-3 gap-6">
           {steps.map((s) => (
-            <div key={s.step} className="p-6 rounded-lg border bg-card">
+            <article key={s.step} className="p-6 rounded-lg border bg-card">
               <div className="font-mono text-sm text-primary mb-2">{s.step}</div>
               <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
               <p className="text-sm text-muted-foreground">{s.desc}</p>
-            </div>
+            </article>
           ))}
         </div>
       </section>
@@ -88,10 +88,12 @@ export default function LandingPage() {
         <p className="text-center text-muted-foreground mb-8">Practical help for practising and checking OMR sheets.</p>
         <div className="grid md:grid-cols-3 gap-5">
           {guideLinks.map((g) => (
-            <Link key={g.to} to={g.to} className="block p-6 rounded-lg border bg-card hover:border-primary transition-colors">
-              <span className="font-semibold">{g.label}</span>
-              <ArrowRight className="w-4 h-4 inline ml-2 text-primary" aria-hidden="true" />
-            </Link>
+            <article key={g.to}>
+              <Link to={g.to} className="block p-6 rounded-lg border bg-card hover:border-primary transition-colors">
+                <span className="font-semibold">{g.label}</span>
+                <ArrowRight className="w-4 h-4 inline ml-2 text-primary" aria-hidden="true" />
+              </Link>
+            </article>
           ))}
         </div>
       </section>

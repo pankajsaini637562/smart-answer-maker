@@ -22,7 +22,7 @@ export default function CbtLoginPage() {
     finally { setBusy(false); }
   };
   return (
-    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
+    <main className="min-h-dvh bg-background flex items-center justify-center p-4">
       <SEO title="CBT Sign in | Smart AI OMR" description="Sign in with your roll number." noindex />
       <Card className="w-full max-w-sm">
         <CardHeader><CardTitle className="font-display">CBT Exam Sign in</CardTitle></CardHeader>
@@ -37,6 +37,6 @@ export default function CbtLoginPage() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

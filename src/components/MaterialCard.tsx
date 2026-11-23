@@ -17,6 +17,7 @@ export interface MaterialCardData {
 export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolean }) {
   return (
     <Link to={`/materials/${m.id}`} className="block group">
+      <article className="h-full">
       <Card className="modern-card overflow-hidden h-full transition-transform">
         <div className="aspect-video relative bg-primary/10 flex items-center justify-center">
           {m.cover_url ? (
@@ -45,6 +46,7 @@ export function MaterialCard({ m, owned }: { m: MaterialCardData; owned?: boolea
           </div>
         </CardContent>
       </Card>
+      </article>
     </Link>
   );
 }

@@ -61,10 +61,10 @@ export default function MaterialDetailPage() {
   };
 
   if (loading) return (
-    <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div></div>
+    <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></main></div>
   );
   if (!m) return (
-    <div className="min-h-dvh bg-background"><AppHeader /><div className="container py-20 text-center text-muted-foreground">Not found.</div></div>
+    <div className="min-h-dvh bg-background"><AppHeader /><main className="container py-20 text-center text-muted-foreground">Not found.</main></div>
   );
 
   const owned = purchase && (purchase.status === 'approved' || purchase.status === 'free');

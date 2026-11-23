@@ -43,13 +43,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             <div className="font-semibold mb-2">Smart AI OMR Analysis</div>
             <p className="text-muted-foreground">Analyze. Evaluate. Improve. An online OMR checker for NEET practice tests.</p>
           </div>
-          <div>
+          <nav aria-label="Footer guides">
             <div className="font-semibold mb-2">Guides</div>
             <ul className="space-y-2 text-muted-foreground">
               {guideLinks.map((g) => <li key={g.to}><Link to={g.to} className="hover:text-foreground">{g.label}</Link></li>)}
             </ul>
-          </div>
-          <div>
+          </nav>
+          <nav aria-label="Footer app links">
             <div className="font-semibold mb-2">App</div>
             <ul className="space-y-2 text-muted-foreground">
               <li><Link to="/auth" className="hover:text-foreground">Sign up or sign in</Link></li>
@@ -57,7 +57,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
               <li><Link to="/materials" className="hover:text-foreground">Study materials</Link></li>
               <li><Link to="/leaderboard" className="hover:text-foreground">Leaderboard</Link></li>
             </ul>
-          </div>
+          </nav>
         </div>
         <div className="container pb-8 text-xs text-muted-foreground">
           © {new Date().getFullYear()} Smart AI OMR Analysis. Independent practice tool, not affiliated with NTA.

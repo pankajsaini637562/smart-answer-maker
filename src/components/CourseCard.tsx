@@ -7,6 +7,7 @@ import type { Course } from '@/lib/courses';
 export function CourseCard({ course, enrolled }: { course: Course; enrolled?: boolean }) {
   return (
     <Link to={`/courses/${course.id}`} className="block group">
+      <article className="h-full">
       <Card className="modern-card overflow-hidden h-full transition-transform">
         <div className="aspect-video relative bg-primary/10 flex items-center justify-center">
           {course.cover_url ? (
@@ -33,6 +34,7 @@ export function CourseCard({ course, enrolled }: { course: Course; enrolled?: bo
           </div>
         </CardContent>
       </Card>
+      </article>
     </Link>
   );
 }

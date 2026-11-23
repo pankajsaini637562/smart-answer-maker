@@ -24,7 +24,7 @@ export default function CbtVerifyPage() {
   useEffect(() => { load(); }, [reference]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
+    <main className="min-h-dvh bg-background flex items-center justify-center p-4">
       <SEO title="Verify admit card | Smart AI OMR" description="Check whether a CBT admit card is valid." noindex />
       <Card className="w-full max-w-md">
         <CardHeader><CardTitle className="font-display">Admit card check</CardTitle></CardHeader>
@@ -49,6 +49,6 @@ export default function CbtVerifyPage() {
           <Button asChild variant="outline" className="w-full"><Link to="/">Go to home</Link></Button>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

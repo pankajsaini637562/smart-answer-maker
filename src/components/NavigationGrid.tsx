@@ -34,7 +34,7 @@ export function NavigationGrid({
   const reviewCount = markedForReview.filter(r => r).length;
 
   return (
-    <div className="space-y-4">
+    <nav aria-label="Question navigation" className="space-y-4">
       <div className="grid grid-cols-5 gap-2">
         {Array.from({ length: totalQuestions }, (_, i) => (
           <button
@@ -61,6 +61,6 @@ export function NavigationGrid({
           <span className="text-muted-foreground">Review ({reviewCount})</span>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

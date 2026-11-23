@@ -79,8 +79,8 @@ export default function OAuthConsentPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-background flex items-center justify-center p-4">
-      <SEO title="Connect an app | Smart AI OMR Analysis" description="Approve or deny a third-party app requesting access to your Smart AI OMR account." />
+    <main className="min-h-dvh bg-background flex items-center justify-center p-4">
+      <SEO title="Connect an app | Smart AI OMR Analysis" description="Approve or deny a third-party app requesting access to your Smart AI OMR account." noindex />
       <Card className="modern-card w-full max-w-md">
         <CardHeader className="text-center">
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
@@ -122,6 +122,6 @@ export default function OAuthConsentPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

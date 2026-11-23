@@ -4,6 +4,8 @@
 User-agent: *
 Allow: /
 Disallow: /app
+Disallow: /auth
+Disallow: /.lovable/
 Disallow: /create
 Disallow: /sheets
 Disallow: /history
@@ -16,6 +18,7 @@ Disallow: /library
 Disallow: /refer
 Disallow: /admin
 Disallow: /instructor
+Disallow: /cbt/
 Disallow: /reset-password
 
 Sitemap: https://smartaiomr.us.ci/sitemap.xml

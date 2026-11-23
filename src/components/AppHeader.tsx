@@ -34,7 +34,7 @@ export function AppHeader() {
             <img src={logoAsset.url} alt="Smart AI OMR – Test & Result" className="h-12 w-12 object-contain rounded-md bg-card" />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
+          <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
             {items.map((item) => {
               const isActive = location.pathname === item.to;
               return (
@@ -55,7 +55,7 @@ export function AppHeader() {
 
           <div className="flex items-center gap-1.5">
             {/* Mobile nav */}
-            <nav className="flex md:hidden items-center gap-0.5">
+            <nav aria-label="Mobile navigation" className="flex md:hidden items-center gap-0.5">
               {items.map((item) => {
                 const isActive = location.pathname === item.to;
                 return (
