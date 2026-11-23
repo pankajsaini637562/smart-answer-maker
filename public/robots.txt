@@ -18,4 +18,4 @@ Disallow: /admin
 Disallow: /instructor
 Disallow: /reset-password
 
-Sitemap: https://smartaiomranalyis.lovable.app/sitemap.xml
+Sitemap: https://smartaiomr.us.ci/sitemap.xml
