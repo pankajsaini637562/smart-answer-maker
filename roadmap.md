@@ -1,7 +1,7 @@
-# Technical SEO roadmap
+# Dynamic SEO roadmap
 
-- [x] Audit public routes and published dynamic content; update robots.txt and the existing static sitemap.
-- [x] Verify direct visits to public sub-pages use Lovable's built-in SPA fallback; add no hosting-specific redirect files.
-- [x] Add appropriate semantic landmarks across shared layouts and page components without changing visual design.
-- [x] Run targeted checks and test all 13 direct public routes.
-- [x] Commit the completed changes.
+- [ ] Audit existing metadata helpers and route coverage.
+- [ ] Add the requested homepage metadata, social tags, and WebApplication JSON-LD.
+- [ ] Add route-specific titles, descriptions, self-referencing canonicals, and private-route noindex rules.
+- [ ] Add focused metadata tests and verify representative public, dynamic, private, and unknown routes in the browser.
+- [ ] Commit the completed changes.

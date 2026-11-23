@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { SEO } from '@/components/SEO';
+import { HOME_DESCRIPTION, HOME_TITLE } from '@/lib/site';
 import { PublicLayout, StartPracticeLink, guideLinks } from '@/components/PublicLayout';
 import { ClipboardList, BarChart3, Brain, Timer, Trophy, Users, ArrowRight, FileDown } from 'lucide-react';
 
@@ -33,10 +34,7 @@ const faqs = [
 export default function LandingPage() {
   return (
     <PublicLayout>
-      <SEO
-        title="Smart AI OMR Analysis | NEET OMR Checker Online"
-        description="Check your NEET practice answers with Smart AI OMR Analysis. Create OMR-style tests, evaluate responses with an answer key, and review your results."
-      />
+      <SEO title={HOME_TITLE} description={HOME_DESCRIPTION} />
 
       <section className="border-b">
         <div className="container py-16 md:py-24 text-center max-w-3xl">

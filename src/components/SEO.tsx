@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
-import { SITE_URL, SITE_NAME } from '@/lib/site';
+import { SHARE_IMAGE_ALT, SHARE_IMAGE_URL, SITE_URL, SITE_NAME } from '@/lib/site';
 
 interface SEOProps {
   title: string;
@@ -10,9 +10,10 @@ interface SEOProps {
   breadcrumbs?: { name: string; path: string }[];
 }
 
-export function SEO({ title, description, noindex, breadcrumbs }: SEOProps) {
+export function SEO({ title, description, noindex = false, breadcrumbs }: SEOProps) {
   const { pathname } = useLocation();
-  const url = `${SITE_URL}${pathname === '/' ? '/' : pathname}`;
+  const canonicalPath = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+  const url = `${SITE_URL}${canonicalPath}`;
   const webPage = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -31,18 +32,32 @@ export function SEO({ title, description, noindex, breadcrumbs }: SEOProps) {
       item: `${SITE_URL}${b.path}`,
     })),
   };
+
   return (
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
-      {!noindex && <link rel="canonical" href={url} />}
+      <link rel="canonical" href={url} />
+      <meta
+        name="robots"
+        content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
+      />
+
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
+      <meta property="og:image" content={SHARE_IMAGE_URL} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={SHARE_IMAGE_ALT} />
+
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      <meta name="twitter:image" content={SHARE_IMAGE_URL} />
+      <meta name="twitter:image:alt" content={SHARE_IMAGE_ALT} />
+
       {!noindex && <script type="application/ld+json">{JSON.stringify(webPage)}</script>}
       {crumbs && <script type="application/ld+json">{JSON.stringify(crumbs)}</script>}
     </Helmet>
