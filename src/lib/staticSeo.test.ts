@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { HOME_DESCRIPTION, HOME_TITLE, SHARE_IMAGE_URL } from './site';
 
-const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+const html = readFileSync(resolve(process.cwd(), 'index.html'), 'utf8');
 const documentHead = new DOMParser().parseFromString(html, 'text/html').head;
 
 function content(selector: string) {

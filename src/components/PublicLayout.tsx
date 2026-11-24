@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import logoAsset from '@/assets/logo.webp.asset.json';
 import { Button } from '@/components/ui/button';
 import { trackEvent } from '@/lib/site';
 
@@ -23,7 +22,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container flex items-center justify-between h-16 gap-3">
           <Link to="/" className="flex items-center" aria-label="Smart AI OMR Analysis home">
-            <img src={logoAsset.url} alt="Smart AI OMR Analysis logo" width={56} height={56} className="h-14 w-14 object-contain rounded-md bg-card" />
+            <img src="/icon-192.png" alt="Smart AI OMR Analysis logo for the online NEET and JEE OMR sheet checker" width={56} height={56} className="h-14 w-14 object-contain rounded-md bg-card" />
           </Link>
           <nav aria-label="Guides" className="hidden md:flex items-center gap-5 text-sm text-muted-foreground">
             <Link to="/free-neet-omr-sheet-pdf" className="hover:text-foreground">OMR sheet PDF</Link>
