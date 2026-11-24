@@ -339,9 +339,12 @@ export default function ChatPage() {
 
 
   const downloadFile = async (f: GroupFile) => {
-    const { data, error } = await supabase.storage.from('group-files').createSignedUrl(f.file_path, 60);
-    if (error) { toast.error(error.message); return; }
-    window.open(data.signedUrl, '_blank');
+    const win = window.open('', '_blank');
+    const { data, error } = await supabase.storage.from('group-files').download(f.file_path);
+    if (error || !data) { win?.close(); toast.error(error?.message ?? 'Download failed'); return; }
+    const url = URL.createObjectURL(data);
+    if (win) win.location.href = url; else window.location.href = url;
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   };
 
   const createInvite = async () => {

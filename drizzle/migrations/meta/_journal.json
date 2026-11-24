@@ -92,6 +92,13 @@
       "when": 1794280411864,
       "tag": "0012_secure_gamification_scores",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795482341234,
+      "tag": "0013_cbt_registration_pending_and_result_checks",
+      "breakpoints": true
     }
   ]
 }

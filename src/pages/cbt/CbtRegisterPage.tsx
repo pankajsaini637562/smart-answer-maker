@@ -56,7 +56,7 @@ export default function CbtRegisterPage() {
     try {
       const { username, ...rest } = form;
       const r = await portalRpc<StudentRegistration>('cbt_register', { _details: { ...rest, extra_details: { username } } });
-      toast.success(`Registered! Your roll number is ${r.roll_number}`);
+      toast.success(`Registered! Roll number ${r.roll_number} — awaiting admin approval`);
       await load();
     } catch (err: any) { toast.error(err.message); }
     finally { setBusy(false); }
@@ -113,7 +113,7 @@ export default function CbtRegisterPage() {
                   <Input id={k} placeholder={ph} maxLength={k === 'username' ? 60 : 200} value={form[k] ?? ''} onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))} />
                 </div>
               ))}
-              <p className="sm:col-span-2 text-xs text-muted-foreground">Your roll number is created from your batch code, e.g. NEET26-0001. Registration is approved instantly.</p>
+              <p className="sm:col-span-2 text-xs text-muted-foreground">Your roll number is created from your batch code, e.g. NEET26-0001. An administrator reviews and approves your registration before you can take exams.</p>
               <Button type="submit" disabled={busy} className="sm:col-span-2">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Register</Button>
             </form>
           </CardContent></Card>

@@ -91,7 +91,8 @@ export async function enrollFree(courseId: string) {
 }
 
 export async function signedPdfUrl(path: string) {
-  const { data, error } = await supabase.storage.from('course-content').createSignedUrl(path, 3600);
-  if (error) throw error;
-  return data.signedUrl;
+  // Download through a permission-checked request so no reusable link is issued.
+  const { data, error } = await supabase.storage.from('course-content').download(path);
+  if (error || !data) throw error ?? new Error('Download failed');
+  return URL.createObjectURL(data);
 }
