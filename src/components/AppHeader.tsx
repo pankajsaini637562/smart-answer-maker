@@ -5,6 +5,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useIsInstructor } from '@/hooks/useIsInstructor';
+import logoAsset from '@/assets/smart-ai-omr-logo.png.asset.json';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
@@ -30,7 +31,7 @@ export function AppHeader() {
       <div className="container py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center" aria-label="Smart AI OMR home">
-            <img src="/icon-192.png" alt="Smart AI OMR Analysis logo for online OMR tests and results" width={48} height={48} className="h-12 w-12 object-contain rounded-md bg-card" />
+            <img src={logoAsset.url} alt="Smart AI OMR Analysis logo for online OMR tests and results" width={79} height={40} className="h-10 w-auto object-contain rounded-md bg-card" />
           </Link>
 
           <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-1 bg-muted/60 rounded-xl p-1">
