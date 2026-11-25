@@ -99,6 +99,13 @@
       "when": 1795482341234,
       "tag": "0013_cbt_registration_pending_and_result_checks",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1795575112437,
+      "tag": "0014_leaderboard_xp_from_graded_cbt",
+      "breakpoints": true
     }
   ]
 }
